@@ -13,7 +13,8 @@ import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
 import Cart from "@/pages/cart";
 import News from "@/pages/news";
-import NewsDetail from "@/pages/news-detail";
+import NewsDetail from "@/pages/news-detail";  
+import SolarEnergyLanding from "@/pages/solar-energy";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/cart" component={Cart} />
       <Route path="/news" component={News} />
       <Route path="/news/:slug" component={NewsDetail} />
+      <Route path="/solar-energy" component={SolarEnergyLanding} />
       <Route component={NotFound} />
     </Switch>
   );

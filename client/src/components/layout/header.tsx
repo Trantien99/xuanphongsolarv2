@@ -10,12 +10,13 @@ import { CartSidebar } from "@/components/cart/cart-sidebar";
 import { VisualSearchModal } from "@/components/search/visual-search-modal";
 
 const categories = [
-  { name: "All Categories", href: "/products" },
-  { name: "Power Tools", href: "/products?category=power-tools" },
-  { name: "Safety Equipment", href: "/products?category=safety-equipment" },
-  { name: "Machinery", href: "/products?category=machinery" },
-  { name: "Electronics", href: "/products?category=electronics" },
-  { name: "Materials", href: "/products?category=materials" },
+  { name: "All Categories", href: "/products", highlight: false },
+  { name: "Power Tools", href: "/products?category=power-tools", highlight: false },
+  { name: "Safety Equipment", href: "/products?category=safety-equipment", highlight: false },
+  { name: "Solar Energy", href: "/solar-energy", highlight: true },
+  { name: "Machinery", href: "/products?category=machinery", highlight: false },
+  { name: "Electronics", href: "/products?category=electronics", highlight: false },
+  { name: "Materials", href: "/products?category=materials", highlight: false },
 ];
 
 export function Header() {
@@ -172,7 +173,11 @@ export function Header() {
             <nav className="flex space-x-8 py-3 overflow-x-auto">
               {categories.map((category) => (
                 <Link key={category.name} href={category.href}>
-                  <span className="text-gray-700 hover:text-primary font-medium whitespace-nowrap cursor-pointer">
+                  <span className={`font-medium whitespace-nowrap cursor-pointer ${
+                    category.highlight 
+                      ? "text-yellow-600 hover:text-yellow-700 font-semibold" 
+                      : "text-gray-700 hover:text-primary"
+                  }`}>
                     {category.name}
                   </span>
                 </Link>
