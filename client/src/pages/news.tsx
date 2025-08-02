@@ -1,125 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, useRoute } from "wouter";
-import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
+import { Calendar, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { News } from "@shared/schema";
 
-function NewsDetail({ slug }: { slug: string }) {
-  const { data: article, isLoading } = useQuery<News>({
-    queryKey: ["/api/news/slug", slug],
-  });
-
-  if (isLoading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Skeleton className="h-8 w-48 mb-6" />
-        <Skeleton className="h-64 w-full mb-6" />
-        <Skeleton className="h-12 w-3/4 mb-4" />
-        <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-2/3" />
-      </div>
-    );
-  }
-
-  if (!article) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Article Not Found</h1>
-          <Link href="/news">
-            <Button>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to News
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/news">
-          <Button variant="outline" className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to News
-          </Button>
-        </Link>
-
-        <article className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {article.imageUrl && (
-            <div className="aspect-video overflow-hidden">
-              <img
-                src={article.imageUrl}
-                alt={article.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-
-          <div className="p-8">
-            <header className="mb-8">
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                {article.title}
-              </h1>
-
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
-                <div className="flex items-center">
-                  <User className="h-4 w-4 mr-2" />
-                  {article.author}
-                </div>
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  }) : 'No date'}
-                </div>
-              </div>
-
-              {article.tags && article.tags.length > 0 && (
-                <div className="flex items-center gap-2 mb-6">
-                  <Tag className="h-4 w-4 text-gray-500" />
-                  {article.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-
-              <p className="text-xl text-gray-600 leading-relaxed">
-                {article.excerpt}
-              </p>
-            </header>
-
-            <div className="prose prose-lg max-w-none">
-              {article.content.split('\n').map((paragraph, index) => (
-                <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </div>
-        </article>
-      </div>
-    </div>
-  );
-}
-
-export default function News() {
-  const [match, params] = useRoute("/news/:slug");
-
-  if (match && params?.slug) {
-    return <NewsDetail slug={params.slug} />;
-  }
-
+function NewsList() {
   const { data: news = [], isLoading } = useQuery<News[]>({
     queryKey: ["/api/news"],
   });
@@ -210,4 +97,8 @@ export default function News() {
       </div>
     </div>
   );
+}
+
+export default function News() {
+  return <NewsList />;
 }
