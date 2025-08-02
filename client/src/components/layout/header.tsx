@@ -132,6 +132,18 @@ export function Header() {
 
               {/* Desktop Navigation */}
               <div className="hidden md:flex items-center space-x-4">
+                <Link href="/products">
+                  <Button variant="ghost" className={location === "/products" ? "bg-gray-100" : ""}>
+                    Products
+                  </Button>
+                </Link>
+                
+                <Link href="/news">
+                  <Button variant="ghost" className={location === "/news" || location.startsWith("/news/") ? "bg-gray-100" : ""}>
+                    News
+                  </Button>
+                </Link>
+                
                 <Button variant="ghost" size="icon">
                   <User className="h-5 w-5" />
                 </Button>
