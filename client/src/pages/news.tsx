@@ -75,15 +75,15 @@ function NewsDetail({ slug }: { slug: string }) {
                 </div>
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-2" />
-                  {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                  {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
-                  })}
+                  }) : 'No date'}
                 </div>
               </div>
 
-              {article.tags.length > 0 && (
+              {article.tags && article.tags.length > 0 && (
                 <div className="flex items-center gap-2 mb-6">
                   <Tag className="h-4 w-4 text-gray-500" />
                   {article.tags.map((tag) => (
@@ -183,11 +183,11 @@ export default function News() {
                       </div>
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
-                        {new Date(article.publishedAt).toLocaleDateString()}
+                        {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'No date'}
                       </div>
                     </div>
 
-                    {article.tags.length > 0 && (
+                    {article.tags && article.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-4">
                         {article.tags.slice(0, 3).map((tag) => (
                           <Badge key={tag} variant="secondary" className="text-xs">
