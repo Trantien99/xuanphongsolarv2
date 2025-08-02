@@ -214,7 +214,7 @@ export class MemStorage implements IStorage {
         title: "New Safety Regulations for Industrial Equipment",
         slug: "new-safety-regulations-industrial-equipment",
         excerpt: "Updated OSHA guidelines for industrial equipment safety standards effective 2024.",
-        content: "The Occupational Safety and Health Administration (OSHA) has announced new safety regulations for industrial equipment...",
+        content: "The Occupational Safety and Health Administration (OSHA) has announced new safety regulations for industrial equipment that will take effect throughout 2024. These comprehensive updates focus on improving workplace safety standards across manufacturing, construction, and industrial facilities.\n\nKey changes include mandatory safety training programs for equipment operators, enhanced personal protective equipment requirements, and stricter maintenance protocols for heavy machinery. Companies must implement these new standards within 90 days of the effective date.\n\nThe regulations also introduce digital reporting systems for safety incidents and require regular third-party inspections of critical equipment. Industry experts estimate that while implementation costs may be significant initially, the long-term benefits include reduced workplace accidents and improved operational efficiency.\n\nEmployers are encouraged to review their current safety protocols and work with certified safety consultants to ensure full compliance with the new regulations.",
         imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
         author: "Safety Team",
         publishedAt: new Date("2024-01-15"),
@@ -227,12 +227,25 @@ export class MemStorage implements IStorage {
         title: "Top 10 Power Tools for 2024",
         slug: "top-10-power-tools-2024",
         excerpt: "Our comprehensive review of the best power tools for professional use in 2024.",
-        content: "As we enter 2024, the power tool industry continues to innovate with new technologies and improved performance...",
+        content: "As we enter 2024, the power tool industry continues to innovate with new technologies and improved performance features. Our expert team has thoroughly tested and evaluated hundreds of power tools to bring you this definitive list of the top 10 power tools for professional use.\n\nThis year's standout features include longer battery life, more precise control systems, and enhanced safety mechanisms. Cordless tools have reached new levels of power and efficiency, making them viable alternatives to corded tools in most applications.\n\nThe top performers in our testing include the DeWalt 20V Max series for versatility, Milwaukee M18 FUEL for heavy-duty applications, and Makita's XGT 40V platform for professional contractors. Each tool was evaluated based on performance, durability, value, and user feedback from industry professionals.\n\nWhether you're a contractor, manufacturer, or serious DIY enthusiast, investing in quality power tools remains one of the most important decisions for productivity and safety.",
         imageUrl: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
         author: "Product Team",
         publishedAt: new Date("2024-01-10"),
         isPublished: true,
         tags: ["power tools", "review", "2024"],
+        createdAt: new Date()
+      },
+      {
+        id: "3",
+        title: "The Future of Smart Manufacturing Technology",
+        slug: "future-smart-manufacturing-technology",
+        excerpt: "How IoT, AI, and automation are transforming industrial manufacturing processes and improving efficiency.",
+        content: "Smart manufacturing represents the next evolution in industrial production, combining Internet of Things (IoT) sensors, artificial intelligence, and advanced automation to create more efficient, responsive, and sustainable manufacturing processes.\n\nThe integration of IoT sensors throughout production lines enables real-time monitoring of equipment performance, environmental conditions, and product quality. This data-driven approach allows manufacturers to predict maintenance needs, optimize energy consumption, and reduce waste significantly.\n\nArtificial intelligence algorithms analyze vast amounts of production data to identify patterns and optimize processes automatically. Machine learning models can predict equipment failures before they occur, schedule maintenance during optimal windows, and adjust production parameters in real-time to maintain quality standards.\n\nAdvanced robotics and automation systems are becoming more flexible and collaborative, working alongside human operators to enhance productivity while maintaining safety. These systems can adapt to different products and production requirements without extensive reprogramming.\n\nEarly adopters of smart manufacturing technologies report efficiency improvements of 20-30%, reduced operational costs, and significantly improved product quality. As these technologies mature and become more accessible, we expect widespread adoption across all manufacturing sectors.",
+        imageUrl: "https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+        author: "Technology Team",
+        publishedAt: new Date("2024-01-05"),
+        isPublished: true,
+        tags: ["smart manufacturing", "IoT", "automation", "AI"],
         createdAt: new Date()
       }
     ];
