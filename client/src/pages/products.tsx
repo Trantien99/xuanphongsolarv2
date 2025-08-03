@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useTitle } from "@/hooks/use-title";
 import type { Product, Category } from "@shared/schema";
 
 export default function Products() {
@@ -18,6 +19,9 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState("");
+  
+  // Set dynamic title
+  useTitle("pageTitle.products");
   const [sortBy, setSortBy] = useState("popular");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 

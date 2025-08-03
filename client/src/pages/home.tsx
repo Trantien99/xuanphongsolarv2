@@ -7,6 +7,7 @@ import { ProductGrid } from "@/components/product/product-grid";
 import { useState } from "react";
 import { VisualSearchModal } from "@/components/search/visual-search-modal";
 import { useTranslation } from "@/lib/i18n";
+import { useTitle, useMetaDescription } from "@/hooks/use-title";
 import type { Product, Category } from "@shared/schema";
 
 const categoryIcons = {
@@ -21,6 +22,10 @@ const categoryIcons = {
 export default function Home() {
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
   const { t } = useTranslation();
+  
+  // Set dynamic title and meta description
+  useTitle("meta.title");
+  useMetaDescription("meta.description");
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
