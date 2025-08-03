@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import { t } from "@/lib/i18n";
 
 interface VisualSearchModalProps {
   isOpen: boolean;
@@ -38,7 +39,7 @@ export function VisualSearchModal({ isOpen, onClose }: VisualSearchModalProps) {
       }
     } catch (error) {
       toast({
-        title: "Camera Error",
+        title: t("toastMessages.cameraError"),
         description: "Unable to access camera. Please check permissions.",
         variant: "destructive",
       });
@@ -81,7 +82,7 @@ export function VisualSearchModal({ isOpen, onClose }: VisualSearchModalProps) {
       setIsProcessing(false);
       onClose();
       toast({
-        title: "Visual Search Complete",
+        title: t("toastMessages.visualSearchComplete"),
         description: "Redirecting to search results...",
       });
       // In a real implementation, this would process the image and redirect to results

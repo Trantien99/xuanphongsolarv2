@@ -4,12 +4,16 @@ import { Calendar, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTitle } from "@/hooks/use-title";
 import type { News } from "@shared/schema";
 
 function NewsList() {
   const { data: news = [], isLoading } = useQuery<News[]>({
     queryKey: ["/api/news"],
   });
+  
+  // Set dynamic title
+  useTitle("pageTitle.news");
 
   return (
     <div className="min-h-screen bg-gray-50">

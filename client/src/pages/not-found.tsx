@@ -1,9 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { useTitle } from "@/hooks/use-title";
 
 export default function NotFound() {
   const { t } = useTranslation();
+  
+  // Set dynamic title
+  useTitle("pageTitle.notFound");
   
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">

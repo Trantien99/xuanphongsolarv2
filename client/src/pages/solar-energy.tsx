@@ -8,53 +8,55 @@ import { Separator } from "@/components/ui/separator";
 import type { Product, Category } from "@shared/schema";
 import { useCart } from "@/components/cart/cart-context";
 import { useToast } from "@/hooks/use-toast";
+import { useTitle } from "@/hooks/use-title";
+import { t } from "@/lib/i18n";
 
-const features = [
+const getFeatures = () => [
   {
     icon: Sun,
-    title: "Năng Lượng Sạch",
-    description: "Sử dụng nguồn năng lượng tái tạo từ mặt trời, thân thiện với môi trường"
+    title: t("solarEnergy.features.cleanEnergy.title"),
+    description: t("solarEnergy.features.cleanEnergy.description")
   },
   {
     icon: Zap,
-    title: "Tiết Kiệm Chi Phí",
-    description: "Giảm 80-90% hóa đơn điện hàng tháng sau khi lắp đặt"
+    title: t("solarEnergy.features.costSaving.title"),
+    description: t("solarEnergy.features.costSaving.description")
   },
   {
     icon: Shield,
-    title: "Bảo Hành Dài Hạn",
-    description: "Bảo hành 15-25 năm cho tấm pin và thiết bị chính"
+    title: t("solarEnergy.features.longWarranty.title"),
+    description: t("solarEnergy.features.longWarranty.description")
   },
   {
     icon: Leaf,
-    title: "Thân Thiện Môi Trường",
-    description: "Giảm phát thải CO2, góp phần bảo vệ môi trường"
+    title: t("solarEnergy.features.ecoFriendly.title"),
+    description: t("solarEnergy.features.ecoFriendly.description")
   }
 ];
 
-const categories = [
+const getCategories = () => [
   {
     icon: Sun,
-    title: "Tấm Pin Mặt Trời",
-    description: "Tấm pin mono & poly crystal chất lượng cao",
+    title: t("solarEnergy.categories.solarPanels.title"),
+    description: t("solarEnergy.categories.solarPanels.description"),
     items: ["Pin 300W-600W", "Hiệu suất 20-22%", "Bảo hành 25 năm"]
   },
   {
     icon: Battery,
-    title: "Pin Lưu Trữ",
-    description: "Hệ thống pin lithium cho năng lượng dự phòng",
+    title: t("solarEnergy.categories.batteries.title"),
+    description: t("solarEnergy.categories.batteries.description"),
     items: ["Pin LiFePO4", "Tuổi thọ 6000+ chu kỳ", "BMS tích hợp"]
   },
   {
     icon: Droplets,
-    title: "Máy Nước Nóng",
-    description: "Hệ thống nước nóng năng lượng mặt trời",
+    title: t("solarEnergy.categories.waterHeater.title"),
+    description: t("solarEnergy.categories.waterHeater.description"),
     items: ["Dung tích 100-300L", "Ống chân không", "Hiệu suất 95%+"]
   },
   {
     icon: ArrowUp,
-    title: "Thang Máy Solar",
-    description: "Thang máy tiết kiệm năng lượng",
+    title: t("solarEnergy.categories.solarElevator.title"),
+    description: t("solarEnergy.categories.solarElevator.description"),
     items: ["Động cơ hiệu suất cao", "Pin dự phòng", "Điều khiển thông minh"]
   }
 ];
@@ -62,6 +64,9 @@ const categories = [
 export default function SolarEnergyLanding() {
   const { addItem } = useCart();
   const { toast } = useToast();
+  
+  // Set dynamic title
+  useTitle("pageTitle.products", "Năng lượng mặt trời");
 
   const { data: solarProducts = [], isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products", { categoryId: "7" }],
@@ -85,7 +90,7 @@ export default function SolarEnergyLanding() {
     addItem(product.id, 1);
     
     toast({
-      title: "Đã thêm vào giỏ hàng",
+      title: t("solarEnergy.addedToCart"),
       description: `${product.name} đã được thêm vào giỏ hàng của bạn.`,
     });
   };
@@ -132,7 +137,7 @@ export default function SolarEnergyLanding() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
+            {getFeatures().map((feature, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex justify-center mb-4">
@@ -164,7 +169,7 @@ export default function SolarEnergyLanding() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category, index) => (
+            {getCategories().map((category, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center space-x-3">

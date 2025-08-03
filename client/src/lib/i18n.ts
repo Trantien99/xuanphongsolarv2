@@ -15,13 +15,15 @@ export const translations = {
     backToProducts: "Quay lại sản phẩm",
     
     // Navigation
-    home: "Trang chủ",
-    products: "Sản phẩm",
-    news: "Tin tức",
-    about: "Giới thiệu",
-    contact: "Liên hệ",
-    cart: "Giỏ hàng",
-    account: "Tài khoản",
+    navigation: {
+      home: "Trang chủ",
+      products: "Sản phẩm",
+      news: "Tin tức",
+      about: "Giới thiệu",
+      contact: "Liên hệ",
+      cart: "Giỏ hàng",
+      account: "Tài khoản",
+    },
     
     // Product Detail
     productDetail: "Chi tiết sản phẩm",
@@ -125,6 +127,123 @@ export const translations = {
       daysAgo: "{days} ngày trước",
       monthsAgo: "{months} tháng trước",
       yearsAgo: "{years} năm trước",
+    },
+
+    // HTML Meta titles and descriptions
+    meta: {
+      title: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+      description: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành với công cụ khám phá sản phẩm tiên tiến, công cụ điện, thiết bị an toàn và máy móc.",
+      keywords: "sản phẩm công nghiệp, tìm kiếm hình ảnh, thị trường B2B, công cụ chuyên nghiệp, tìm nguồn cung thiết bị, công cụ điện, thiết bị an toàn, máy móc, thiết bị điện tử, vật liệu xây dựng",
+      author: "IndustrialSource",
+      ogTitle: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+      ogDescription: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành với công cụ khám phá sản phẩm tiên tiến.",
+      twitterTitle: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+      twitterDescription: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành với công cụ khám phá sản phẩm tiên tiến.",
+    },
+
+    // Home page
+    home: {
+      heroTitle: "Khám phá sản phẩm công nghiệp với công nghệ tìm kiếm hình ảnh",
+      heroSubtitle: "Tìm kiếm sản phẩm dễ dàng hơn bao giờ hết với công nghệ AI tiên tiến",
+      items: "sản phẩm",
+    },
+
+    // Page titles
+    pageTitle: {
+      home: "Trang chủ",
+      products: "Sản phẩm",
+      news: "Tin tức",
+      cart: "Giỏ hàng",
+      checkout: "Thanh toán",
+      productDetail: "Chi tiết sản phẩm",
+      notFound: "Không tìm thấy trang",
+    },
+
+    // Common UI elements
+    common: {
+      delete: "Xóa",
+      close: "Đóng",
+      cancel: "Hủy",
+      save: "Lưu",
+      loading: "Đang tải...",
+      error: "Lỗi",
+      success: "Thành công",
+    },
+
+    // Cart
+    cart: {
+      pageTitle: "Giỏ hàng",
+      total: "Tổng cộng",
+      empty: "Giỏ hàng trống",
+      addedToCart: "Đã thêm vào giỏ hàng",
+      failedToAdd: "Không thể thêm vào giỏ hàng",
+      itemRemoved: "Đã xóa sản phẩm",
+      failedToRemove: "Không thể xóa sản phẩm",
+      cleared: "Đã xóa giỏ hàng",
+      failedToClear: "Không thể xóa giỏ hàng",
+    },
+
+    // Not Found page
+    notFound: {
+      title: "Trang không tồn tại",
+      description: "Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.",
+      message: "Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.",
+      backToHome: "Quay về trang chủ",
+    },
+
+    // Solar Energy page
+    solarEnergy: {
+      features: {
+        cleanEnergy: {
+          title: "Năng Lượng Sạch",
+          description: "Sử dụng nguồn năng lượng tái tạo từ mặt trời, thân thiện với môi trường"
+        },
+        costSaving: {
+          title: "Tiết Kiệm Chi Phí",
+          description: "Giảm 80-90% hóa đơn điện hàng tháng sau khi lắp đặt"
+        },
+        longWarranty: {
+          title: "Bảo Hành Dài Hạn",
+          description: "Bảo hành 15-25 năm cho tấm pin và thiết bị chính"
+        },
+        ecoFriendly: {
+          title: "Thân Thiện Môi Trường",
+          description: "Giảm phát thải CO2, góp phần bảo vệ môi trường"
+        }
+      },
+      categories: {
+        solarPanels: {
+          title: "Tấm Pin Mặt Trời",
+          description: "Tấm pin chất lượng cao, hiệu suất tối ưu"
+        },
+        batteries: {
+          title: "Pin Lưu Trữ",
+          description: "Hệ thống lưu trữ năng lượng đáng tin cậy"
+        },
+        waterHeater: {
+          title: "Máy Nước Nóng",
+          description: "Giải pháp nước nóng tiết kiệm năng lượng"
+        },
+        solarElevator: {
+          title: "Thang Máy Solar",
+          description: "Thang máy sử dụng năng lượng mặt trời"
+        }
+      },
+      addedToCart: "Đã thêm vào giỏ hàng"
+    },
+
+    // Toast messages
+    toastMessages: {
+      cameraError: "Lỗi Camera",
+      visualSearchComplete: "Tìm kiếm hình ảnh hoàn thành",
+      itemAddedToCart: "Đã thêm sản phẩm vào giỏ hàng",
+      failedToAddItem: "Không thể thêm sản phẩm vào giỏ hàng",
+      failedToUpdateCart: "Không thể cập nhật giỏ hàng",
+      itemRemovedFromCart: "Đã xóa sản phẩm khỏi giỏ hàng",
+      failedToRemoveItem: "Không thể xóa sản phẩm",
+      cartCleared: "Đã xóa giỏ hàng",
+      failedToClearCart: "Không thể xóa giỏ hàng",
+      orderSuccess: "Đặt hàng thành công!",
     },
   }
 };

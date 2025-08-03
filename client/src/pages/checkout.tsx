@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCart } from "@/components/cart/cart-context";
 import { useToast } from "@/hooks/use-toast";
+import { useTitle } from "@/hooks/use-title";
+import { t } from "@/lib/i18n";
 
 interface CheckoutForm {
   // Shipping Information
@@ -38,6 +40,9 @@ export default function Checkout() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Set dynamic title
+  useTitle("pageTitle.checkout");
   const [formData, setFormData] = useState<CheckoutForm>({
     firstName: "",
     lastName: "",
@@ -74,7 +79,7 @@ export default function Checkout() {
     
     if (!validateForm()) {
       toast({
-        title: "Lỗi",
+        title: t("error"),
         description: "Vui lòng điền đầy đủ thông tin bắt buộc",
         variant: "destructive"
       });
@@ -88,7 +93,7 @@ export default function Checkout() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       toast({
-        title: "Đặt hàng thành công!",
+        title: t("toastMessages.orderSuccess"),
         description: "Cảm ơn bạn đã mua hàng. Chúng tôi sẽ liên hệ với bạn sớm nhất.",
       });
       
@@ -96,7 +101,7 @@ export default function Checkout() {
       setLocation("/");
     } catch (error) {
       toast({
-        title: "Lỗi",
+        title: t("error"),
         description: "Có lỗi xảy ra khi xử lý đơn hàng. Vui lòng thử lại.",
         variant: "destructive"
       });
