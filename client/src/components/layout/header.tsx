@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/components/cart/cart-context";
 import { CartSidebar } from "@/components/cart/cart-sidebar";
 import { VisualSearchModal } from "@/components/search/visual-search-modal";
+import { AutocompleteSearch } from "@/components/search/autocomplete-search";
 
 const categories = [
   { name: "All Categories", href: "/products", highlight: false },
@@ -23,15 +24,7 @@ export function Header() {
   const [location] = useLocation();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const { state } = useCart();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-  };
 
   return (
     <>
@@ -48,27 +41,19 @@ export function Header() {
             </div>
 
             {/* Search Bar - Desktop */}
-            <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-              <form onSubmit={handleSearch} className="relative w-full">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <Input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pl-10 pr-24 py-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                />
-                <Button
-                  type="button"
-                  onClick={() => setIsVisualSearchOpen(true)}
-                  className="absolute inset-y-0 right-0 flex items-center px-3 py-2 bg-primary text-white rounded-r-lg hover:bg-primary/90 transition-colors"
-                >
-                  <Camera className="h-4 w-4 mr-2" />
-                  Visual Search
-                </Button>
-              </form>
+            <div className="hidden md:flex flex-1 max-w-2xl mx-8 relative">
+              <AutocompleteSearch 
+                placeholder="Tìm kiếm sản phẩm..."
+                className="w-full"
+              />
+              <Button
+                type="button"
+                onClick={() => setIsVisualSearchOpen(true)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 py-2 bg-primary text-white rounded-r-lg hover:bg-primary/90 transition-colors z-10"
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                Visual Search
+              </Button>
             </div>
 
             {/* Navigation Icons */}
@@ -87,15 +72,10 @@ export function Header() {
                     </Link>
                     
                     {/* Mobile Search */}
-                    <form onSubmit={handleSearch} className="relative">
-                      <Input
-                        type="text"
-                        placeholder="Search products..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full"
-                      />
-                    </form>
+                    <AutocompleteSearch 
+                      placeholder="Tìm kiếm sản phẩm..."
+                      className="w-full"
+                    />
                     
                     <Button
                       onClick={() => setIsVisualSearchOpen(true)}

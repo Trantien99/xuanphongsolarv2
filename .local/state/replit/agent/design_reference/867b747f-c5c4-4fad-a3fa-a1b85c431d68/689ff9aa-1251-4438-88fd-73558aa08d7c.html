@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndustryFind - Visual Product Search for Professionals</title>
+    <meta name="description" content="Find industrial products faster with visual search. Professional e-commerce platform for industry specialists.">
+    <meta name="keywords" content="visual search, industrial products, professional tools, equipment search">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#64748B',
+                        accent: '#F59E0B'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- @COMPONENT: Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-primary">IndustryFind</h1>
+                    </div>
+                </div>
+
+                <!-- Visual Search Bar -->
+                <div class="flex-1 max-w-2xl mx-8">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-camera text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Search by image or text..." 
+                               class="block w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <div class="absolute inset-y-0 right-0 flex items-center">
+                            <button class="bg-primary text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition-colors" data-event="click:handleVisualSearch">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-500">
+                        <span class="bg-accent/10 text-accent px-2 py-1 rounded-full text-xs mr-2">NEW</span>
+                        Drop an image here or click to upload for visual search
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-900 hover:text-primary font-medium">Categories</a>
+                    <a href="#" class="text-gray-900 hover:text-primary font-medium">News</a>
+                    <a href="#" class="text-gray-900 hover:text-primary font-medium">Support</a>
+                </nav>
+
+                <!-- Cart -->
+                <div class="flex items-center space-x-4">
+                    <button class="relative p-2 text-gray-600 hover:text-primary" data-event="click:toggleCart">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" data-bind="cart.itemCount">3</span>
+                    </button>
+                    <button class="md:hidden p-2 text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <!-- @COMPONENT: Hero Section -->
+    <section class="bg-gradient-to-r from-primary to-blue-700 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Find Industrial Products with Visual Search</h2>
+                    <p class="text-xl mb-8 text-blue-100">Revolutionary image-based search technology for industry professionals. Find exactly what you need, faster than ever.</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="bg-accent hover:bg-yellow-500 text-gray-900 px-8 py-3 rounded-lg font-semibold transition-colors">
+                            Try Visual Search
+                        </button>
+                        <button class="border-2 border-white text-white hover:bg-white hover:text-primary px-8 py-3 rounded-lg font-semibold transition-colors">
+                            Browse Categories
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <!-- Professional industrial equipment showcase -->
+                    <div class="bg-white p-8 rounded-xl shadow-2xl">
+                        <!-- High-quality industrial equipment image -->
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" alt="Industrial equipment and machinery" class="rounded-lg w-full">
+                        <div class="mt-4 text-gray-900">
+                            <h3 class="font-semibold">Advanced Machinery Detection</h3>
+                            <p class="text-sm text-gray-600">Upload any equipment image for instant identification</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Hero Section -->
+
+    <!-- @COMPONENT: Product Categories -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Shop by Category</h2>
+                <p class="text-xl text-gray-600">Find products across all major industrial sectors</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- @MAP: categories.map(category => ( -->
+                <div class="group cursor-pointer" data-event="click:navigateToCategory">
+                    <div class="bg-gray-100 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
+                        <!-- Industrial tools and machinery -->
+                        <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Industrial tools and machinery" class="w-20 h-20 mx-auto mb-4 rounded-lg object-cover">
+                        <h3 class="font-semibold text-gray-900 group-hover:text-primary" data-bind="category.name">Machinery</h3>
+                        <p class="text-sm text-gray-600 mt-1" data-bind="category.itemCount">2,847 items</p>
+                    </div>
+                </div>
+                
+                <div class="group cursor-pointer" data-event="click:navigateToCategory">
+                    <div class="bg-gray-100 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
+                        <!-- Hand tools and equipment -->
+                        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Professional hand tools" class="w-20 h-20 mx-auto mb-4 rounded-lg object-cover">
+                        <h3 class="font-semibold text-gray-900 group-hover:text-primary">Hand Tools</h3>
+                        <p class="text-sm text-gray-600 mt-1">1,523 items</p>
+                    </div>
+                </div>
+                
+                <div class="group cursor-pointer" data-event="click:navigateToCategory">
+                    <div class="bg-gray-100 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
+                        <!-- Safety equipment and gear -->
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Safety equipment and protective gear" class="w-20 h-20 mx-auto mb-4 rounded-lg object-cover">
+                        <h3 class="font-semibold text-gray-900 group-hover:text-primary">Safety Equipment</h3>
+                        <p class="text-sm text-gray-600 mt-1">892 items</p>
+                    </div>
+                </div>
+                
+                <div class="group cursor-pointer" data-event="click:navigateToCategory">
+                    <div class="bg-gray-100 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
+                        <!-- Electrical components and systems -->
+                        <img src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Electrical components and control systems" class="w-20 h-20 mx-auto mb-4 rounded-lg object-cover">
+                        <h3 class="font-semibold text-gray-900 group-hover:text-primary">Electrical</h3>
+                        <p class="text-sm text-gray-600 mt-1">3,156 items</p>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Product Categories -->
+
+    <!-- @COMPONENT: Featured Products -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Featured Products</h2>
+                    <p class="text-gray-600">Top-rated products from trusted suppliers</p>
+                </div>
+                <button class="text-primary hover:text-blue-700 font-medium">View All <i class="fas fa-arrow-right ml-1"></i></button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- @MAP: featuredProducts.map(product => ( -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer" data-event="click:viewProduct">
+                    <div class="relative">
+                        <!-- Professional industrial drill -->
+                        <img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Professional industrial drill" class="w-full h-48 object-cover rounded-t-xl">
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-accent text-gray-900 px-2 py-1 rounded-full text-xs font-semibold">Featured</span>
+                        </div>
+                        <button class="absolute top-3 right-3 bg-white/80 hover:bg-white p-2 rounded-full transition-colors" data-event="click:addToWishlist">
+                            <i class="far fa-heart text-gray-600"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                            </div>
+                            <span class="text-sm text-gray-600 ml-2" data-bind="product.reviews">(127 reviews)</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2 group-hover:text-primary" data-bind="product.name">Professional Impact Drill HD-2000</h3>
+                        <p class="text-sm text-gray-600 mb-3" data-bind="product.brand">DeWalt Professional Series</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-lg font-bold text-gray-900" data-bind="product.price">$249.99</span>
+                                <span class="text-sm text-gray-500 line-through" data-bind="product.originalPrice">$299.99</span>
+                            </div>
+                            <button class="bg-primary text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors" data-event="click:addToCart">
+                                <i class="fas fa-plus mr-1"></i>Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer" data-event="click:viewProduct">
+                    <div class="relative">
+                        <!-- Industrial safety helmet -->
+                        <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Professional safety helmet" class="w-full h-48 object-cover rounded-t-xl">
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">Best Seller</span>
+                        </div>
+                        <button class="absolute top-3 right-3 bg-white/80 hover:bg-white p-2 rounded-full transition-colors">
+                            <i class="far fa-heart text-gray-600"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                            </div>
+                            <span class="text-sm text-gray-600 ml-2">(203 reviews)</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2 group-hover:text-primary">Advanced Safety Helmet Pro</h3>
+                        <p class="text-sm text-gray-600 mb-3">3M Safety Solutions</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-lg font-bold text-gray-900">$89.99</span>
+                            </div>
+                            <button class="bg-primary text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-plus mr-1"></i>Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer">
+                    <div class="relative">
+                        <!-- Industrial measuring tools -->
+                        <img src="https://pixabay.com/get/gd6fb1294ec1367d6a58867329df8fa18c7335868ae703f4dda39214b83d24af6e6075028c7f334d8591a73d43cf2a72c4dc6e3901c6a3a78a2dedc4a2f2409d7_1280.jpg" alt="Precision measuring tools and calipers" class="w-full h-48 object-cover rounded-t-xl">
+                        <button class="absolute top-3 right-3 bg-white/80 hover:bg-white p-2 rounded-full transition-colors">
+                            <i class="far fa-heart text-gray-600"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="far fa-star text-sm"></i>
+                            </div>
+                            <span class="text-sm text-gray-600 ml-2">(84 reviews)</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2 group-hover:text-primary">Digital Precision Calipers</h3>
+                        <p class="text-sm text-gray-600 mb-3">Mitutoyo Precision</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-lg font-bold text-gray-900">$145.00</span>
+                            </div>
+                            <button class="bg-primary text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-plus mr-1"></i>Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer">
+                    <div class="relative">
+                        <!-- Industrial pneumatic tools -->
+                        <img src="https://pixabay.com/get/g0cbe1dba6a55a8cdca52003b6855dc7205e67346b6a41789883f1d31190db661e50108bb3c5cd1900e7a3d43f13a92f3943e718b9928abbeaaed3fd80ccd4d09_1280.jpg" alt="Pneumatic air tools and compressor" class="w-full h-48 object-cover rounded-t-xl">
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">20% OFF</span>
+                        </div>
+                        <button class="absolute top-3 right-3 bg-white/80 hover:bg-white p-2 rounded-full transition-colors">
+                            <i class="far fa-heart text-gray-600"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                                <i class="fas fa-star text-sm"></i>
+                            </div>
+                            <span class="text-sm text-gray-600 ml-2">(156 reviews)</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2 group-hover:text-primary">Pneumatic Impact Wrench Set</h3>
+                        <p class="text-sm text-gray-600 mb-3">Ingersoll Rand</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-lg font-bold text-gray-900">$199.99</span>
+                                <span class="text-sm text-gray-500 line-through">$249.99</span>
+                            </div>
+                            <button class="bg-primary text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-plus mr-1"></i>Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Featured Products -->
+
+    <!-- @COMPONENT: Visual Search CTA -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-r from-primary to-blue-700 rounded-2xl p-8 md:p-12 text-center">
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                        Can't Find What You're Looking For?
+                    </h2>
+                    <p class="text-xl text-blue-100 mb-8">
+                        Upload a photo and let our AI-powered visual search find similar products instantly. Revolutionary technology built for professionals.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button class="bg-accent hover:bg-yellow-500 text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg transition-colors">
+                            <i class="fas fa-camera mr-2"></i>Start Visual Search
+                        </button>
+                        <button class="border-2 border-white text-white hover:bg-white hover:text-primary px-8 py-4 rounded-lg font-semibold text-lg transition-colors">
+                            <i class="fas fa-phone mr-2"></i>Contact Expert
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Visual Search CTA -->
+
+    <!-- @COMPONENT: News Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Industry News & Updates</h2>
+                    <p class="text-gray-600">Stay informed with the latest industry trends and product updates</p>
+                </div>
+                <button class="text-primary hover:text-blue-700 font-medium">View All Articles <i class="fas fa-arrow-right ml-1"></i></button>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- @MAP: newsArticles.map(article => ( -->
+                <article class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer" data-event="click:readArticle">
+                    <!-- Manufacturing and industry news -->
+                    <img src="https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400" alt="Advanced manufacturing technology and automation" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span data-bind="article.category">Industry Trends</span>
+                            <span class="mx-2">•</span>
+                            <time data-bind="article.publishDate">March 15, 2024</time>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 hover:text-primary" data-bind="article.title">
+                            The Future of Manufacturing: AI-Driven Automation
+                        </h3>
+                        <p class="text-gray-600 mb-4" data-bind="article.excerpt">
+                            Explore how artificial intelligence is revolutionizing manufacturing processes and improving efficiency across industrial sectors...
+                        </p>
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <!-- Author profile image -->
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" alt="Industry expert author" class="w-8 h-8 rounded-full">
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900" data-bind="article.author">Dr. Sarah Chen</p>
+                                <p class="text-sm text-gray-500">Manufacturing Expert</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+                    <!-- Safety and compliance in industry -->
+                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400" alt="Industrial safety equipment and workplace safety" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span>Safety & Compliance</span>
+                            <span class="mx-2">•</span>
+                            <time>March 12, 2024</time>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 hover:text-primary">
+                            New Safety Regulations: What You Need to Know
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            Latest updates to industrial safety standards and compliance requirements affecting equipment selection and workplace protocols...
+                        </p>
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <!-- Safety expert profile -->
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" alt="Safety compliance expert" class="w-8 h-8 rounded-full">
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">Michael Rodriguez</p>
+                                <p class="text-sm text-gray-500">Safety Consultant</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+                    <!-- Technology and innovation -->
+                    <img src="https://pixabay.com/get/gd5c07a5e9f65c3af45cf1ffadc223eb27ee655ec5c8eb3a1468d17b8578ed5204c486087061821d430c9ab7c5f18d3683f094d10e4fbb871c098d55d3bcf09a5_1280.jpg" alt="Cutting-edge industrial technology and innovation" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span>Technology</span>
+                            <span class="mx-2">•</span>
+                            <time>March 10, 2024</time>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 hover:text-primary">
+                            Breakthrough: Smart Tools with IoT Integration
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            Discover how Internet of Things technology is being integrated into industrial tools for real-time monitoring and predictive maintenance...
+                        </p>
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <!-- Technology expert profile -->
+                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" alt="Technology innovation expert" class="w-8 h-8 rounded-full">
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">Jennifer Park</p>
+                                <p class="text-sm text-gray-500">Tech Analyst</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: News Section -->
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">IndustryFind</h3>
+                    <p class="text-gray-400 mb-6">Revolutionary visual search platform for industry professionals. Find products faster with AI-powered image recognition.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube text-xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Products</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Visual Search</a></li>
+                        <li><a href="#" class="hover:text-white">Product Catalog</a></li>
+                        <li><a href="#" class="hover:text-white">Bulk Orders</a></li>
+                        <li><a href="#" class="hover:text-white">Custom Solutions</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white">Technical Support</a></li>
+                        <li><a href="#" class="hover:text-white">Training</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Careers</a></li>
+                        <li><a href="#" class="hover:text-white">Press</a></li>
+                        <li><a href="#" class="hover:text-white">Partners</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400">&copy; 2024 IndustryFind. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <!-- @COMPONENT: Shopping Cart Sidebar -->
+    <!-- @STATE: isCartOpen:boolean = false -->
+    <div id="cartSidebar" class="fixed inset-y-0 right-0 z-50 w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300" data-bind="cartOpen">
+        <div class="flex flex-col h-full">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h2 class="text-lg font-semibold">Shopping Cart (<span data-bind="cart.itemCount">3</span>)</h2>
+                <button class="p-2 hover:bg-gray-100 rounded-lg" data-event="click:closeCart">
+                    <i class="fas fa-times text-gray-500"></i>
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6">
+                <div class="space-y-4" data-mock="true">
+                    <!-- Cart Item 1 -->
+                    <div class="flex items-center space-x-4 p-4 border rounded-lg">
+                        <!-- Cart item product image -->
+                        <img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" alt="Professional drill in shopping cart" class="w-16 h-16 object-cover rounded">
+                        <div class="flex-1">
+                            <h3 class="font-medium text-sm">Professional Impact Drill HD-2000</h3>
+                            <p class="text-xs text-gray-500">DeWalt Professional</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="font-semibold">$249.99</span>
+                                <div class="flex items-center space-x-2">
+                                    <button class="w-6 h-6 rounded-full border flex items-center justify-center text-xs">-</button>
+                                    <span class="text-sm">1</span>
+                                    <button class="w-6 h-6 rounded-full border flex items-center justify-center text-xs">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Cart Item 2 -->
+                    <div class="flex items-center space-x-4 p-4 border rounded-lg">
+                        <!-- Safety helmet in cart -->
+                        <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" alt="Safety helmet in shopping cart" class="w-16 h-16 object-cover rounded">
+                        <div class="flex-1">
+                            <h3 class="font-medium text-sm">Advanced Safety Helmet Pro</h3>
+                            <p class="text-xs text-gray-500">3M Safety Solutions</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="font-semibold">$89.99</span>
+                                <div class="flex items-center space-x-2">
+                                    <button class="w-6 h-6 rounded-full border flex items-center justify-center text-xs">-</button>
+                                    <span class="text-sm">2</span>
+                                    <button class="w-6 h-6 rounded-full border flex items-center justify-center text-xs">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-semibold">Total:</span>
+                    <span class="text-xl font-bold text-primary" data-bind="cart.total">$429.97</span>
+                </div>
+                <button class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors" data-event="click:proceedToCheckout">
+                    Proceed to Checkout
+                </button>
+                <button class="w-full mt-2 border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: Shopping Cart Sidebar -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (function() {
+            // Cart functionality simulation
+            const cartState = {
+                items: [
+                    { id: 1, name: "Professional Impact Drill HD-2000", price: 249.99, quantity: 1 },
+                    { id: 2, name: "Advanced Safety Helmet Pro", price: 89.99, quantity: 2 }
+                ],
+                isOpen: false
+            };
+
+            // Visual search simulation
+            function handleVisualSearch() {
+                // TODO: Implement actual visual search API integration
+                console.log("Visual search initiated");
+            }
+
+            // Cart toggle functionality
+            function toggleCart() {
+                const sidebar = document.getElementById('cartSidebar');
+                cartState.isOpen = !cartState.isOpen;
+                
+                if (cartState.isOpen) {
+                    sidebar.classList.remove('translate-x-full');
+                } else {
+                    sidebar.classList.add('translate-x-full');
+                }
+            }
+
+            // Initialize cart functionality
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('[data-event*="toggleCart"]')) {
+                    e.preventDefault();
+                    toggleCart();
+                }
+                
+                if (e.target.closest('[data-event*="closeCart"]')) {
+                    e.preventDefault();
+                    toggleCart();
+                }
+                
+                if (e.target.closest('[data-event*="addToCart"]')) {
+                    e.preventDefault();
+                    // TODO: Add item to cart logic
+                    console.log("Item added to cart");
+                }
+            });
+
+            // SEO optimization - structured data for products
+            const structuredData = {
+                "@context": "https://schema.org",
+                "@type": "Product",
+                "name": "IndustryFind Visual Search Platform",
+                "description": "AI-powered visual search for industrial products",
+                "brand": "IndustryFind"
+            };
+
+            // TODO: Implement local storage for cart persistence
+            // TODO: Integrate with payment processing
+            // TODO: Add product filtering and search functionality
+            // TODO: Implement user authentication
+        })();
+    </script>
+</body>
+</html>

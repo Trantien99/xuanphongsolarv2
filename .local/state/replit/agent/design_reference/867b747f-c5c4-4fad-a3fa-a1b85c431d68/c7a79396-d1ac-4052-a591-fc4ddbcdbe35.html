@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndustrialSource - Visual Product Discovery for Professionals</title>
+    <meta name="description" content="Find industrial products faster with visual search. Professional e-commerce platform for industry experts with advanced product discovery tools.">
+    <meta name="keywords" content="industrial products, visual search, B2B marketplace, professional tools, equipment sourcing">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#1E40AF',
+                            600: '#1d4ed8',
+                            700: '#1e3a8a'
+                        },
+                        success: {
+                            500: '#059669',
+                            600: '#047857'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- @COMPONENT: Header [navigation, search, cart] -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-primary-600">IndustrialSource</h1>
+                    </div>
+                </div>
+
+                <!-- Search Bar with Visual Search -->
+                <div class="flex-1 max-w-2xl mx-8">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Search products..." 
+                               class="block w-full pl-10 pr-24 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                        <button class="absolute inset-y-0 right-0 flex items-center px-3 py-2 bg-primary-500 text-white rounded-r-lg hover:bg-primary-600 transition-colors"
+                                data-implementation="Implement visual search functionality">
+                            <i class="fas fa-camera mr-2"></i>
+                            Visual Search
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navigation Icons -->
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-500 hover:text-gray-700" data-implementation="User account functionality">
+                        <i class="fas fa-user text-xl"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-700 relative" data-event="click:toggleCart">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" data-bind="cart.itemCount">3</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Navigation -->
+        <div class="bg-gray-50 border-t border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <nav class="flex space-x-8 py-3">
+                    <a href="#" class="text-gray-700 hover:text-primary-600 font-medium">All Categories</a>
+                    <a href="#" class="text-gray-700 hover:text-primary-600">Power Tools</a>
+                    <a href="#" class="text-gray-700 hover:text-primary-600">Safety Equipment</a>
+                    <a href="#" class="text-gray-700 hover:text-primary-600">Machinery</a>
+                    <a href="#" class="text-gray-700 hover:text-primary-600">Electronics</a>
+                    <a href="#" class="text-gray-700 hover:text-primary-600">Materials</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <!-- @COMPONENT: HeroSection [featured content, visual search promotion] -->
+    <section class="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-4xl lg:text-5xl font-bold mb-6">Find Products Faster with Visual Search</h2>
+                    <p class="text-xl mb-8 text-blue-100">Upload a photo or sketch of what you need. Our AI-powered visual search finds exact matches from thousands of industrial products.</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                                data-implementation="Open visual search modal">
+                            <i class="fas fa-camera mr-2"></i>
+                            Try Visual Search
+                        </button>
+                        <button class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-600 transition-colors">
+                            Browse Catalog
+                        </button>
+                    </div>
+                </div>
+                <div class="hidden lg:block">
+                    <!-- Professional industrial workspace with tools and equipment -->
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
+                         alt="Professional industrial workspace" 
+                         class="rounded-xl shadow-2xl w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <!-- @COMPONENT: CategoryGrid [product categories with icons] -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Shop by Category</h2>
+                <p class="text-lg text-gray-600">Find exactly what you need from our comprehensive product categories</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <!-- @MAP: categories.map(category => ( -->
+                <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-primary-50 hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="text-3xl text-primary-500 mb-3 group-hover:text-primary-600">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1" data-mock="true">Power Tools</h3>
+                    <p class="text-sm text-gray-500" data-mock="true">2,450 items</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-primary-50 hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="text-3xl text-primary-500 mb-3 group-hover:text-primary-600">
+                        <i class="fas fa-hard-hat"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1" data-mock="true">Safety Gear</h3>
+                    <p class="text-sm text-gray-500" data-mock="true">1,890 items</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-primary-50 hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="text-3xl text-primary-500 mb-3 group-hover:text-primary-600">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1" data-mock="true">Machinery</h3>
+                    <p class="text-sm text-gray-500" data-mock="true">756 items</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-primary-50 hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="text-3xl text-primary-500 mb-3 group-hover:text-primary-600">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1" data-mock="true">Electronics</h3>
+                    <p class="text-sm text-gray-500" data-mock="true">3,210 items</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-primary-50 hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="text-3xl text-primary-500 mb-3 group-hover:text-primary-600">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1" data-mock="true">Materials</h3>
+                    <p class="text-sm text-gray-500" data-mock="true">4,567 items</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-6 text-center hover:bg-primary-50 hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="text-3xl text-primary-500 mb-3 group-hover:text-primary-600">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1" data-mock="true">Hand Tools</h3>
+                    <p class="text-sm text-gray-500" data-mock="true">1,234 items</p>
+                </div>
+                <!-- @END_MAP -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: CategoryGrid -->
+
+    <!-- @COMPONENT: FeaturedProducts [product showcase] -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
+                    <p class="text-lg text-gray-600">Top-rated products trusted by industry professionals</p>
+                </div>
+                <button class="text-primary-600 hover:text-primary-700 font-semibold">
+                    View All Products <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- @MAP: featuredProducts.map(product => ( -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer" data-event="click:viewProduct">
+                    <div class="aspect-square overflow-hidden rounded-t-xl bg-gray-100">
+                        <!-- Professional cordless drill on white background -->
+                        <img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" 
+                             alt="Professional cordless drill" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900 mb-2" data-mock="true">DeWalt 20V Max Cordless Drill</h3>
+                        <p class="text-sm text-gray-600 mb-3" data-mock="true">Professional-grade power tool with lithium-ion battery</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-bold text-gray-900" data-bind="product.price">$189.99</span>
+                            <button class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors text-sm"
+                                    data-event="click:addToCart">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="flex items-center mt-2">
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-sm text-gray-500 ml-2" data-mock="true">(324 reviews)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer">
+                    <div class="aspect-square overflow-hidden rounded-t-xl bg-gray-100">
+                        <!-- Industrial safety helmet on white background -->
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" 
+                             alt="Industrial safety helmet" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900 mb-2" data-mock="true">3M Hard Hat with Face Shield</h3>
+                        <p class="text-sm text-gray-600 mb-3" data-mock="true">ANSI Z89.1 certified protection helmet</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-bold text-gray-900" data-bind="product.price">$45.99</span>
+                            <button class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors text-sm">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="flex items-center mt-2">
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                            <span class="text-sm text-gray-500 ml-2" data-mock="true">(156 reviews)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer">
+                    <div class="aspect-square overflow-hidden rounded-t-xl bg-gray-100">
+                        <!-- Digital multimeter on white background -->
+                        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" 
+                             alt="Digital multimeter" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900 mb-2" data-mock="true">Fluke 117 Digital Multimeter</h3>
+                        <p class="text-sm text-gray-600 mb-3" data-mock="true">True RMS digital multimeter for electricians</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-bold text-gray-900" data-bind="product.price">$239.99</span>
+                            <button class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors text-sm">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="flex items-center mt-2">
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-sm text-gray-500 ml-2" data-mock="true">(89 reviews)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer">
+                    <div class="aspect-square overflow-hidden rounded-t-xl bg-gray-100">
+                        <!-- Industrial welding equipment on white background -->
+                        <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" 
+                             alt="Industrial welding equipment" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900 mb-2" data-mock="true">Lincoln MIG Welder 180C</h3>
+                        <p class="text-sm text-gray-600 mb-3" data-mock="true">Professional MIG welder with digital display</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-bold text-gray-900" data-bind="product.price">$899.99</span>
+                            <button class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors text-sm">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="flex items-center mt-2">
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-sm text-gray-500 ml-2" data-mock="true">(203 reviews)</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_MAP -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: FeaturedProducts -->
+
+    <!-- @COMPONENT: ProductCatalog [complete product listing with filters] -->
+    <section class="py-16 bg-white" id="catalog">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Product Catalog</h2>
+                <p class="text-lg text-gray-600">Browse our complete collection of professional-grade tools and equipment</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Filters Sidebar -->
+                <div class="lg:w-1/4">
+                    <div class="bg-gray-50 rounded-xl p-6 sticky top-24">
+                        <h3 class="font-semibold text-gray-900 mb-4">Filters</h3>
+                        
+                        <!-- Category Filter -->
+                        <div class="mb-6">
+                            <h4 class="font-medium text-gray-700 mb-3">Category</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">Power Tools (234)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">Safety Equipment (189)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">Electronics (321)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="mb-6">
+                            <h4 class="font-medium text-gray-700 mb-3">Price Range</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="price" class="text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">Under $50</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="price" class="text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">$50 - $200</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="price" class="text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">$200 - $500</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="price" class="text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">Over $500</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Brand Filter -->
+                        <div class="mb-6">
+                            <h4 class="font-medium text-gray-700 mb-3">Brand</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">DeWalt</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">Milwaukee</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-primary-600" data-mock="true">
+                                    <span class="ml-3 text-sm text-gray-600">3M</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button class="w-full bg-primary-500 text-white py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors"
+                                data-implementation="Apply selected filters">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="lg:w-3/4">
+                    <!-- Sort and View Options -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-gray-600">Showing 1-24 of 1,247 products</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm" data-mock="true">
+                                <option>Sort by: Popular</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                                <option>Newest First</option>
+                            </select>
+                            <div class="flex border border-gray-300 rounded-lg">
+                                <button class="p-2 bg-primary-500 text-white rounded-l-lg">
+                                    <i class="fas fa-th text-sm"></i>
+                                </button>
+                                <button class="p-2 text-gray-500 hover:bg-gray-50 rounded-r-lg">
+                                    <i class="fas fa-list text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Product items would be mapped here -->
+                        <!-- Repeat product card structure similar to featured products -->
+                        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow group cursor-pointer border border-gray-200">
+                            <div class="aspect-square overflow-hidden rounded-t-xl bg-gray-100">
+                                <!-- Angle grinder on white background -->
+                                <img src="https://pixabay.com/get/gd1a82529b05c70d0e161e090b67201cef8c68317ecb09b78842736b3877257bf0e70f64b6fd33a6968824072d37b76855fdd4cfd8026917b15a5e0e0cf866722_1280.jpg" 
+                                     alt="Angle grinder power tool" 
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-gray-900 mb-2" data-mock="true">Bosch 4.5" Angle Grinder</h3>
+                                <p class="text-sm text-gray-600 mb-3" data-mock="true">11 Amp corded grinder with auxiliary handle</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xl font-bold text-gray-900">$79.99</span>
+                                    <button class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors text-sm">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                                <div class="flex items-center mt-2">
+                                    <div class="flex text-yellow-400 text-sm">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                                    </div>
+                                    <span class="text-sm text-gray-500 ml-2">(67 reviews)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional product cards would follow the same pattern -->
+                        <!-- Adding 5 more products for demonstration -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex justify-center mt-12">
+                        <nav class="flex items-center space-x-2">
+                            <button class="p-2 text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="px-4 py-2 bg-primary-500 text-white rounded-lg">1</button>
+                            <button class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">2</button>
+                            <button class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">3</button>
+                            <span class="px-2 text-gray-500">...</span>
+                            <button class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">52</button>
+                            <button class="p-2 text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ProductCatalog -->
+
+    <!-- @STATE: cartOpen:boolean = false -->
+    <!-- @COMPONENT: ShoppingCart [sidebar cart] -->
+    <div id="cartSidebar" class="fixed inset-y-0 right-0 w-96 bg-white shadow-xl z-50 transform translate-x-full transition-transform" data-bind="cartOpen">
+        <div class="flex flex-col h-full">
+            <!-- Cart Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Shopping Cart</h2>
+                <button class="text-gray-500 hover:text-gray-700" data-event="click:toggleCart">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <!-- @MAP: cartItems.map(item => ( -->
+                <div class="flex items-center space-x-4 mb-6 pb-6 border-b border-gray-200">
+                    <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                        <!-- Product thumbnail -->
+                        <img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100" 
+                             alt="Product thumbnail" 
+                             class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium text-gray-900" data-mock="true">DeWalt 20V Max Drill</h3>
+                        <p class="text-sm text-gray-500" data-bind="item.price">$189.99</p>
+                        <div class="flex items-center mt-2">
+                            <button class="text-gray-400 hover:text-gray-600" data-event="click:decreaseQuantity">
+                                <i class="fas fa-minus text-xs"></i>
+                            </button>
+                            <span class="mx-3 text-sm" data-bind="item.quantity">1</span>
+                            <button class="text-gray-400 hover:text-gray-600" data-event="click:increaseQuantity">
+                                <i class="fas fa-plus text-xs"></i>
+                            </button>
+                            <button class="ml-auto text-red-500 hover:text-red-700" data-event="click:removeItem">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_MAP -->
+            </div>
+
+            <!-- Cart Footer -->
+            <div class="border-t border-gray-200 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-900">Total:</span>
+                    <span class="text-lg font-bold text-gray-900" data-bind="cart.total">$429.97</span>
+                </div>
+                <button class="w-full bg-primary-500 text-white py-3 px-4 rounded-lg hover:bg-primary-600 transition-colors font-semibold"
+                        data-event="click:proceedToCheckout">
+                    Proceed to Checkout
+                </button>
+                <button class="w-full mt-2 text-primary-600 hover:text-primary-700 font-medium"
+                        data-event="click:toggleCart">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ShoppingCart -->
+
+    <!-- Cart Overlay -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" data-event="click:toggleCart"></div>
+
+    <!-- @COMPONENT: CheckoutModal [checkout process] -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-900">Checkout</h2>
+                    <button class="text-gray-500 hover:text-gray-700" data-event="click:closeCheckout">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <form class="space-y-6" data-implementation="Handle checkout form submission">
+                    <!-- Shipping Information -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Shipping Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">ZIP Code</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Payment Information</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                                <input type="text" placeholder="1234 5678 9012 3456" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                                    <input type="text" placeholder="MM/YY" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                                    <input type="text" placeholder="123" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Subtotal:</span>
+                                <span data-bind="order.subtotal">$429.97</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Shipping:</span>
+                                <span data-bind="order.shipping">$15.99</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Tax:</span>
+                                <span data-bind="order.tax">$35.84</span>
+                            </div>
+                            <div class="border-t border-gray-300 pt-2 mt-2">
+                                <div class="flex justify-between font-semibold text-lg">
+                                    <span>Total:</span>
+                                    <span data-bind="order.total">$481.80</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-success-500 text-white py-3 px-4 rounded-lg hover:bg-success-600 transition-colors font-semibold">
+                        Complete Order
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: CheckoutModal -->
+
+    <!-- @COMPONENT: Footer [company info, links] -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">IndustrialSource</h3>
+                    <p class="text-gray-400 mb-4">Your trusted partner for professional-grade tools and equipment. Serving industry professionals since 2015.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Products</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Power Tools</a></li>
+                        <li><a href="#" class="hover:text-white">Safety Equipment</a></li>
+                        <li><a href="#" class="hover:text-white">Electronics</a></li>
+                        <li><a href="#" class="hover:text-white">Machinery</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white">Return Policy</a></li>
+                        <li><a href="#" class="hover:text-white">Warranty</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Careers</a></li>
+                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 IndustrialSource. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <!-- @FUNCTIONALITY: Basic interactivity for cart, modals, and navigation -->
+    <script>
+        (function() {
+            // TODO: Implement proper state management with React/Redux
+            let cartOpen = false;
+            let checkoutOpen = false;
+
+            // Cart toggle functionality
+            function toggleCart() {
+                cartOpen = !cartOpen;
+                const cartSidebar = document.getElementById('cartSidebar');
+                const cartOverlay = document.getElementById('cartOverlay');
+                
+                if (cartOpen) {
+                    cartSidebar.classList.remove('translate-x-full');
+                    cartOverlay.classList.remove('hidden');
+                } else {
+                    cartSidebar.classList.add('translate-x-full');
+                    cartOverlay.classList.add('hidden');
+                }
+            }
+
+            // Checkout modal functionality
+            function toggleCheckout() {
+                checkoutOpen = !checkoutOpen;
+                const checkoutModal = document.getElementById('checkoutModal');
+                
+                if (checkoutOpen) {
+                    checkoutModal.classList.remove('hidden');
+                    toggleCart(); // Close cart when opening checkout
+                } else {
+                    checkoutModal.classList.add('hidden');
+                }
+            }
+
+            // Event listeners
+            document.addEventListener('click', function(e) {
+                // Cart toggle
+                if (e.target.closest('[data-event="click:toggleCart"]')) {
+                    e.preventDefault();
+                    toggleCart();
+                }
+                
+                // Checkout toggle
+                if (e.target.closest('[data-event="click:proceedToCheckout"]')) {
+                    e.preventDefault();
+                    toggleCheckout();
+                }
+                
+                if (e.target.closest('[data-event="click:closeCheckout"]')) {
+                    e.preventDefault();
+                    toggleCheckout();
+                }
+
+                // Add to cart simulation
+                if (e.target.closest('[data-event="click:addToCart"]')) {
+                    e.preventDefault();
+                    // TODO: Implement actual add to cart functionality
+                    console.log('Add to cart clicked');
+                }
+            });
+
+            // Form submission handling
+            document.addEventListener('submit', function(e) {
+                if (e.target.closest('[data-implementation*="checkout"]')) {
+                    e.preventDefault();
+                    // TODO: Implement actual checkout processing
+                    alert('Order completed! (This is a demo)');
+                    toggleCheckout();
+                }
+            });
+
+            // Local storage for cart persistence
+            // TODO: Implement actual cart persistence with localStorage
+            
+        })();
+    </script>
+</body>
+</html>
