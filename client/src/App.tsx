@@ -8,6 +8,8 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { MobileActionButtons, FloatingCallButton } from "@/components/mobile/mobile-action-buttons";
 import { MobileFloatingActions, MobileCartButton, QuickCallButton } from "@/components/mobile/mobile-floating-actions";
+import { useScrollToTop } from "@/hooks/use-scroll-to-top";
+import { ScrollToTopButton } from "@/components/ui/scroll-to-top-button";
 
 // Pages
 import Home from "@/pages/home";
@@ -21,6 +23,9 @@ import SolarEnergyLanding from "@/pages/solar-energy";
 import NotFound from "@/pages/not-found";
 
 function Router() {
+  // Auto scroll to top when route changes
+  useScrollToTop('instant');
+  
   return (
     <Switch>
       <Route path="/" component={Home} />
@@ -52,6 +57,9 @@ function App() {
             <MobileActionButtons />
             {/* <MobileCartButton /> */}
             {/* <QuickCallButton /> */}
+            
+            {/* Scroll to top button */}
+            <ScrollToTopButton />
           </div>
           <Toaster />
         </CartProvider>
