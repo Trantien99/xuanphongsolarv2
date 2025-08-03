@@ -82,7 +82,7 @@ export function MobileActionButtons() {
                   >
                     {button.badge > 9 ? "9+" : button.badge}
                   </motion.div>
-                )}
+                ) || ''}
               </div>
               
               {/* Button label */}
