@@ -13,6 +13,7 @@ import { ImageGallery } from "@/components/product/image-gallery";
 import { RelatedProducts } from "@/components/product/related-products";
 import { ConsultationPopup } from "@/components/product/consultation-popup";
 import { t, formatCurrency } from "@/lib/i18n";
+import { useTitle } from "@/hooks/use-title";
 import type { Product } from "@shared/schema";
 
 export default function ProductDetail() {
@@ -24,6 +25,9 @@ export default function ProductDetail() {
     queryKey: ["/api/products/slug", params?.slug],
     enabled: !!params?.slug,
   });
+
+  // Set dynamic title based on product name
+  useTitle("pageTitle.productDetail", product?.name);
 
   if (isLoading) {
     return (

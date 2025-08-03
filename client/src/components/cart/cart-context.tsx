@@ -2,6 +2,7 @@ import { createContext, useContext, useReducer, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
+import { t } from "@/lib/i18n";
 
 interface CartItem {
   id: string;
@@ -107,10 +108,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: "Item added to cart" });
+      toast({ title: t("toastMessages.itemAddedToCart") });
     },
     onError: () => {
-      toast({ title: "Failed to add item to cart", variant: "destructive" });
+      toast({ title: t("toastMessages.failedToAddItem"), variant: "destructive" });
     },
   });
 
@@ -123,7 +124,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
     },
     onError: () => {
-      toast({ title: "Failed to update cart", variant: "destructive" });
+      toast({ title: t("toastMessages.failedToUpdateCart"), variant: "destructive" });
     },
   });
 
@@ -134,10 +135,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: "Item removed from cart" });
+      toast({ title: t("toastMessages.itemRemovedFromCart") });
     },
     onError: () => {
-      toast({ title: "Failed to remove item", variant: "destructive" });
+      toast({ title: t("toastMessages.failedToRemoveItem"), variant: "destructive" });
     },
   });
 
@@ -148,10 +149,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: "Cart cleared" });
+      toast({ title: t("toastMessages.cartCleared") });
     },
     onError: () => {
-      toast({ title: "Failed to clear cart", variant: "destructive" });
+      toast({ title: t("toastMessages.failedToClearCart"), variant: "destructive" });
     },
   });
 

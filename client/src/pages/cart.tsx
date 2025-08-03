@@ -5,10 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/components/cart/cart-context";
 import { useTranslation } from "@/lib/i18n";
+import { useTitle } from "@/hooks/use-title";
 
 export default function Cart() {
   const { state, updateQuantity, removeFromCart, clearCart } = useCart();
   const { t } = useTranslation();
+  
+  // Set dynamic title
+  useTitle("pageTitle.cart");
 
   const handleQuantityChange = async (itemId: string, change: number) => {
     const item = state.items.find(i => i.id === itemId);
