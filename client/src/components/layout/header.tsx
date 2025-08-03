@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, Camera, User, ShoppingCart, Menu, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, Camera, User, ShoppingCart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -25,7 +25,6 @@ export function Header() {
   const [location] = useLocation();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const { state } = useCart();
   const { t } = useTranslation();
 
@@ -113,38 +112,16 @@ export function Header() {
 
                     {/* Categories section */}
                     <div className="border-t pt-4">
-                      <h3 className="text-sm font-semibold text-gray-600 mb-3">Danh mục sản phẩm</h3>
-                      <div className="grid grid-cols-2 gap-2">
-                        {categories.slice(1, showAllCategories ? undefined : 7).map((category) => (
+                      <h3 className="text-sm font-semibold text-gray-600 mb-2">Danh mục sản phẩm</h3>
+                      <div className="space-y-1">
+                        {categories.slice(1).map((category) => (
                           <Link key={category.name} href={category.href}>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="w-full justify-start text-xs h-8 px-2"
-                            >
-                              <span className="truncate">{category.name}</span>
+                            <Button variant="ghost" size="sm" className="w-full justify-start text-sm">
+                              {category.name}
                             </Button>
                           </Link>
                         ))}
                       </div>
-                      {categories.length > 7 && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full mt-2 text-xs text-primary hover:text-primary/80"
-                          onClick={() => setShowAllCategories(!showAllCategories)}
-                        >
-                          {showAllCategories ? (
-                            <>
-                              Thu gọn <ChevronUp className="h-3 w-3 ml-1" />
-                            </>
-                          ) : (
-                            <>
-                              Xem thêm <ChevronDown className="h-3 w-3 ml-1" />
-                            </>
-                          )}
-                        </Button>
-                      )}
                     </div>
                   </div>
                 </SheetContent>
