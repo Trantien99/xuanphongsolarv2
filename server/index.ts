@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import database from "./database";
+import apiRoutes from "./routes/index";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +39,19 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Connect to MongoDB
+  try {
+    await database.connect({
+      uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce',
+    });
+  } catch (error) {
+    console.error('Failed to connect to MongoDB:', error);
+    process.exit(1);
+  }
+
+  // Register API routes
+  app.use('/api', apiRoutes);
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -67,5 +82,20 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    log(`MongoDB connected: ${database.getConnectionStatus()}`);
+    log(`API routes available at http://localhost:${port}/api`);
+  });
+
+  // Graceful shutdown
+  process.on('SIGTERM', async () => {
+    console.log('SIGTERM received, shutting down gracefully');
+    await database.disconnect();
+    process.exit(0);
+  });
+
+  process.on('SIGINT', async () => {
+    console.log('SIGINT received, shutting down gracefully');
+    await database.disconnect();
+    process.exit(0);
   });
 })();
