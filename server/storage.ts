@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Category, type InsertCategory, type Product, type InsertProduct, type News, type InsertNews, type CartItem, type InsertCartItem } from "@shared/schema";
+import { type User, type InsertUser, type Category, type InsertCategory, type Product, type InsertProduct, type News, type InsertNews, type CartItem, type InsertCartItem, type Consultation, type InsertConsultation } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -32,6 +32,12 @@ export interface IStorage {
   updateCartItem(id: string, quantity: number): Promise<CartItem | undefined>;
   removeCartItem(id: string): Promise<boolean>;
   clearCart(sessionId: string): Promise<boolean>;
+
+  // Consultations
+  getConsultations(): Promise<Consultation[]>;
+  getConsultation(id: string): Promise<Consultation | undefined>;
+  createConsultation(consultation: InsertConsultation): Promise<Consultation>;
+  updateConsultation(id: string, updates: Partial<Consultation>): Promise<Consultation | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -40,6 +46,7 @@ export class MemStorage implements IStorage {
   private products: Map<string, Product> = new Map();
   private news: Map<string, News> = new Map();
   private cartItems: Map<string, CartItem> = new Map();
+  private consultations: Map<string, Consultation> = new Map();
 
   constructor() {
     this.seedData();
@@ -596,6 +603,46 @@ export class MemStorage implements IStorage {
     const items = Array.from(this.cartItems.values()).filter(item => item.sessionId === sessionId);
     items.forEach(item => this.cartItems.delete(item.id));
     return true;
+  }
+
+  // Consultations
+  async getConsultations(): Promise<Consultation[]> {
+    return Array.from(this.consultations.values())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async getConsultation(id: string): Promise<Consultation | undefined> {
+    return this.consultations.get(id);
+  }
+
+  async createConsultation(insertConsultation: InsertConsultation): Promise<Consultation> {
+    const id = randomUUID();
+    const now = new Date();
+    
+    const consultation: Consultation = { 
+      ...insertConsultation, 
+      id, 
+      status: insertConsultation.status || "pending",
+      createdAt: now,
+      updatedAt: now
+    };
+    
+    this.consultations.set(id, consultation);
+    return consultation;
+  }
+
+  async updateConsultation(id: string, updates: Partial<Consultation>): Promise<Consultation | undefined> {
+    const consultation = this.consultations.get(id);
+    if (!consultation) return undefined;
+
+    const updatedConsultation = { 
+      ...consultation, 
+      ...updates, 
+      updatedAt: new Date() 
+    };
+    
+    this.consultations.set(id, updatedConsultation);
+    return updatedConsultation;
   }
 }
 

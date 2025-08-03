@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
-import { ArrowLeft, Star, ShoppingCart, Heart, Share2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Star, ShoppingCart, Heart, Share2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,11 +9,14 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCart } from "@/components/cart/cart-context";
 import { toast } from "@/hooks/use-toast";
+import { ImageGallery } from "@/components/product/image-gallery";
+import { RelatedProducts } from "@/components/product/related-products";
+import { ConsultationPopup } from "@/components/product/consultation-popup";
+import { t, formatCurrency } from "@/lib/i18n";
 import type { Product } from "@shared/schema";
 
 export default function ProductDetail() {
   const [match, params] = useRoute("/products/:slug");
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
 
@@ -27,7 +30,7 @@ export default function ProductDetail() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading product...</p>
+          <p className="text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -37,11 +40,11 @@ export default function ProductDetail() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('productNotFound')}</h1>
           <Link href="/products">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Products
+              {t('backToProducts')}
             </Button>
           </Link>
         </div>
@@ -71,26 +74,14 @@ export default function ProductDetail() {
     return stars;
   };
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === product.images.length - 1 ? 0 : prev + 1
-    );
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? product.images.length - 1 : prev - 1
-    );
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
-          <Link href="/" className="hover:text-primary">Home</Link>
+          <Link href="/" className="hover:text-primary">{t('breadcrumb.home')}</Link>
           <span>/</span>
-          <Link href="/products" className="hover:text-primary">Products</Link>
+          <Link href="/products" className="hover:text-primary">{t('breadcrumb.products')}</Link>
           <span>/</span>
           <span className="text-gray-900">{product.name}</span>
         </div>
@@ -99,63 +90,13 @@ export default function ProductDetail() {
         <Link href="/products">
           <Button variant="outline" className="mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Products
+            {t('backToProducts')}
           </Button>
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
-          <div className="space-y-4">
-            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden relative">
-              <img
-                src={product.images[currentImageIndex] || "https://via.placeholder.com/600x600"}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-              
-              {product.images.length > 1 && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white"
-                    onClick={prevImage}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white"
-                    onClick={nextImage}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </>
-              )}
-            </div>
-
-            {/* Thumbnail Images */}
-            {product.images.length > 1 && (
-              <div className="flex space-x-2 overflow-x-auto">
-                {product.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                      index === currentImageIndex ? "border-primary" : "border-gray-300"
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`${product.name} ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <ImageGallery images={product.images} productName={product.name} />
 
           {/* Product Info */}
           <div className="space-y-6">
@@ -176,11 +117,11 @@ export default function ProductDetail() {
                 <div className="flex items-center space-x-1">
                   {renderStars(product.rating)}
                   <span className="ml-2 text-sm text-gray-600">
-                    ({product.reviewCount} reviews)
+                    ({product.reviewCount} {t('reviewCount')})
                   </span>
                 </div>
                 <Badge variant="secondary">{product.brand}</Badge>
-                {product.isFeatured && <Badge>Featured</Badge>}
+                {product.isFeatured && <Badge>{t('featured')}</Badge>}
               </div>
 
               <p className="text-gray-600 mb-6">{product.description}</p>
@@ -189,11 +130,11 @@ export default function ProductDetail() {
             {/* Price */}
             <div className="flex items-center space-x-4">
               <span className="text-3xl font-bold text-gray-900">
-                ${product.price}
+                {formatCurrency(product.price)}
               </span>
               {product.originalPrice && (
                 <span className="text-xl text-gray-500 line-through">
-                  ${product.originalPrice}
+                  {formatCurrency(product.originalPrice)}
                 </span>
               )}
             </div>
@@ -203,8 +144,8 @@ export default function ProductDetail() {
               product.inStock ? "text-green-600" : "text-red-600"
             }`}>
               {product.inStock 
-                ? `In Stock (${product.stockQuantity} available)` 
-                : "Out of Stock"
+                ? `${t('inStock')} (${product.stockQuantity} ${t('stockAvailable')})` 
+                : t('outOfStock')
               }
             </div>
 
@@ -237,22 +178,22 @@ export default function ProductDetail() {
                 className="flex-1 max-w-sm"
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
-                Add to Cart
+                {t('addToCart')}
               </Button>
             </div>
 
             {/* Product Details Tabs */}
             <Tabs defaultValue="specifications" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="specifications">Specifications</TabsTrigger>
-                <TabsTrigger value="features">Features</TabsTrigger>
-                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                <TabsTrigger value="specifications">{t('specifications')}</TabsTrigger>
+                <TabsTrigger value="features">{t('features')}</TabsTrigger>
+                <TabsTrigger value="reviews">{t('reviews')}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="specifications" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Technical Specifications</CardTitle>
+                    <CardTitle>{t('specifications')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {Object.keys(product.specifications).length > 0 ? (
@@ -265,7 +206,7 @@ export default function ProductDetail() {
                         ))}
                       </dl>
                     ) : (
-                      <p className="text-gray-600">No specifications available.</p>
+                      <p className="text-gray-600">Chưa có thông số kỹ thuật.</p>
                     )}
                   </CardContent>
                 </Card>
@@ -274,7 +215,7 @@ export default function ProductDetail() {
               <TabsContent value="features" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Key Features</CardTitle>
+                    <CardTitle>{t('features')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {product.features.length > 0 ? (
@@ -287,7 +228,7 @@ export default function ProductDetail() {
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-gray-600">No features listed.</p>
+                      <p className="text-gray-600">Chưa có tính năng nào được liệt kê.</p>
                     )}
                   </CardContent>
                 </Card>
@@ -296,15 +237,15 @@ export default function ProductDetail() {
               <TabsContent value="reviews" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Customer Reviews</CardTitle>
+                    <CardTitle>{t('reviews')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center py-8">
                       <p className="text-gray-600 mb-4">
-                        Reviews feature coming soon. This product has {product.reviewCount} reviews 
-                        with an average rating of {product.rating}/5.
+                        Tính năng đánh giá sẽ sớm có mặt. Sản phẩm này có {product.reviewCount} {t('reviewCount')} 
+                        với điểm đánh giá trung bình {product.rating}/5.
                       </p>
-                      <Button variant="outline">Write a Review</Button>
+                      <Button variant="outline">{t('writeReview')}</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -312,7 +253,16 @@ export default function ProductDetail() {
             </Tabs>
           </div>
         </div>
+
+        {/* Related Products */}
+        <RelatedProducts 
+          currentProductId={product.id} 
+          categoryId={product.categoryId} 
+        />
       </div>
+
+      {/* Consultation Popup */}
+      <ConsultationPopup />
     </div>
   );
 }
