@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useRoute } from "wouter";
+import { useState } from "react";
 import { ArrowLeft, Calendar, User, Tag, Clock, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import type { News } from "@shared/schema";
 
 export default function NewsDetail() {
   const [match, params] = useRoute("/news/:slug");
+  const [isSharing, setIsSharing] = useState(false);
   
   const { data: article, isLoading, error } = useQuery<News>({
     queryKey: ["/api/news/slug", params?.slug],
@@ -61,20 +63,72 @@ export default function NewsDetail() {
     );
   }
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
+  const handleShare = async () => {
+    if (isSharing) return;
+    
+    setIsSharing(true);
+    try {
+      if (navigator.share && navigator.canShare && navigator.canShare({
         title: article.title,
         text: article.excerpt,
         url: window.location.href,
-      });
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      toast({
-        title: t('success'),
-        description: 'Link copied to clipboard!',
-      });
+      })) {
+        await navigator.share({
+          title: article.title,
+          text: article.excerpt,
+          url: window.location.href,
+        });
+        toast({
+          title: t('success'),
+          description: t('sharedSuccessfully'),
+        });
+      } else {
+        // Fallback: copy to clipboard
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(window.location.href);
+          toast({
+            title: t('success'),
+            description: t('linkCopied'),
+          });
+        } else {
+          // Manual fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = window.location.href;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {
+            document.execCommand('copy');
+            toast({
+              title: t('success'),
+              description: t('linkCopied'),
+            });
+          } catch (err) {
+                          toast({
+                title: 'Error',
+                description: t('shareError'),
+                variant: 'destructive',
+              });
+          } finally {
+            document.body.removeChild(textArea);
+          }
+        }
+      }
+    } catch (error) {
+      // Handle user cancellation or other errors
+      if (error instanceof Error && error.name !== 'AbortError') {
+        // AbortError means user cancelled the share dialog, which is normal
+        toast({
+          title: 'Error',
+          description: t('shareError'),
+          variant: 'destructive',
+        });
+      }
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -113,10 +167,11 @@ export default function NewsDetail() {
               variant="outline"
               size="sm"
               onClick={handleShare}
+              disabled={isSharing}
               className="sm:ml-auto w-full sm:w-auto mt-2 sm:mt-0"
             >
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
+              <Share2 className={`h-4 w-4 mr-2 ${isSharing ? 'animate-spin' : ''}`} />
+              {isSharing ? t('sharing') : t('share')}
             </Button>
           </div>
 
