@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProductSchema, insertNewsSchema, insertCartItemSchema } from "@shared/schema";
+import { insertProductSchema, insertNewsSchema, insertCartItemSchema, insertConsultationSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -67,6 +67,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(product);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch product" });
+    }
+  });
+
+  app.get("/api/products/related/:categoryId", async (req, res) => {
+    try {
+      const { categoryId } = req.params;
+      const { exclude, limit = "8" } = req.query;
+      
+      const filters = {
+        categoryId,
+        limit: parseInt(limit as string),
+        offset: 0,
+      };
+
+      const products = await storage.getProducts(filters);
+      
+      // Exclude the current product if specified
+      const relatedProducts = exclude 
+        ? products.filter(product => product.id !== exclude)
+        : products;
+
+      res.json(relatedProducts.slice(0, parseInt(limit as string)));
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch related products" });
     }
   });
 
@@ -187,6 +211,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to clear cart" });
+    }
+  });
+
+  // Consultations
+  app.get("/api/consultations", async (req, res) => {
+    try {
+      const consultations = await storage.getConsultations();
+      res.json(consultations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch consultations" });
+    }
+  });
+
+  app.post("/api/consultations", async (req, res) => {
+    try {
+      const validatedData = insertConsultationSchema.parse(req.body);
+      const consultation = await storage.createConsultation(validatedData);
+      res.status(201).json(consultation);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid consultation data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create consultation" });
+    }
+  });
+
+  app.get("/api/consultations/:id", async (req, res) => {
+    try {
+      const consultation = await storage.getConsultation(req.params.id);
+      if (!consultation) {
+        return res.status(404).json({ error: "Consultation not found" });
+      }
+      res.json(consultation);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch consultation" });
+    }
+  });
+
+  app.patch("/api/consultations/:id", async (req, res) => {
+    try {
+      const allowedUpdates = ['status'];
+      const updates = Object.keys(req.body)
+        .filter(key => allowedUpdates.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = req.body[key];
+          return obj;
+        }, {} as any);
+
+      const consultation = await storage.updateConsultation(req.params.id, updates);
+      if (!consultation) {
+        return res.status(404).json({ error: "Consultation not found" });
+      }
+      res.json(consultation);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update consultation" });
     }
   });
 
