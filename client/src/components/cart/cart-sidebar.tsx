@@ -30,7 +30,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
       <SheetContent className="w-full sm:w-96 sm:max-w-md">
         <SheetHeader>
           <SheetTitle className="flex items-center justify-between">
-            <span className="text-lg">Shopping Cart</span>
+            <span className="text-lg">Giỏ hàng</span>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-5 w-5" />
             </Button>
@@ -42,8 +42,8 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           <div className="flex-1 overflow-y-auto py-4 sm:py-6">
             {state.items.length === 0 ? (
               <div className="text-center py-8 sm:py-12">
-                <p className="text-gray-500 mb-4">Your cart is empty</p>
-                <Button onClick={onClose}>Continue Shopping</Button>
+                <p className="text-gray-500 mb-4">Giỏ hàng trống</p>
+                <Button onClick={onClose}>Tiếp tục mua sắm</Button>
               </div>
             ) : (
               <div className="space-y-4 sm:space-y-6">
@@ -54,20 +54,20 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                       <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                         <img
                           src={item.product?.images[0] || "https://via.placeholder.com/100x100"}
-                          alt={item.product?.name || "Product"}
+                          alt={item.product?.name || "Sản phẩm"}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-gray-900 text-sm leading-tight">
-                          {item.product?.name || "Unknown Product"}
+                          {item.product?.name || "Sản phẩm không xác định"}
                         </h3>
                         <p className="text-sm text-gray-500 mt-1">
-                          ${item.product?.price || "0.00"}
+                          {item.product?.price || "0"}.000₫
                         </p>
                         <p className="text-sm font-medium text-gray-900 mt-1">
-                          Total: ${((parseFloat(item.product?.price || "0")) * item.quantity).toFixed(2)}
+                          Thành tiền: {((parseFloat(item.product?.price || "0")) * item.quantity).toLocaleString('vi-VN')}.000₫
                         </p>
                       </div>
                     </div>
@@ -103,7 +103,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                         onClick={() => removeFromCart(item.id)}
                       >
                         <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Remove item</span>
+                        <span className="sr-only">Xóa sản phẩm</span>
                       </Button>
                     </div>
                   </div>
@@ -116,16 +116,16 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           {state.items.length > 0 && (
             <div className="border-t border-gray-200 pt-4 sm:pt-6">
               <div className="flex justify-between items-center mb-3 sm:mb-4">
-                <span className="text-base sm:text-lg font-semibold text-gray-900">Total:</span>
+                <span className="text-base sm:text-lg font-semibold text-gray-900">Tổng cộng:</span>
                 <span className="text-base sm:text-lg font-bold text-gray-900">
-                  ${state.total.toFixed(2)}
+                  {(state.total * 1000).toLocaleString('vi-VN')}₫
                 </span>
               </div>
               
               <div className="space-y-2 sm:space-y-3">
                 <Link href="/cart" onClick={onClose}>
                   <Button className="w-full bg-primary hover:bg-primary/90 h-11">
-                    View Cart
+                    Xem giỏ hàng
                   </Button>
                 </Link>
                 <Button
@@ -133,7 +133,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   className="w-full h-10"
                   onClick={onClose}
                 >
-                  Continue Shopping
+                  Tiếp tục mua sắm
                 </Button>
               </div>
             </div>

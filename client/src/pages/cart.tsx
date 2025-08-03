@@ -32,19 +32,19 @@ export default function Cart() {
           <Link href="/products">
             <Button variant="outline" className="mb-4 sm:mb-6">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Products
+              Quay lại sản phẩm
             </Button>
           </Link>
 
           <div className="text-center py-12 sm:py-16">
             <ShoppingCart className="h-16 w-16 sm:h-24 sm:w-24 text-gray-300 mx-auto mb-4 sm:mb-6" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Your Cart is Empty</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Giỏ hàng trống</h1>
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 px-4">
-              Looks like you haven't added any items to your cart yet.
+              Bạn chưa thêm sản phẩm nào vào giỏ hàng.
             </p>
             <Link href="/products">
               <Button size="lg">
-                Start Shopping
+                Bắt đầu mua sắm
               </Button>
             </Link>
           </div>
@@ -59,7 +59,7 @@ export default function Cart() {
         <Link href="/products">
           <Button variant="outline" className="mb-4 sm:mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Continue Shopping
+            Tiếp tục mua sắm
           </Button>
         </Link>
 
@@ -68,14 +68,14 @@ export default function Cart() {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0 pb-4">
-                <CardTitle className="text-lg sm:text-xl">Shopping Cart ({state.itemCount} items)</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Giỏ hàng ({state.itemCount} sản phẩm)</CardTitle>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={clearCart}
                   className="text-red-600 hover:text-red-700 hover:bg-red-50 self-start sm:self-auto"
                 >
-                  Clear Cart
+                  Xóa giỏ hàng
                 </Button>
               </CardHeader>
               <CardContent className="pt-0">
@@ -87,20 +87,20 @@ export default function Cart() {
                         <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                           <img
                             src={item.product?.images[0] || "https://via.placeholder.com/100x100"}
-                            alt={item.product?.name || "Product"}
+                            alt={item.product?.name || "Sản phẩm"}
                             className="w-full h-full object-cover"
                           />
                         </div>
 
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
-                            {item.product?.name || "Unknown Product"}
+                            {item.product?.name || "Sản phẩm không xác định"}
                           </h3>
                           <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                            SKU: {item.productId}
+                            Mã SP: {item.productId}
                           </p>
                           <p className="text-base sm:text-lg font-medium text-gray-900 mt-1 sm:mt-2">
-                            ${item.product?.price || "0.00"}
+                            {item.product?.price || "0"}.000₫
                           </p>
                         </div>
                       </div>
@@ -133,7 +133,7 @@ export default function Cart() {
                         {/* Price and Remove */}
                         <div className="text-right">
                           <p className="font-semibold text-gray-900 text-sm sm:text-base">
-                            ${((parseFloat(item.product?.price || "0")) * item.quantity).toFixed(2)}
+                            {((parseFloat(item.product?.price || "0")) * item.quantity).toLocaleString('vi-VN')}.000₫
                           </p>
                           <Button
                             variant="ghost"
@@ -142,7 +142,7 @@ export default function Cart() {
                             className="text-red-600 hover:text-red-700 hover:bg-red-50 mt-1 sm:mt-2 text-xs sm:text-sm h-7 sm:h-8"
                           >
                             <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                            Remove
+                            Xóa
                           </Button>
                         </div>
                       </div>
@@ -157,51 +157,51 @@ export default function Cart() {
           <div className="lg:col-span-1">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg sm:text-xl">Order Summary</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Tóm tắt đơn hàng</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 sm:space-y-4">
                 <div className="flex justify-between text-sm sm:text-base">
-                  <span>Subtotal:</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>Tạm tính:</span>
+                  <span>{subtotal.toLocaleString('vi-VN')}.000₫</span>
                 </div>
                 
                 <div className="flex justify-between text-sm sm:text-base">
-                  <span>Shipping:</span>
+                  <span>Phí vận chuyển:</span>
                   <span>
                     {shipping === 0 ? (
-                      <span className="text-green-600">Free</span>
+                      <span className="text-green-600">Miễn phí</span>
                     ) : (
-                      `$${shipping.toFixed(2)}`
+                      `${shipping.toLocaleString('vi-VN')}₫`
                     )}
                   </span>
                 </div>
                 
                 <div className="flex justify-between text-sm sm:text-base">
-                  <span>Tax:</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>Thuế VAT:</span>
+                  <span>{(tax * 1000).toLocaleString('vi-VN')}₫</span>
                 </div>
                 
                 <Separator />
                 
                 <div className="flex justify-between text-base sm:text-lg font-semibold">
-                  <span>Total:</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>Tổng cộng:</span>
+                  <span>{(total * 1000).toLocaleString('vi-VN')}₫</span>
                 </div>
 
                 {shipping > 0 && (
                   <p className="text-xs sm:text-sm text-gray-600">
-                    Free shipping on orders over $100
+                    Miễn phí vận chuyển cho đơn hàng trên 100.000₫
                   </p>
                 )}
 
                 <Button className="w-full mt-4 sm:mt-6" size="lg">
-                  Proceed to Checkout
+                  Tiến hành thanh toán
                 </Button>
 
                 <div className="text-center">
                   <Link href="/products">
                     <Button variant="outline" className="w-full">
-                      Continue Shopping
+                      Tiếp tục mua sắm
                     </Button>
                   </Link>
                 </div>
@@ -209,12 +209,12 @@ export default function Cart() {
                 {/* Security Badges */}
                 <div className="pt-4 sm:pt-6 border-t border-gray-200">
                   <p className="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">
-                    Secure Checkout
+                    Thanh toán an toàn
                   </p>
                   <div className="flex justify-center space-x-2 text-xs text-gray-500">
-                    <span>🔒 SSL Secured</span>
+                    <span>🔒 Bảo mật SSL</span>
                     <span>•</span>
-                    <span>💳 All Cards Accepted</span>
+                    <span>💳 Hỗ trợ tất cả thẻ</span>
                   </div>
                 </div>
               </CardContent>

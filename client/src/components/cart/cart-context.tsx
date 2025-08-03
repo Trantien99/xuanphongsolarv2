@@ -107,10 +107,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: "Item added to cart" });
+      toast({ title: "Đã thêm vào giỏ hàng" });
     },
     onError: () => {
-      toast({ title: "Failed to add item to cart", variant: "destructive" });
+      toast({ title: "Không thể thêm vào giỏ hàng", variant: "destructive" });
     },
   });
 
@@ -123,7 +123,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
     },
     onError: () => {
-      toast({ title: "Failed to update cart", variant: "destructive" });
+      toast({ title: "Không thể cập nhật giỏ hàng", variant: "destructive" });
     },
   });
 
@@ -134,10 +134,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: "Item removed from cart" });
+      toast({ title: "Đã xóa khỏi giỏ hàng" });
     },
     onError: () => {
-      toast({ title: "Failed to remove item", variant: "destructive" });
+      toast({ title: "Không thể xóa sản phẩm", variant: "destructive" });
     },
   });
 
@@ -148,10 +148,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: "Cart cleared" });
+      toast({ title: "Đã xóa toàn bộ giỏ hàng" });
     },
     onError: () => {
-      toast({ title: "Failed to clear cart", variant: "destructive" });
+      toast({ title: "Không thể xóa giỏ hàng", variant: "destructive" });
     },
   });
 
