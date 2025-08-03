@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, Camera, User, ShoppingCart, Menu, X } from "lucide-react";
+import { Search, Camera, User, ShoppingCart, Menu, X, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -20,6 +20,125 @@ const categories = [
   { name: "Thiết bị điện tử", href: "/products?category=electronics", highlight: false },
   { name: "Vật liệu", href: "/products?category=materials", highlight: false },
 ];
+
+interface Category {
+  name: string;
+  href: string;
+  highlight: boolean;
+}
+
+function MobileCategoryMenu({ categories }: { categories: Category[] }) {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+  
+  // Hiển thị 4 items per page để có thể fit 2 hàng x 2 items
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(categories.length / itemsPerPage);
+  
+  // Lấy items cho trang hiện tại
+  const getCurrentPageItems = () => {
+    const startIndex = currentPage * itemsPerPage;
+    return categories.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+    if (isRightSwipe && currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  return (
+    <div className="relative">
+      <div 
+        className="overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div 
+          className="flex transition-transform duration-300 ease-in-out"
+          style={{ transform: `translateX(-${currentPage * 100}%)` }}
+        >
+          {Array.from({ length: totalPages }, (_, pageIndex) => (
+            <div key={pageIndex} className="w-full flex-shrink-0">
+              <div className="grid grid-cols-2 gap-2">
+                {categories
+                  .slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage)
+                  .map((category: Category) => (
+                    <Link key={category.name} href={category.href}>
+                      <div className={`p-2 rounded-lg border text-center text-xs font-medium transition-colors ${
+                        category.highlight 
+                          ? "bg-yellow-50 border-yellow-200 text-yellow-700" 
+                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                      }`}>
+                        {category.name}
+                      </div>
+                    </Link>
+                  ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Navigation dots and next button */}
+      <div className="flex items-center justify-between mt-2">
+        <div className="flex space-x-1">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === currentPage ? "bg-primary" : "bg-gray-300"
+              }`}
+              onClick={() => setCurrentPage(index)}
+            />
+          ))}
+        </div>
+        
+        {currentPage < totalPages - 1 && (
+          <button
+            onClick={nextPage}
+            className="flex items-center text-xs text-primary font-medium"
+          >
+            Xem thêm
+            <ChevronRight className="h-3 w-3 ml-1" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function Header() {
   const [location] = useLocation();
@@ -166,7 +285,8 @@ export function Header() {
         {/* Secondary Navigation */}
         <div className="bg-gray-50 border-t border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex space-x-8 py-3 overflow-x-auto">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-8 py-3 overflow-x-auto">
               {categories.map((category) => (
                 <Link key={category.name} href={category.href}>
                   <span className={`font-medium whitespace-nowrap cursor-pointer ${
@@ -179,6 +299,11 @@ export function Header() {
                 </Link>
               ))}
             </nav>
+
+            {/* Mobile Navigation - 2 rows with swipe support */}
+            <div className="md:hidden py-2">
+              <MobileCategoryMenu categories={categories} />
+            </div>
           </div>
         </div>
       </header>
