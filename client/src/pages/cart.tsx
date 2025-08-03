@@ -194,9 +194,11 @@ export default function Cart() {
                   </p>
                 )}
 
-                <Button className="w-full mt-4 sm:mt-6" size="lg">
-                  Proceed to Checkout
-                </Button>
+                <Link href="/checkout">
+                  <Button className="w-full mt-4 sm:mt-6" size="lg">
+                    Proceed to Checkout
+                  </Button>
+                </Link>
 
                 <div className="text-center">
                   <Link href="/products">
