@@ -9,15 +9,16 @@ import { useCart } from "@/components/cart/cart-context";
 import { CartSidebar } from "@/components/cart/cart-sidebar";
 import { VisualSearchModal } from "@/components/search/visual-search-modal";
 import { AutocompleteSearch } from "@/components/search/autocomplete-search";
+import { useTranslation } from "@/lib/i18n";
 
 const categories = [
-  { name: "All Categories", href: "/products", highlight: false },
-  { name: "Power Tools", href: "/products?category=power-tools", highlight: false },
-  { name: "Safety Equipment", href: "/products?category=safety-equipment", highlight: false },
-  { name: "Solar Energy", href: "/solar-energy", highlight: true },
-  { name: "Machinery", href: "/products?category=machinery", highlight: false },
-  { name: "Electronics", href: "/products?category=electronics", highlight: false },
-  { name: "Materials", href: "/products?category=materials", highlight: false },
+  { name: "Tất cả danh mục", href: "/products", highlight: false },
+  { name: "Công cụ điện", href: "/products?category=power-tools", highlight: false },
+  { name: "Thiết bị an toàn", href: "/products?category=safety-equipment", highlight: false },
+  { name: "Năng lượng mặt trời", href: "/solar-energy", highlight: true },
+  { name: "Máy móc", href: "/products?category=machinery", highlight: false },
+  { name: "Thiết bị điện tử", href: "/products?category=electronics", highlight: false },
+  { name: "Vật liệu", href: "/products?category=materials", highlight: false },
 ];
 
 export function Header() {
@@ -25,6 +26,7 @@ export function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
   const { state } = useCart();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -43,7 +45,7 @@ export function Header() {
             {/* Search Bar - Desktop */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-8 relative">
               <AutocompleteSearch 
-                placeholder="Tìm kiếm sản phẩm..."
+                placeholder={t('nav.searchPlaceholder')}
                 className="w-full"
               />
               <Button
@@ -52,7 +54,7 @@ export function Header() {
                 className="absolute inset-y-0 right-0 flex items-center px-3 py-2 bg-primary text-white rounded-r-lg hover:bg-primary/90 transition-colors z-10"
               >
                 <Camera className="h-4 w-4 mr-2" />
-                Visual Search
+                {t('nav.visualSearch')}
               </Button>
             </div>
 
@@ -73,7 +75,7 @@ export function Header() {
                     
                     {/* Mobile Search */}
                     <AutocompleteSearch 
-                      placeholder="Tìm kiếm sản phẩm..."
+                      placeholder={t('nav.searchPlaceholder')}
                       className="w-full"
                     />
                     
@@ -82,28 +84,28 @@ export function Header() {
                       className="w-full"
                     >
                       <Camera className="h-4 w-4 mr-2" />
-                      Visual Search
+                      {t('nav.visualSearch')}
                     </Button>
 
                     <nav className="flex flex-col space-y-2">
                       <Link href="/">
                         <Button variant="ghost" className="w-full justify-start">
-                          Home
+                          {t('nav.home')}
                         </Button>
                       </Link>
                       <Link href="/products">
                         <Button variant="ghost" className="w-full justify-start">
-                          Products
+                          {t('nav.products')}
                         </Button>
                       </Link>
                       <Link href="/news">
                         <Button variant="ghost" className="w-full justify-start">
-                          News
+                          {t('nav.news')}
                         </Button>
                       </Link>
                       <Link href="/cart">
                         <Button variant="ghost" className="w-full justify-start">
-                          Cart ({state.itemCount})
+                          {t('nav.cart')} ({state.itemCount})
                         </Button>
                       </Link>
                     </nav>
@@ -115,13 +117,13 @@ export function Header() {
               <div className="hidden md:flex items-center space-x-4">
                 <Link href="/products">
                   <Button variant="ghost" className={location === "/products" ? "bg-gray-100" : ""}>
-                    Products
+                    {t('nav.products')}
                   </Button>
                 </Link>
                 
                 <Link href="/news">
                   <Button variant="ghost" className={location === "/news" || location.startsWith("/news/") ? "bg-gray-100" : ""}>
-                    News
+                    {t('nav.news')}
                   </Button>
                 </Link>
                 

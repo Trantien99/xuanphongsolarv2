@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/components/cart/cart-context";
+import { useTranslation } from "@/lib/i18n";
 
 export default function Cart() {
   const { state, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { t } = useTranslation();
 
   const handleQuantityChange = async (itemId: string, change: number) => {
     const item = state.items.find(i => i.id === itemId);
@@ -32,19 +34,19 @@ export default function Cart() {
           <Link href="/products">
             <Button variant="outline" className="mb-4 sm:mb-6">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Products
+              {t('nav.products')}
             </Button>
           </Link>
 
           <div className="text-center py-12 sm:py-16">
             <ShoppingCart className="h-16 w-16 sm:h-24 sm:w-24 text-gray-300 mx-auto mb-4 sm:mb-6" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Your Cart is Empty</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">{t('cart.emptyCart')}</h1>
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 px-4">
-              Looks like you haven't added any items to your cart yet.
+              {t('cart.emptyCartDesc')}
             </p>
             <Link href="/products">
               <Button size="lg">
-                Start Shopping
+                {t('cart.continueShopping')}
               </Button>
             </Link>
           </div>
@@ -59,7 +61,7 @@ export default function Cart() {
         <Link href="/products">
           <Button variant="outline" className="mb-4 sm:mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Continue Shopping
+            {t('cart.continueShopping')}
           </Button>
         </Link>
 
@@ -68,14 +70,14 @@ export default function Cart() {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0 pb-4">
-                <CardTitle className="text-lg sm:text-xl">Shopping Cart ({state.itemCount} items)</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">{t('cart.pageTitle')} ({state.itemCount} {t('home.items')})</CardTitle>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={clearCart}
                   className="text-red-600 hover:text-red-700 hover:bg-red-50 self-start sm:self-auto"
                 >
-                  Clear Cart
+                  {t('common.delete')} {t('cart.pageTitle')}
                 </Button>
               </CardHeader>
               <CardContent className="pt-0">
@@ -97,7 +99,7 @@ export default function Cart() {
                             {item.product?.name || "Unknown Product"}
                           </h3>
                           <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                            SKU: {item.productId}
+                            {t('productDetail.sku')}: {item.productId}
                           </p>
                           <p className="text-base sm:text-lg font-medium text-gray-900 mt-1 sm:mt-2">
                             ${item.product?.price || "0.00"}
@@ -142,7 +144,7 @@ export default function Cart() {
                             className="text-red-600 hover:text-red-700 hover:bg-red-50 mt-1 sm:mt-2 text-xs sm:text-sm h-7 sm:h-8"
                           >
                             <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                            Remove
+                            {t('cart.removeItem')}
                           </Button>
                         </div>
                       </div>
@@ -157,19 +159,19 @@ export default function Cart() {
           <div className="lg:col-span-1">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg sm:text-xl">Order Summary</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">{t('cart.total')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 sm:space-y-4">
                 <div className="flex justify-between text-sm sm:text-base">
-                  <span>Subtotal:</span>
+                  <span>{t('cart.subtotal')}:</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
                 
                 <div className="flex justify-between text-sm sm:text-base">
-                  <span>Shipping:</span>
+                  <span>{t('cart.shipping')}:</span>
                   <span>
                     {shipping === 0 ? (
-                      <span className="text-green-600">Free</span>
+                      <span className="text-green-600">Miễn phí</span>
                     ) : (
                       `$${shipping.toFixed(2)}`
                     )}
@@ -177,31 +179,31 @@ export default function Cart() {
                 </div>
                 
                 <div className="flex justify-between text-sm sm:text-base">
-                  <span>Tax:</span>
+                  <span>{t('cart.tax')}:</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
                 
                 <Separator />
                 
                 <div className="flex justify-between text-base sm:text-lg font-semibold">
-                  <span>Total:</span>
+                  <span>{t('cart.grandTotal')}:</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
 
                 {shipping > 0 && (
                   <p className="text-xs sm:text-sm text-gray-600">
-                    Free shipping on orders over $100
+                    Miễn phí vận chuyển cho đơn hàng trên $100
                   </p>
                 )}
 
                 <Button className="w-full mt-4 sm:mt-6" size="lg">
-                  Proceed to Checkout
+                  {t('cart.checkout')}
                 </Button>
 
                 <div className="text-center">
                   <Link href="/products">
                     <Button variant="outline" className="w-full">
-                      Continue Shopping
+                      {t('cart.continueShopping')}
                     </Button>
                   </Link>
                 </div>
@@ -209,12 +211,12 @@ export default function Cart() {
                 {/* Security Badges */}
                 <div className="pt-4 sm:pt-6 border-t border-gray-200">
                   <p className="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">
-                    Secure Checkout
+                    Thanh toán an toàn
                   </p>
                   <div className="flex justify-center space-x-2 text-xs text-gray-500">
-                    <span>🔒 SSL Secured</span>
+                    <span>🔒 Bảo mật SSL</span>
                     <span>•</span>
-                    <span>💳 All Cards Accepted</span>
+                    <span>💳 Chấp nhận mọi thẻ</span>
                   </div>
                 </div>
               </CardContent>
