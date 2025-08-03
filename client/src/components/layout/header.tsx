@@ -140,59 +140,12 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
   );
 }
 
-// Custom hook for scroll direction detection
-function useScrollDirection() {
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
-  const lastScrollY = useRef(0);
-  const ticking = useRef(false);
-
-  useEffect(() => {
-    const updateScrollDirection = () => {
-      const scrollY = window.scrollY;
-      
-      if (Math.abs(scrollY - lastScrollY.current) < 5) {
-        ticking.current = false;
-        return;
-      }
-      
-      const direction = scrollY > lastScrollY.current ? 'down' : 'up';
-      setScrollDirection(direction);
-      
-      // Hide secondary nav when scrolling down past 100px, show when scrolling up
-      if (scrollY > 100) {
-        setIsVisible(direction === 'up');
-      } else {
-        setIsVisible(true);
-      }
-      
-      lastScrollY.current = scrollY > 0 ? scrollY : 0;
-      ticking.current = false;
-    };
-
-    const requestTick = () => {
-      if (!ticking.current) {
-        requestAnimationFrame(updateScrollDirection);
-        ticking.current = true;
-      }
-    };
-
-    const onScroll = () => requestTick();
-
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  return { scrollDirection, isVisible };
-}
-
 export function Header() {
   const [location] = useLocation();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
   const { state } = useCart();
   const { t } = useTranslation();
-  const { scrollDirection, isVisible } = useScrollDirection();
 
   return (
     <>
@@ -329,10 +282,8 @@ export function Header() {
           </div>
         </div>
 
-        {/* Secondary Navigation with scroll-based visibility */}
-        <div className={`bg-gray-50 border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden ${
-          isVisible ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
-        }`}>
+        {/* Secondary Navigation */}
+        <div className="bg-gray-50 border-t border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8 py-3 overflow-x-auto">
