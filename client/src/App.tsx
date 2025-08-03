@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/components/cart/cart-context";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { MobileActionButtons, FloatingCallButton } from "@/components/mobile/mobile-action-buttons";
+import { MobileFloatingActions, MobileCartButton, QuickCallButton } from "@/components/mobile/mobile-floating-actions";
 
 // Pages
 import Home from "@/pages/home";
@@ -45,6 +47,11 @@ function App() {
               <Router />
             </main>
             <Footer />
+            
+            {/* Mobile Action Buttons - Only visible on mobile */}
+            <MobileActionButtons />
+            <MobileCartButton />
+            <QuickCallButton />
           </div>
           <Toaster />
         </CartProvider>
