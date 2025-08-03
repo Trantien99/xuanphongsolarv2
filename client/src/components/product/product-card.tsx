@@ -39,7 +39,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.slug}`}>
-      <Card className="group cursor-pointer hover:shadow-lg transition-shadow border border-gray-200">
+      <Card className="group cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 h-full flex flex-col">
         <div className="aspect-square overflow-hidden rounded-t-lg bg-gray-100">
           <img
             src={product.images[0] || "https://via.placeholder.com/400x400?text=No+Image"}
@@ -47,19 +47,19 @@ export function ProductCard({ product }: ProductCardProps) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
           />
         </div>
-        <CardContent className="p-4">
+        <CardContent className="p-4 flex flex-col flex-1">
           <div className="flex items-start justify-between mb-2">
-            <h3 className="font-semibold text-gray-900 line-clamp-2 flex-1">
+            <h3 className="font-semibold text-gray-900 line-clamp-2 flex-1 min-h-[3rem]">
               {product.name}
             </h3>
             {product.isFeatured && (
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="secondary" className="ml-2 shrink-0">
                 Featured
               </Badge>
             )}
           </div>
           
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          <p className="text-sm text-gray-600 mb-3 line-clamp-2 min-h-[2.5rem]">
             {product.shortDescription}
           </p>
           
@@ -74,18 +74,9 @@ export function ProductCard({ product }: ProductCardProps) {
                 </span>
               )}
             </div>
-            
-            <Button
-              size="sm"
-              onClick={handleAddToCart}
-              className="bg-primary hover:bg-primary/90"
-            >
-              <ShoppingCart className="h-4 w-4 mr-1" />
-              Add to Cart
-            </Button>
           </div>
           
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-1">
               {renderStars(product.rating)}
             </div>
@@ -94,13 +85,25 @@ export function ProductCard({ product }: ProductCardProps) {
             </span>
           </div>
           
-          <div className="mt-2 flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium text-gray-700">
               {product.brand}
             </span>
             <span className={`text-sm ${product.inStock ? "text-green-600" : "text-red-600"}`}>
               {product.inStock ? `${product.stockQuantity} in stock` : "Out of stock"}
             </span>
+          </div>
+          
+          <div className="mt-auto">
+            <Button
+              size="sm"
+              onClick={handleAddToCart}
+              className="bg-primary hover:bg-primary/90 w-full"
+              disabled={!product.inStock}
+            >
+              <ShoppingCart className="h-4 w-4 mr-1" />
+              {product.inStock ? "Add to Cart" : "Out of Stock"}
+            </Button>
           </div>
         </CardContent>
       </Card>

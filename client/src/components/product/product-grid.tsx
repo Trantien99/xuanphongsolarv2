@@ -10,7 +10,7 @@ interface ProductGridProps {
 export function ProductGrid({ products, isLoading }: ProductGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="space-y-3">
             <Skeleton className="aspect-square w-full" />
@@ -33,7 +33,7 @@ export function ProductGrid({ products, isLoading }: ProductGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 auto-rows-fr">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
