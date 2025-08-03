@@ -62,7 +62,7 @@ const getCategories = () => [
 ];
 
 export default function SolarEnergyLanding() {
-  const { addItem } = useCart();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   
   // Set dynamic title
@@ -86,8 +86,8 @@ export default function SolarEnergyLanding() {
     }
   });
 
-  const handleAddToCart = (product: Product) => {
-    addItem(product.id, 1);
+  const handleAddToCart = async (product: Product) => {
+    await addToCart(product.id, 1);
     
     toast({
       title: t("solarEnergy.addedToCart"),
