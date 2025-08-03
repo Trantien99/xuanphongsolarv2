@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/ui/pagination";
 import { useTitle } from "@/hooks/use-title";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { News } from "@shared/schema";
 
 interface NewsResponse {
@@ -164,6 +164,7 @@ function LatestNews() {
 function AllNewsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const sectionRef = useRef<HTMLElement>(null);
 
   const { data: newsResponse, isLoading } = useQuery<NewsResponse>({
     queryKey: ["/api/news", "all", currentPage],
@@ -176,7 +177,10 @@ function AllNewsList() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to the top of the AllNewsList component
+    if (sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   if (isLoading) {
@@ -213,7 +217,7 @@ function AllNewsList() {
   }
 
   return (
-    <section>
+    <section ref={sectionRef}>
       <h2 className="text-3xl font-bold text-gray-900 mb-8">
         All News ({newsResponse.total} articles)
       </h2>

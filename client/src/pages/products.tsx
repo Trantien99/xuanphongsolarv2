@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useRoute } from "wouter";
 import { Filter, Grid, List } from "lucide-react";
@@ -22,6 +22,7 @@ export default function Products() {
   const [priceRange, setPriceRange] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(24);
+  const productsRef = useRef<HTMLDivElement>(null);
   
   // Set dynamic title
   useTitle("pageTitle.products");
@@ -174,7 +175,10 @@ export default function Products() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     updateURL({ page });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to the top of the products section
+    if (productsRef.current) {
+      productsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleItemsPerPageChange = (items: number) => {
@@ -271,7 +275,7 @@ export default function Products() {
           </div>
 
           {/* Main Content */}
-          <div className="lg:w-3/4">
+          <div className="lg:w-3/4" ref={productsRef}>
             {/* Toolbar */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
