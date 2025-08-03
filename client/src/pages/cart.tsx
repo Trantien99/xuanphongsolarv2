@@ -195,10 +195,11 @@ export default function Cart() {
                     Miễn phí vận chuyển cho đơn hàng trên $100
                   </p>
                 )}
-
-                <Button className="w-full mt-4 sm:mt-6" size="lg">
-                  {t('cart.checkout')}
-                </Button>
+                <Link href="/checkout">
+                  <Button className="w-full mt-4 sm:mt-6" size="lg">
+                    {t('cart.checkout')}
+                  </Button>
+                </Link>
 
                 <div className="text-center">
                   <Link href="/products">
