@@ -45,10 +45,16 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.targetTouches[0].clientX;
+    // Prevent default behavior and stop propagation
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndX.current = e.targetTouches[0].clientX;
+    // Prevent default scrolling behavior
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   const handleTouchEnd = () => {
@@ -64,6 +70,10 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
     if (isRightSwipe && currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
+    
+    // Reset touch positions
+    touchStartX.current = 0;
+    touchEndX.current = 0;
   };
 
   const nextPage = () => {
@@ -82,6 +92,7 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
     <div className="relative">
       <div 
         className="overflow-hidden"
+        style={{ touchAction: 'none' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

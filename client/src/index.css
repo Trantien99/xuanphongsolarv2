@@ -308,3 +308,53 @@
     color: black !important;
   }
 }
+
+/* Mobile touch optimization - Prevent overscroll and unwanted gestures */
+html {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  /* Prevent pull-to-refresh on mobile */
+  overscroll-behavior-y: contain;
+}
+
+/* Prevent horizontal scrolling on the entire page */
+body, html {
+  overflow-x: hidden;
+}
+
+/* Specific mobile touch handling */
+@media (max-width: 768px) {
+  * {
+    /* Disable default touch behaviors that might interfere */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection for input elements */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  /* Prevent zooming on double tap */
+  * {
+    touch-action: manipulation;
+  }
+  
+  /* Allow pan for scrollable elements */
+  .overflow-x-auto, .overflow-y-auto, .overflow-auto {
+    touch-action: pan-x pan-y;
+  }
+}
