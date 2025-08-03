@@ -15,6 +15,7 @@ export interface IStorage {
 
   // Products
   getProducts(filters?: { categoryId?: string; featured?: boolean; search?: string; limit?: number; offset?: number }): Promise<Product[]>;
+  getProductsWithCount(filters?: { categoryId?: string; featured?: boolean; search?: string; limit?: number; offset?: number }): Promise<{ products: Product[]; total: number }>;
   getProduct(id: string): Promise<Product | undefined>;
   getProductBySlug(slug: string): Promise<Product | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
@@ -488,6 +489,43 @@ export class MemStorage implements IStorage {
     const limit = filters?.limit || products.length;
 
     return products.slice(offset, offset + limit);
+  }
+
+  async getProductsWithCount(filters?: { categoryId?: string; featured?: boolean; search?: string; limit?: number; offset?: number }): Promise<{ products: Product[]; total: number }> {
+    let products = Array.from(this.products.values()).filter(p => p.isActive);
+
+    if (filters?.categoryId) {
+      products = products.filter(p => p.categoryId === filters.categoryId);
+    }
+
+    if (filters?.featured !== undefined) {
+      products = products.filter(p => p.isFeatured === filters.featured);
+    }
+
+    if (filters?.search) {
+      const searchLower = filters.search.toLowerCase();
+      products = products.filter(p => 
+        p.name.toLowerCase().includes(searchLower) ||
+        p.description.toLowerCase().includes(searchLower) ||
+        p.brand.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Sort by featured first, then by name
+    products.sort((a, b) => {
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    const total = products.length;
+    const offset = filters?.offset || 0;
+    const limit = filters?.limit || products.length;
+
+    return {
+      products: products.slice(offset, offset + limit),
+      total
+    };
   }
 
   async getProduct(id: string): Promise<Product | undefined> {

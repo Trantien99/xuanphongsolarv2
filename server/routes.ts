@@ -30,7 +30,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Products
   app.get("/api/products", async (req, res) => {
     try {
-      const { categoryId, featured, search, limit, offset } = req.query;
+      const { categoryId, featured, search, limit, offset, withCount } = req.query;
       const filters = {
         categoryId: categoryId as string,
         featured: featured === "true" ? true : featured === "false" ? false : undefined,
@@ -39,8 +39,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         offset: offset ? parseInt(offset as string) : undefined,
       };
 
-      const products = await storage.getProducts(filters);
-      res.json(products);
+      if (withCount === "true") {
+        const result = await storage.getProductsWithCount(filters);
+        res.json(result);
+      } else {
+        const products = await storage.getProducts(filters);
+        res.json(products);
+      }
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch products" });
     }
