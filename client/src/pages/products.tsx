@@ -168,20 +168,20 @@ export default function Products() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             {selectedCategory ? getCategoryName(selectedCategory) : "All Products"}
           </h1>
           {searchQuery && (
-            <p className="text-lg text-gray-600">
+            <p className="text-base sm:text-lg text-gray-600">
               Search results for "{searchQuery}"
             </p>
           )}
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Desktop Filters Sidebar */}
           <div className="hidden lg:block lg:w-1/4">
             <Card>
@@ -194,9 +194,9 @@ export default function Products() {
           {/* Main Content */}
           <div className="lg:w-3/4">
             {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-600">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                <span className="text-sm sm:text-base text-gray-600">
                   Showing {sortedProducts.length} of {products.length} products
                 </span>
                 
@@ -219,9 +219,9 @@ export default function Products() {
                 </Sheet>
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-48">
+                  <SelectTrigger className="w-full sm:w-48">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -233,7 +233,7 @@ export default function Products() {
                   </SelectContent>
                 </Select>
 
-                <div className="flex border border-gray-300 rounded-lg">
+                <div className="flex border border-gray-300 rounded-lg self-center">
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
@@ -259,7 +259,7 @@ export default function Products() {
 
             {/* Pagination */}
             {sortedProducts.length > 24 && (
-              <div className="flex justify-center mt-12">
+              <div className="flex justify-center mt-8 sm:mt-12">
                 <nav className="flex items-center space-x-2">
                   <Button variant="outline" size="sm" disabled>
                     Previous
