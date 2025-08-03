@@ -6,19 +6,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ProductGrid } from "@/components/product/product-grid";
 import { useState } from "react";
 import { VisualSearchModal } from "@/components/search/visual-search-modal";
+import { useTranslation } from "@/lib/i18n";
 import type { Product, Category } from "@shared/schema";
 
 const categoryIcons = {
-  "Power Tools": Wrench,
-  "Safety Equipment": HardHat,
-  "Machinery": ServerCog,
-  "Electronics": Zap,
-  "Materials": Package,
-  "Hand Tools": Gavel,
+  "Công cụ điện": Wrench,
+  "Thiết bị an toàn": HardHat,
+  "Máy móc": ServerCog,
+  "Thiết bị điện tử": Zap,
+  "Vật liệu": Package,
+  "Công cụ cầm tay": Gavel,
 };
 
 export default function Home() {
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
+  const { t } = useTranslation();
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -42,11 +44,10 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-                Find Products Faster with Visual Search
+                {t('home.heroTitle')}
               </h2>
               <p className="text-xl mb-8 text-blue-100">
-                Upload a photo or sketch of what you need. Our AI-powered visual search 
-                finds exact matches from thousands of industrial products.
+                {t('home.heroSubtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -55,7 +56,7 @@ export default function Home() {
                   onClick={() => setIsVisualSearchOpen(true)}
                 >
                   <Camera className="h-5 w-5 mr-2" />
-                  Try Visual Search
+                  {t('home.tryVisualSearch')}
                 </Button>
                 <Link href="/products">
                   <Button
@@ -63,7 +64,7 @@ export default function Home() {
                     variant="outline"
                     className="border-white text-white hover:bg-white hover:text-primary"
                   >
-                    Browse Catalog
+                    {t('home.browseCatalog')}
                   </Button>
                 </Link>
               </div>
@@ -83,9 +84,9 @@ export default function Home() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Shop by Category</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('home.shopByCategory')}</h2>
             <p className="text-lg text-gray-600">
-              Find exactly what you need from our comprehensive product categories
+              {t('home.shopByCategoryDesc')}
             </p>
           </div>
 
@@ -104,7 +105,7 @@ export default function Home() {
                         {category.name}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {category.itemCount} items
+                        {category.itemCount} {t('home.items')}
                       </p>
                     </CardContent>
                   </Card>
@@ -120,14 +121,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('home.featuredProducts')}</h2>
               <p className="text-lg text-gray-600">
-                Top-rated products trusted by industry professionals
+                {t('home.featuredProductsDesc')}
               </p>
             </div>
             <Link href="/products">
               <Button variant="outline" className="group">
-                View All Products
+                {t('home.viewAllProducts')}
                 <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -143,14 +144,14 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center mb-12">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Industry News</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('home.industryNews')}</h2>
                 <p className="text-lg text-gray-600">
-                  Stay updated with the latest industry trends and product updates
+                  {t('home.industryNewsDesc')}
                 </p>
               </div>
               <Link href="/news">
                 <Button variant="outline" className="group">
-                  View All News
+                  {t('home.viewAllNews')}
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
