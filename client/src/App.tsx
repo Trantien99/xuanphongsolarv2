@@ -50,8 +50,8 @@ function App() {
             
             {/* Mobile Action Buttons - Only visible on mobile */}
             <MobileActionButtons />
-            <MobileCartButton />
-            <QuickCallButton />
+            {/* <MobileCartButton /> */}
+            {/* <QuickCallButton /> */}
           </div>
           <Toaster />
         </CartProvider>
