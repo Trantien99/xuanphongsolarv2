@@ -39,13 +39,23 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
   // Touch handlers for swipe gestures
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.targetTouches[0].clientX;
+    // Prevent default behavior and stop propagation
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndX.current = e.targetTouches[0].clientX;
+    // Prevent default scrolling behavior
+    e.preventDefault();
+    e.stopPropagation();
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    // Prevent default behavior
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (!touchStartX.current || !touchEndX.current) return;
 
     const distance = touchStartX.current - touchEndX.current;
@@ -60,6 +70,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
       prevSlide();
     }
 
+    // Reset touch positions
     touchStartX.current = null;
     touchEndX.current = null;
   };
@@ -77,6 +88,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
       {/* Main Image Slider */}
       <div 
         className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group cursor-grab active:cursor-grabbing"
+        style={{ touchAction: 'none' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
