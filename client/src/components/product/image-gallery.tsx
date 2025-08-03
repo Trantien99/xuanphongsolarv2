@@ -12,6 +12,9 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchEndY = useRef<number | null>(null);
+  const isHorizontalSwipe = useRef<boolean | null>(null);
 
   // Auto-play functionality
   useEffect(() => {
@@ -39,40 +42,70 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
   // Touch handlers for swipe gestures
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.targetTouches[0].clientX;
-    // Prevent default behavior and stop propagation
-    e.preventDefault();
-    e.stopPropagation();
+    touchStartY.current = e.targetTouches[0].clientY;
+    touchEndX.current = null;
+    touchEndY.current = null;
+    isHorizontalSwipe.current = null;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStartX.current || !touchStartY.current) return;
+    
     touchEndX.current = e.targetTouches[0].clientX;
-    // Prevent default scrolling behavior
-    e.preventDefault();
-    e.stopPropagation();
+    touchEndY.current = e.targetTouches[0].clientY;
+    
+    // Calculate movement distances
+    const deltaX = Math.abs(touchEndX.current - touchStartX.current);
+    const deltaY = Math.abs(touchEndY.current - touchStartY.current);
+    
+    // Determine swipe direction if not already determined
+    if (isHorizontalSwipe.current === null && (deltaX > 10 || deltaY > 10)) {
+      isHorizontalSwipe.current = deltaX > deltaY;
+    }
+    
+    // Only prevent default for horizontal swipes (image navigation)
+    // Allow vertical swipes (page scrolling) to work normally
+    if (isHorizontalSwipe.current && images.length > 1) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    // Prevent default behavior
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!touchStartX.current || !touchEndX.current) return;
-
-    const distance = touchStartX.current - touchEndX.current;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe && images.length > 1) {
-      nextSlide();
+    if (!touchStartX.current || !touchEndX.current || !isHorizontalSwipe.current) {
+      // Reset touch positions
+      touchStartX.current = null;
+      touchEndX.current = null;
+      touchStartY.current = null;
+      touchEndY.current = null;
+      isHorizontalSwipe.current = null;
+      return;
     }
 
-    if (isRightSwipe && images.length > 1) {
-      prevSlide();
+    // Only handle horizontal swipes for image navigation
+    if (isHorizontalSwipe.current && images.length > 1) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const distance = touchStartX.current - touchEndX.current;
+      const isLeftSwipe = distance > 50;
+      const isRightSwipe = distance < -50;
+
+      if (isLeftSwipe) {
+        nextSlide();
+      }
+
+      if (isRightSwipe) {
+        prevSlide();
+      }
     }
 
     // Reset touch positions
     touchStartX.current = null;
     touchEndX.current = null;
+    touchStartY.current = null;
+    touchEndY.current = null;
+    isHorizontalSwipe.current = null;
   };
 
   if (images.length === 0) {
@@ -88,7 +121,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
       {/* Main Image Slider */}
       <div 
         className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group cursor-grab active:cursor-grabbing"
-        style={{ touchAction: 'none' }}
+        style={{ touchAction: 'pan-y' }} // Allow vertical panning (scrolling) but restrict horizontal
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

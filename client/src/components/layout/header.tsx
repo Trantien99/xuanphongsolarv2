@@ -32,6 +32,9 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
   const [showMore, setShowMore] = useState(false);
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
+  const touchStartY = useRef<number>(0);
+  const touchEndY = useRef<number>(0);
+  const isHorizontalSwipe = useRef<boolean | null>(null);
   
   // Hiển thị 4 items per page để có thể fit 2 hàng x 2 items
   const itemsPerPage = 2;
@@ -45,35 +48,66 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.targetTouches[0].clientX;
-    // Prevent default behavior and stop propagation
-    e.preventDefault();
-    e.stopPropagation();
+    touchStartY.current = e.targetTouches[0].clientY;
+    touchEndX.current = 0;
+    touchEndY.current = 0;
+    isHorizontalSwipe.current = null;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStartX.current || !touchStartY.current) return;
+    
     touchEndX.current = e.targetTouches[0].clientX;
-    // Prevent default scrolling behavior
-    e.preventDefault();
-    e.stopPropagation();
+    touchEndY.current = e.targetTouches[0].clientY;
+    
+    // Calculate movement distances
+    const deltaX = Math.abs(touchEndX.current - touchStartX.current);
+    const deltaY = Math.abs(touchEndY.current - touchStartY.current);
+    
+    // Determine swipe direction if not already determined
+    if (isHorizontalSwipe.current === null && (deltaX > 10 || deltaY > 10)) {
+      isHorizontalSwipe.current = deltaX > deltaY;
+    }
+    
+    // Only prevent default for horizontal swipes (category navigation)
+    // Allow vertical swipes (page scrolling) to work normally
+    if (isHorizontalSwipe.current && totalPages > 1) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    
-    const distance = touchStartX.current - touchEndX.current;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe && currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
+    if (!touchStartX.current || !touchEndX.current || !isHorizontalSwipe.current) {
+      // Reset touch positions
+      touchStartX.current = 0;
+      touchEndX.current = 0;
+      touchStartY.current = 0;
+      touchEndY.current = 0;
+      isHorizontalSwipe.current = null;
+      return;
     }
-    if (isRightSwipe && currentPage > 0) {
-      setCurrentPage(currentPage - 1);
+    
+    // Only handle horizontal swipes for category navigation
+    if (isHorizontalSwipe.current && totalPages > 1) {
+      const distance = touchStartX.current - touchEndX.current;
+      const isLeftSwipe = distance > 50;
+      const isRightSwipe = distance < -50;
+
+      if (isLeftSwipe && currentPage < totalPages - 1) {
+        setCurrentPage(currentPage + 1);
+      }
+      if (isRightSwipe && currentPage > 0) {
+        setCurrentPage(currentPage - 1);
+      }
     }
     
     // Reset touch positions
     touchStartX.current = 0;
     touchEndX.current = 0;
+    touchStartY.current = 0;
+    touchEndY.current = 0;
+    isHorizontalSwipe.current = null;
   };
 
   const nextPage = () => {
@@ -92,7 +126,7 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
     <div className="relative">
       <div 
         className="overflow-hidden"
-        style={{ touchAction: 'none' }}
+        style={{ touchAction: 'pan-y' }} // Allow vertical panning (scrolling) but restrict horizontal
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
