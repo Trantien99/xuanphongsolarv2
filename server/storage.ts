@@ -22,7 +22,8 @@ export interface IStorage {
   updateProduct(id: string, updates: Partial<Product>): Promise<Product | undefined>;
 
   // News
-  getNews(filters?: { limit?: number; offset?: number }): Promise<News[]>;
+  getNews(filters?: { limit?: number; offset?: number; featured?: boolean }): Promise<News[]>;
+  getNewsWithCount(filters?: { limit?: number; offset?: number; featured?: boolean }): Promise<{ news: News[]; total: number; hasMore: boolean }>;
   getNewsItem(id: string): Promise<News | undefined>;
   getNewsBySlug(slug: string): Promise<News | undefined>;
   createNews(news: InsertNews): Promise<News>;
@@ -383,6 +384,7 @@ export class MemStorage implements IStorage {
         author: "Safety Team",
         publishedAt: new Date("2024-01-15"),
         isPublished: true,
+        isFeatured: true,
         tags: ["safety", "regulations", "OSHA"],
         createdAt: new Date()
       },
@@ -396,6 +398,7 @@ export class MemStorage implements IStorage {
         author: "Product Team",
         publishedAt: new Date("2024-01-10"),
         isPublished: true,
+        isFeatured: false,
         tags: ["power tools", "review", "2024"],
         createdAt: new Date()
       },
@@ -409,7 +412,50 @@ export class MemStorage implements IStorage {
         author: "Technology Team",
         publishedAt: new Date("2024-01-05"),
         isPublished: true,
+        isFeatured: true,
         tags: ["smart manufacturing", "IoT", "automation", "AI"],
+        createdAt: new Date()
+      },
+      {
+        id: "4",
+        title: "Sustainable Energy Solutions in Industrial Applications",
+        slug: "sustainable-energy-solutions-industrial",
+        excerpt: "Exploring renewable energy integration and energy efficiency improvements in industrial operations.",
+        content: "The industrial sector is increasingly adopting sustainable energy solutions to reduce environmental impact and operational costs. This comprehensive guide explores the latest developments in renewable energy integration, energy efficiency technologies, and sustainable practices for industrial operations.\n\nSolar panel installations on industrial facilities have become more cost-effective, with many companies achieving significant reductions in electricity costs. Wind energy solutions, particularly for large manufacturing plants, offer another viable renewable energy source.\n\nEnergy efficiency improvements through LED lighting upgrades, smart HVAC systems, and optimized equipment scheduling can reduce energy consumption by 15-25%. Advanced energy management systems provide real-time monitoring and automated optimization of energy usage patterns.\n\nGovernment incentives and tax credits for sustainable energy investments make these upgrades financially attractive for many businesses. The long-term benefits include reduced operational costs, improved corporate sustainability ratings, and compliance with environmental regulations.",
+        imageUrl: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+        author: "Sustainability Team",
+        publishedAt: new Date("2024-01-20"),
+        isPublished: true,
+        isFeatured: false,
+        tags: ["sustainability", "renewable energy", "efficiency"],
+        createdAt: new Date()
+      },
+      {
+        id: "5",
+        title: "Maintenance Best Practices for Heavy Machinery",
+        slug: "maintenance-best-practices-heavy-machinery",
+        excerpt: "Essential maintenance strategies to maximize equipment lifespan and minimize downtime.",
+        content: "Proper maintenance of heavy machinery is crucial for operational efficiency, safety, and cost control. This guide outlines proven maintenance strategies that help maximize equipment lifespan while minimizing unexpected downtime and repair costs.\n\nPreventive maintenance schedules based on manufacturer recommendations and usage patterns are the foundation of effective maintenance programs. Regular inspections, lubrication, and component replacements prevent minor issues from becoming major failures.\n\nPredictive maintenance technologies, including vibration analysis, thermal imaging, and oil analysis, enable early detection of potential problems. These technologies allow maintenance teams to address issues before they cause equipment failure.\n\nDigital maintenance management systems help track maintenance schedules, parts inventory, and equipment performance metrics. Mobile applications enable technicians to access maintenance information and update records in real-time from the field.\n\nTraining programs for maintenance personnel ensure proper procedures are followed and safety standards are maintained. Regular training updates keep staff current with new technologies and best practices.",
+        imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+        author: "Maintenance Team",
+        publishedAt: new Date("2024-01-18"),
+        isPublished: true,
+        isFeatured: false,
+        tags: ["maintenance", "heavy machinery", "best practices"],
+        createdAt: new Date()
+      },
+      {
+        id: "6",
+        title: "Digital Transformation in Industrial Operations",
+        slug: "digital-transformation-industrial-operations",
+        excerpt: "How digital technologies are revolutionizing traditional industrial processes and workflows.",
+        content: "Digital transformation is reshaping industrial operations through the integration of advanced technologies, data analytics, and automated systems. This transformation enables companies to improve efficiency, reduce costs, and enhance competitiveness in the global market.\n\nCloud-based systems provide scalable infrastructure for data storage and processing, enabling real-time access to operational information from anywhere. Integration with existing systems ensures seamless data flow across all operational areas.\n\nMobile applications empower field workers with instant access to technical documentation, work orders, and communication tools. Augmented reality applications assist with complex maintenance procedures and training programs.\n\nData analytics platforms process vast amounts of operational data to identify trends, optimize processes, and predict future needs. Machine learning algorithms continuously improve system performance and decision-making capabilities.\n\nCybersecurity measures protect digital systems and sensitive data from threats. Regular security assessments and employee training programs ensure comprehensive protection against cyber risks.",
+        imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+        author: "Digital Team",
+        publishedAt: new Date("2024-01-12"),
+        isPublished: true,
+        isFeatured: false,
+        tags: ["digital transformation", "technology", "operations"],
         createdAt: new Date()
       }
     ];
@@ -562,8 +608,13 @@ export class MemStorage implements IStorage {
   }
 
   // News methods
-  async getNews(filters?: { limit?: number; offset?: number }): Promise<News[]> {
+  async getNews(filters?: { limit?: number; offset?: number; featured?: boolean }): Promise<News[]> {
     let news = Array.from(this.news.values()).filter(n => n.isPublished);
+    
+    // Filter by featured if specified
+    if (filters?.featured !== undefined) {
+      news = news.filter(n => n.isFeatured === filters.featured);
+    }
     
     // Sort by published date (newest first)
     news.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
@@ -572,6 +623,26 @@ export class MemStorage implements IStorage {
     const limit = filters?.limit || news.length;
 
     return news.slice(offset, offset + limit);
+  }
+
+  async getNewsWithCount(filters?: { limit?: number; offset?: number; featured?: boolean }): Promise<{ news: News[]; total: number; hasMore: boolean }> {
+    let allNews = Array.from(this.news.values()).filter(n => n.isPublished);
+    
+    // Filter by featured if specified
+    if (filters?.featured !== undefined) {
+      allNews = allNews.filter(n => n.isFeatured === filters.featured);
+    }
+    
+    // Sort by published date (newest first)
+    allNews.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+    const total = allNews.length;
+    const offset = filters?.offset || 0;
+    const limit = filters?.limit || total;
+    const news = allNews.slice(offset, offset + limit);
+    const hasMore = offset + limit < total;
+
+    return { news, total, hasMore };
   }
 
   async getNewsItem(id: string): Promise<News | undefined> {
