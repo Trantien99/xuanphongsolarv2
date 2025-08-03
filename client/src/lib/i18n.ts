@@ -220,6 +220,10 @@ export const translations: Translations = {
     writeReview: "Viết đánh giá",
     featured: "Nổi bật",
     share: "Chia sẻ",
+    sharing: "Đang chia sẻ...",
+    sharedSuccessfully: "Chia sẻ thành công!",
+    linkCopied: "Đã sao chép liên kết!",
+    shareError: "Không thể chia sẻ. Vui lòng thử lại.",
     favorite: "Yêu thích",
 
     // Image Gallery
