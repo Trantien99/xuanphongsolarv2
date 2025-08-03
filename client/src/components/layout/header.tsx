@@ -34,7 +34,7 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
   const touchEndX = useRef<number>(0);
   
   // Hiển thị 4 items per page để có thể fit 2 hàng x 2 items
-  const itemsPerPage = 4;
+  const itemsPerPage = 2;
   const totalPages = Math.ceil(categories.length / itemsPerPage);
   
   // Lấy items cho trang hiện tại
@@ -172,7 +172,7 @@ export function Header() {
                 onClick={() => setIsVisualSearchOpen(true)}
                 className="absolute inset-y-0 right-0 flex items-center px-3 py-2 bg-primary text-white rounded-r-lg hover:bg-primary/90 transition-colors z-10"
               >
-                <Camera className="h-4 w-4 mr-2" />
+                <Search className="h-4 w-4 mr-2" />
                 {t('nav.visualSearch')}
               </Button>
             </div>

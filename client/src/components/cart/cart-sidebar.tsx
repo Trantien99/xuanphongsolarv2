@@ -31,9 +31,9 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
         <SheetHeader>
           <SheetTitle className="flex items-center justify-between">
             <span className="text-lg">Shopping Cart</span>
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            {/* <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-5 w-5" />
-            </Button>
+            </Button> */}
           </SheetTitle>
         </SheetHeader>
 
@@ -122,7 +122,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                 </span>
               </div>
               
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-2 sm:space-y-3 pb-3">
                 <Link href="/cart" onClick={onClose}>
                   <Button className="w-full bg-primary hover:bg-primary/90 h-11">
                     View Cart

@@ -11,7 +11,7 @@ export const translations: Translations = {
       products: "Sản phẩm",
       news: "Tin tức",
       cart: "Giỏ hàng",
-      visualSearch: "Tìm kiếm hình ảnh",
+      visualSearch: "Tìm kiếm",
       searchPlaceholder: "Tìm kiếm sản phẩm...",
       allCategories: "Tất cả danh mục",
     },
