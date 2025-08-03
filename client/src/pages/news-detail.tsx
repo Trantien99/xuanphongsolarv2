@@ -25,7 +25,7 @@ export default function NewsDetail() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
           <Skeleton className="h-8 w-48 mb-6" />
           <Skeleton className="h-64 w-full mb-6 rounded-lg" />
           <Skeleton className="h-12 w-3/4 mb-4" />
@@ -78,7 +78,7 @@ export default function NewsDetail() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
           <Link href="/news">
             <Button variant="outline" className="mb-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -86,7 +86,7 @@ export default function NewsDetail() {
             </Button>
           </Link>
           
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-4">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-4 text-sm text-gray-600 mb-4">
             <div className="flex items-center">
               <User className="h-4 w-4 mr-2" />
               {article.author}
@@ -107,7 +107,7 @@ export default function NewsDetail() {
               variant="outline"
               size="sm"
               onClick={handleShare}
-              className="ml-auto"
+              className="sm:ml-auto w-full sm:w-auto mt-2 sm:mt-0"
             >
               <Share2 className="h-4 w-4 mr-2" />
               Share
@@ -115,10 +115,10 @@ export default function NewsDetail() {
           </div>
 
           {article.tags && article.tags.length > 0 && (
-            <div className="flex items-center gap-2 mb-6">
-              <Tag className="h-4 w-4 text-gray-500" />
+            <div className="flex flex-wrap items-center gap-2 mb-4 sm:mb-6">
+              <Tag className="h-4 w-4 text-gray-500 flex-shrink-0" />
               {article.tags.map((tag) => (
-                <Badge key={tag} variant="secondary">
+                <Badge key={tag} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>
               ))}
@@ -128,7 +128,7 @@ export default function NewsDetail() {
       </div>
 
       {/* Article Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         <article className="bg-white rounded-xl shadow-sm overflow-hidden">
           {article.imageUrl && (
             <div className="aspect-video overflow-hidden">
@@ -140,25 +140,25 @@ export default function NewsDetail() {
             </div>
           )}
 
-          <div className="p-8">
-            <header className="mb-8">
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+          <div className="p-4 sm:p-6 lg:p-8">
+            <header className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
                 {article.title}
               </h1>
 
-              <p className="text-xl text-gray-600 leading-relaxed font-medium">
+              <p className="text-lg sm:text-xl text-gray-600 leading-relaxed font-medium">
                 {article.excerpt}
               </p>
             </header>
 
-            <Separator className="my-8" />
+            <Separator className="my-6 sm:my-8" />
 
-            <div className="prose prose-lg max-w-none">
+            <div className="prose prose-base sm:prose-lg max-w-none">
               {article.content.split('\n\n').map((paragraph, index) => {
                 if (paragraph.trim() === '') return null;
                 
                 return (
-                  <p key={index} className="mb-6 text-gray-700 leading-relaxed text-lg">
+                  <p key={index} className="mb-4 sm:mb-6 text-gray-700 leading-relaxed text-base sm:text-lg">
                     {paragraph}
                   </p>
                 );
@@ -169,9 +169,9 @@ export default function NewsDetail() {
 
         {/* Related Articles */}
         {relatedNews.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Articles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="mt-8 sm:mt-12">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Related Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {relatedNews.map((relatedArticle) => (
                 <Link key={relatedArticle.id} href={`/news/${relatedArticle.slug}`}>
                   <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full">
@@ -206,9 +206,9 @@ export default function NewsDetail() {
         )}
 
         {/* Back to Top */}
-        <div className="mt-12 text-center">
+        <div className="mt-8 sm:mt-12 text-center">
           <Link href="/news">
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" className="w-full sm:w-auto">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to All News
             </Button>
