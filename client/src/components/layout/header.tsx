@@ -30,7 +30,7 @@ export function Header() {
 
   return (
     <>
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-[51]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -67,8 +67,8 @@ export function Header() {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-72">
-                  <div className="flex flex-col space-y-4">
+                <SheetContent side="left" className="w-72 mobile-menu-height overflow-y-auto mobile-safe-bottom">
+                  <div className="flex flex-col space-y-4 h-full">
                     <Link href="/">
                       <h2 className="text-xl font-bold text-primary">IndustrialSource</h2>
                     </Link>
@@ -87,7 +87,7 @@ export function Header() {
                       {t('nav.visualSearch')}
                     </Button>
 
-                    <nav className="flex flex-col space-y-2">
+                    <nav className="flex flex-col space-y-2 flex-1">
                       <Link href="/">
                         <Button variant="ghost" className="w-full justify-start">
                           {t('nav.home')}
@@ -109,6 +109,20 @@ export function Header() {
                         </Button>
                       </Link>
                     </nav>
+
+                    {/* Categories section */}
+                    <div className="border-t pt-4">
+                      <h3 className="text-sm font-semibold text-gray-600 mb-2">Danh mục sản phẩm</h3>
+                      <div className="space-y-1">
+                        {categories.slice(1).map((category) => (
+                          <Link key={category.name} href={category.href}>
+                            <Button variant="ghost" size="sm" className="w-full justify-start text-sm">
+                              {category.name}
+                            </Button>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </SheetContent>
               </Sheet>

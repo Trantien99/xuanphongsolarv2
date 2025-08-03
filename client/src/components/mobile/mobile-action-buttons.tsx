@@ -51,12 +51,12 @@ export function MobileActionButtons() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-[60] md:hidden">
       {/* Overlay background */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
       
       {/* Action buttons container */}
-      <div className="relative bg-white border-t border-gray-200 px-2 py-2 safe-area-pb">
+      <div className="relative bg-white border-t border-gray-200 px-2 py-2 safe-area-pb shadow-lg">
         <div className="flex justify-around items-center max-w-sm mx-auto">
           {actionButtons.map((button, index) => (
             <motion.button
@@ -101,7 +101,7 @@ export function MobileActionButtons() {
 export function FloatingCallButton() {
   return (
     <motion.div
-      className="fixed right-4 bottom-20 z-40 md:hidden"
+      className="fixed right-4 bottom-20 z-[55] md:hidden"
       initial={{ scale: 0 }}
       animate={{ scale: 1 }}
       transition={{ delay: 0.5 }}
