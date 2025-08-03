@@ -20,22 +20,73 @@ import type { Product } from "@shared/schema";
 export default function ProductDetail() {
   const [match, params] = useRoute("/products/:slug");
   const [quantity, setQuantity] = useState(1);
+  const [isSharing, setIsSharing] = useState(false);
   const { addToCart } = useCart();
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
+  const handleShare = async () => {
+    if (isSharing) return;
+    
+    setIsSharing(true);
+    try {
+      const shareData = {
         title: product?.name || 'Product',
         text: product?.description || 'Check out this product',
         url: window.location.href,
-      });
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      toast({
-        title: t('success'),
-        description: 'Link copied to clipboard!',
-      });
+      };
+
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        toast({
+          title: t('success'),
+          description: t('sharedSuccessfully'),
+        });
+      } else {
+        // Fallback: copy to clipboard
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(window.location.href);
+          toast({
+            title: t('success'),
+            description: t('linkCopied'),
+          });
+        } else {
+          // Manual fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = window.location.href;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {
+            document.execCommand('copy');
+            toast({
+              title: t('success'),
+              description: t('linkCopied'),
+            });
+          } catch (err) {
+                          toast({
+                title: 'Error',
+                description: t('shareError'),
+                variant: 'destructive',
+              });
+          } finally {
+            document.body.removeChild(textArea);
+          }
+        }
+      }
+    } catch (error) {
+      // Handle user cancellation or other errors
+      if (error instanceof Error && error.name !== 'AbortError') {
+        // AbortError means user cancelled the share dialog, which is normal
+        toast({
+          title: 'Error',
+          description: t('shareError'),
+          variant: 'destructive',
+        });
+      }
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -139,12 +190,17 @@ export default function ProductDetail() {
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" onClick={handleShare}>
-                        <Share2 className="h-4 w-4" />
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        onClick={handleShare}
+                        disabled={isSharing}
+                      >
+                        <Share2 className={`h-4 w-4 ${isSharing ? 'animate-spin' : ''}`} />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{t('share')}</p>
+                      <p>{isSharing ? t('sharing') : t('share')}</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
