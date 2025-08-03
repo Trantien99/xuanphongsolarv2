@@ -59,6 +59,7 @@ export const news = pgTable("news", {
   author: text("author").notNull(),
   publishedAt: timestamp("published_at").defaultNow(),
   isPublished: boolean("is_published").default(true),
+  isFeatured: boolean("is_featured").default(false),
   tags: jsonb("tags").$type<string[]>().default([]),
   createdAt: timestamp("created_at").defaultNow(),
 });

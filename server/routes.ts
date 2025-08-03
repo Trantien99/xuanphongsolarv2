@@ -102,14 +102,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // News
   app.get("/api/news", async (req, res) => {
     try {
-      const { limit, offset } = req.query;
+      const { limit, offset, featured, withCount } = req.query;
       const filters = {
         limit: limit ? parseInt(limit as string) : undefined,
         offset: offset ? parseInt(offset as string) : undefined,
+        featured: featured === "true" ? true : featured === "false" ? false : undefined,
       };
 
-      const news = await storage.getNews(filters);
-      res.json(news);
+      if (withCount === "true") {
+        const result = await storage.getNewsWithCount(filters);
+        res.json(result);
+      } else {
+        const news = await storage.getNews(filters);
+        res.json(news);
+      }
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch news" });
     }
