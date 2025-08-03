@@ -37,7 +37,7 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
   const isHorizontalSwipe = useRef<boolean | null>(null);
   
   // Hiển thị 4 items per page để có thể fit 2 hàng x 2 items
-  const itemsPerPage = 2;
+  const itemsPerPage = 4;
   const totalPages = Math.ceil(categories.length / itemsPerPage);
   
   // Lấy items cho trang hiện tại
