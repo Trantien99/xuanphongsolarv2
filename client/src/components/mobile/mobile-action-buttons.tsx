@@ -51,7 +51,7 @@ export function MobileActionButtons() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[60] md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-[50] md:hidden">
       {/* Overlay background */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
       
