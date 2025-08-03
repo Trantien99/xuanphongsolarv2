@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
+import { t } from "@/lib/i18n";
 import type { News } from "@shared/schema";
 
 export default function NewsDetail() {
@@ -69,6 +71,10 @@ export default function NewsDetail() {
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: t('success'),
+        description: 'Link copied to clipboard!',
+      });
     }
   };
 
