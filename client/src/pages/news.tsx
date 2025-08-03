@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/ui/pagination";
 import { useTitle } from "@/hooks/use-title";
 import { useState, useRef } from "react";
+import { scrollToElement } from "@/lib/utils";
 import type { News } from "@shared/schema";
 
 interface NewsResponse {
@@ -177,10 +178,13 @@ function AllNewsList() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Scroll to the top of the AllNewsList component
-    if (sectionRef.current) {
-      sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    
+    // Scroll to the top of the AllNewsList component with mobile optimization
+    scrollToElement(sectionRef.current, {
+      headerOffset: 80, // Desktop offset
+      mobileHeaderOffset: 100, // Extra offset for mobile to account for mobile action buttons
+      delay: 150 // Slightly longer delay for mobile
+    });
   };
 
   if (isLoading) {

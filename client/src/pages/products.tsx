@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useRef, useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
-import { Filter, Grid, List } from "lucide-react";
+import { Search, Grid, List, Filter } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,6 +12,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Pagination, ItemsPerPageSelector, PaginationInfo } from "@/components/ui/pagination";
 import { useTitle } from "@/hooks/use-title";
 import type { Product, Category } from "@shared/schema";
+import { FilterSidebar } from "@/components/product/filter-sidebar";
+import { scrollToElement } from "@/lib/utils";
 
 export default function Products() {
   const [location, setLocation] = useLocation();
@@ -175,10 +177,13 @@ export default function Products() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     updateURL({ page });
-    // Scroll to the top of the products section
-    if (productsRef.current) {
-      productsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    
+    // Scroll to the top of the products section with mobile optimization
+    scrollToElement(productsRef.current, {
+      headerOffset: 80, // Desktop offset
+      mobileHeaderOffset: 100, // Extra offset for mobile to account for mobile action buttons
+      delay: 150 // Slightly longer delay for mobile
+    });
   };
 
   const handleItemsPerPageChange = (items: number) => {
