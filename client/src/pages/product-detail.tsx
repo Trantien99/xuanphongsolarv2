@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCart } from "@/components/cart/cart-context";
-import { toast } from "@/hooks/use-toast";
+import { useShare } from "@/hooks/use-share";
 import { ImageGallery } from "@/components/product/image-gallery";
 import { RelatedProducts } from "@/components/product/related-products";
 import { ConsultationPopup } from "@/components/product/consultation-popup";
@@ -20,74 +20,17 @@ import type { Product } from "@shared/schema";
 export default function ProductDetail() {
   const [match, params] = useRoute("/products/:slug");
   const [quantity, setQuantity] = useState(1);
-  const [isSharing, setIsSharing] = useState(false);
   const { addToCart } = useCart();
+  const { share, isSharing, isMobileDevice, hasWebShareSupport } = useShare();
 
   const handleShare = async () => {
-    if (isSharing) return;
+    if (!product) return;
     
-    setIsSharing(true);
-    try {
-      const shareData = {
-        title: product?.name || 'Product',
-        text: product?.description || 'Check out this product',
-        url: window.location.href,
-      };
-
-      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
-        toast({
-          title: t('success'),
-          description: t('sharedSuccessfully'),
-        });
-      } else {
-        // Fallback: copy to clipboard
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(window.location.href);
-          toast({
-            title: t('success'),
-            description: t('linkCopied'),
-          });
-        } else {
-          // Manual fallback for older browsers
-          const textArea = document.createElement('textarea');
-          textArea.value = window.location.href;
-          textArea.style.position = 'fixed';
-          textArea.style.left = '-999999px';
-          textArea.style.top = '-999999px';
-          document.body.appendChild(textArea);
-          textArea.focus();
-          textArea.select();
-          try {
-            document.execCommand('copy');
-            toast({
-              title: t('success'),
-              description: t('linkCopied'),
-            });
-          } catch (err) {
-                          toast({
-                title: 'Error',
-                description: t('shareError'),
-                variant: 'destructive',
-              });
-          } finally {
-            document.body.removeChild(textArea);
-          }
-        }
-      }
-    } catch (error) {
-      // Handle user cancellation or other errors
-      if (error instanceof Error && error.name !== 'AbortError') {
-        // AbortError means user cancelled the share dialog, which is normal
-        toast({
-          title: 'Error',
-          description: t('shareError'),
-          variant: 'destructive',
-        });
-      }
-    } finally {
-      setIsSharing(false);
-    }
+    await share({
+      title: product.name,
+      text: product.description,
+      url: window.location.href,
+    });
   };
 
   const { data: product, isLoading } = useQuery<Product>({
@@ -192,15 +135,26 @@ export default function ProductDetail() {
                     <TooltipTrigger asChild>
                       <Button 
                         variant="outline" 
-                        size="icon" 
+                        size={isMobileDevice ? "sm" : "icon"}
                         onClick={handleShare}
                         disabled={isSharing}
+                        className={isMobileDevice ? "flex items-center space-x-2" : ""}
                       >
                         <Share2 className={`h-4 w-4 ${isSharing ? 'animate-spin' : ''}`} />
+                        {isMobileDevice && (
+                          <span className="text-sm">
+                            {isSharing ? t('sharing') : (hasWebShareSupport ? 'Chia sẻ' : 'Sao chép')}
+                          </span>
+                        )}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{isSharing ? t('sharing') : t('share')}</p>
+                      <p>
+                        {isSharing ? t('sharing') : 
+                         (hasWebShareSupport && isMobileDevice ? 
+                          'Nhấn để hiển thị các ứng dụng có thể chia sẻ' : 
+                          t('share'))}
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
