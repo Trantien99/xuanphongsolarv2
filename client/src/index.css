@@ -19,6 +19,15 @@
   .safe-area-pr {
     padding-right: env(safe-area-inset-right);
   }
+
+  /* Mobile menu specific utilities */
+  .mobile-menu-height {
+    max-height: calc(100vh - 5rem);
+  }
+  
+  .mobile-safe-bottom {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
 }
 
 :root {
