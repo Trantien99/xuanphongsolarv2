@@ -174,6 +174,11 @@ function AllNewsList() {
 
   const totalPages = newsResponse ? Math.ceil(newsResponse.total / itemsPerPage) : 0;
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   if (isLoading) {
     return (
       <section>
@@ -223,7 +228,7 @@ function AllNewsList() {
           currentPage={currentPage}
           totalPages={totalPages}
           hasMore={newsResponse.hasMore}
-          onPageChange={setCurrentPage}
+          onPageChange={handlePageChange}
           className="mt-12"
         />
       )}
