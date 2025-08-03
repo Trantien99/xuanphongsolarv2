@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCart } from "@/components/cart/cart-context";
 import { toast } from "@/hooks/use-toast";
 import { ImageGallery } from "@/components/product/image-gallery";
@@ -20,6 +21,23 @@ export default function ProductDetail() {
   const [match, params] = useRoute("/products/:slug");
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: product?.name || 'Product',
+        text: product?.description || 'Check out this product',
+        url: window.location.href,
+      });
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: t('success'),
+        description: 'Link copied to clipboard!',
+      });
+    }
+  };
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: ["/api/products/slug", params?.slug],
@@ -79,7 +97,8 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <TooltipProvider>
+      <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
@@ -108,12 +127,26 @@ export default function ProductDetail() {
               <div className="flex items-center justify-between mb-2">
                 <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="icon">
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <Heart className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{t('favorite')}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon" onClick={handleShare}>
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{t('share')}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
               
@@ -267,6 +300,7 @@ export default function ProductDetail() {
 
       {/* Consultation Popup */}
       <ConsultationPopup />
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }
