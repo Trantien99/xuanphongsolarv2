@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Pagination, ItemsPerPageSelector, PaginationInfo } from "@/components/ui/pagination";
 import { useTitle } from "@/hooks/use-title";
 import type { Product, Category } from "@shared/schema";
 
@@ -19,6 +20,8 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(24);
   
   // Set dynamic title
   useTitle("pageTitle.products");
@@ -30,25 +33,36 @@ export default function Products() {
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get("category") || "";
     const search = urlParams.get("search") || "";
+    const page = parseInt(urlParams.get("page") || "1");
+    const perPage = parseInt(urlParams.get("per_page") || "24");
     
     setSelectedCategory(category);
     setSearchQuery(search);
+    setCurrentPage(page);
+    setItemsPerPage(perPage);
   }, [location]);
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
   });
 
-  const { data: products = [], isLoading } = useQuery<Product[]>({
-    queryKey: ["/api/products", selectedCategory, searchQuery],
+  const { data: productsData, isLoading } = useQuery<{ products: Product[]; total: number }>({
+    queryKey: ["/api/products", selectedCategory, searchQuery, currentPage, itemsPerPage],
     queryFn: () => {
       const params = new URLSearchParams();
       if (selectedCategory) params.append("categoryId", getCategoryId(selectedCategory));
       if (searchQuery) params.append("search", searchQuery);
+      params.append("limit", itemsPerPage.toString());
+      params.append("offset", ((currentPage - 1) * itemsPerPage).toString());
+      params.append("withCount", "true");
       
       return fetch(`/api/products?${params.toString()}`).then(res => res.json());
     },
   });
+
+  const products = productsData?.products || [];
+  const totalProducts = productsData?.total || 0;
+  const totalPages = Math.ceil(totalProducts / itemsPerPage);
 
   const getCategoryId = (slug: string) => {
     const category = categories.find(c => c.slug === slug);
@@ -60,7 +74,8 @@ export default function Products() {
     return category?.name || "All Products";
   };
 
-  // Filter products based on local filters
+  // Note: Filtering and sorting are now handled server-side
+  // Client-side filters like brand and price range are applied to the already paginated results
   const filteredProducts = products.filter(product => {
     if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) {
       return false;
@@ -85,7 +100,7 @@ export default function Products() {
     return true;
   });
 
-  // Sort products
+  // Sort the filtered products (client-side for additional sorting)
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case "price-low":
@@ -115,6 +130,66 @@ export default function Products() {
     setSelectedBrands([]);
     setPriceRange("");
   };
+
+  const updateURL = (updates: { page?: number; perPage?: number; category?: string; search?: string }) => {
+    const params = new URLSearchParams(window.location.search);
+    
+    if (updates.page !== undefined) {
+      if (updates.page === 1) {
+        params.delete("page");
+      } else {
+        params.set("page", updates.page.toString());
+      }
+    }
+    
+    if (updates.perPage !== undefined) {
+      if (updates.perPage === 24) {
+        params.delete("per_page");
+      } else {
+        params.set("per_page", updates.perPage.toString());
+      }
+    }
+    
+    if (updates.category !== undefined) {
+      if (updates.category) {
+        params.set("category", updates.category);
+      } else {
+        params.delete("category");
+      }
+    }
+    
+    if (updates.search !== undefined) {
+      if (updates.search) {
+        params.set("search", updates.search);
+      } else {
+        params.delete("search");
+      }
+    }
+    
+    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    window.history.pushState({}, '', newUrl);
+    setLocation(newUrl);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    updateURL({ page });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemsPerPageChange = (items: number) => {
+    setItemsPerPage(items);
+    setCurrentPage(1);
+    updateURL({ page: 1, perPage: items });
+  };
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    if (currentPage > 1) {
+      setCurrentPage(1);
+      updateURL({ page: 1 });
+    }
+  }, [selectedCategory, searchQuery, selectedBrands, priceRange]);
 
   const FilterSidebar = () => (
     <div className="space-y-6">
@@ -200,9 +275,11 @@ export default function Products() {
             {/* Toolbar */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                <span className="text-sm sm:text-base text-gray-600">
-                  Showing {sortedProducts.length} of {products.length} products
-                </span>
+                <PaginationInfo
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={totalProducts}
+                />
                 
                 {/* Mobile Filter Button */}
                 <Sheet>
@@ -224,6 +301,11 @@ export default function Products() {
               </div>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                <ItemsPerPageSelector
+                  itemsPerPage={itemsPerPage}
+                  onItemsPerPageChange={handleItemsPerPageChange}
+                />
+
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-full sm:w-48">
                     <SelectValue placeholder="Sort by" />
@@ -262,21 +344,13 @@ export default function Products() {
             <ProductGrid products={sortedProducts} isLoading={isLoading} />
 
             {/* Pagination */}
-            {sortedProducts.length > 24 && (
-              <div className="flex justify-center mt-8 sm:mt-12">
-                <nav className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" disabled>
-                    Previous
-                  </Button>
-                  <Button size="sm">1</Button>
-                  <Button variant="outline" size="sm">2</Button>
-                  <Button variant="outline" size="sm">3</Button>
-                  <span className="px-2 text-gray-500">...</span>
-                  <Button variant="outline" size="sm">10</Button>
-                  <Button variant="outline" size="sm">
-                    Next
-                  </Button>
-                </nav>
+            {totalPages > 1 && (
+              <div className="mt-8 sm:mt-12">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </div>
             )}
           </div>

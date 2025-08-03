@@ -1,117 +1,195 @@
-import * as React from "react"
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import React from "react";
+import { Button } from "./button";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { ButtonProps, buttonVariants } from "@/components/ui/button"
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  showFirstLast?: boolean;
+  maxVisiblePages?: number;
+}
 
-const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
-  <nav
-    role="navigation"
-    aria-label="pagination"
-    className={cn("mx-auto flex w-full justify-center", className)}
-    {...props}
-  />
-)
-Pagination.displayName = "Pagination"
+export function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  showFirstLast = true,
+  maxVisiblePages = 7
+}: PaginationProps) {
+  if (totalPages <= 1) return null;
 
-const PaginationContent = React.forwardRef<
-  HTMLUListElement,
-  React.ComponentProps<"ul">
->(({ className, ...props }, ref) => (
-  <ul
-    ref={ref}
-    className={cn("flex flex-row items-center gap-1", className)}
-    {...props}
-  />
-))
-PaginationContent.displayName = "PaginationContent"
+  const getVisiblePages = () => {
+    const pages: (number | string)[] = [];
+    
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if total is less than max
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      const startPage = Math.max(2, currentPage - Math.floor((maxVisiblePages - 4) / 2));
+      const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 4);
+      
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pages.push('...');
+      }
+      
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
+      }
+      
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pages.push('...');
+      }
+      
+      // Always show last page
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
+    }
+    
+    return pages;
+  };
 
-const PaginationItem = React.forwardRef<
-  HTMLLIElement,
-  React.ComponentProps<"li">
->(({ className, ...props }, ref) => (
-  <li ref={ref} className={cn("", className)} {...props} />
-))
-PaginationItem.displayName = "PaginationItem"
+  const visiblePages = getVisiblePages();
 
-type PaginationLinkProps = {
-  isActive?: boolean
-} & Pick<ButtonProps, "size"> &
-  React.ComponentProps<"a">
+  return (
+    <nav className="flex items-center justify-center space-x-1" aria-label="Pagination">
+      {/* First page button */}
+      {showFirstLast && currentPage > 1 && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(1)}
+          className="hidden sm:flex"
+        >
+          First
+        </Button>
+      )}
 
-const PaginationLink = ({
-  className,
-  isActive,
-  size = "icon",
-  ...props
-}: PaginationLinkProps) => (
-  <a
-    aria-current={isActive ? "page" : undefined}
-    className={cn(
-      buttonVariants({
-        variant: isActive ? "outline" : "ghost",
-        size,
-      }),
-      className
-    )}
-    {...props}
-  />
-)
-PaginationLink.displayName = "PaginationLink"
+      {/* Previous button */}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage <= 1}
+        className="flex items-center"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        <span className="hidden sm:inline ml-1">Previous</span>
+      </Button>
 
-const PaginationPrevious = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink
-    aria-label="Go to previous page"
-    size="default"
-    className={cn("gap-1 pl-2.5", className)}
-    {...props}
-  >
-    <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
-  </PaginationLink>
-)
-PaginationPrevious.displayName = "PaginationPrevious"
+      {/* Page numbers */}
+      <div className="flex items-center space-x-1">
+        {visiblePages.map((page, index) => {
+          if (page === '...') {
+            return (
+              <div key={`ellipsis-${index}`} className="px-2">
+                <MoreHorizontal className="h-4 w-4 text-gray-400" />
+              </div>
+            );
+          }
 
-const PaginationNext = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink
-    aria-label="Go to next page"
-    size="default"
-    className={cn("gap-1 pr-2.5", className)}
-    {...props}
-  >
-    <span>Next</span>
-    <ChevronRight className="h-4 w-4" />
-  </PaginationLink>
-)
-PaginationNext.displayName = "PaginationNext"
+          const pageNumber = page as number;
+          return (
+            <Button
+              key={pageNumber}
+              variant={currentPage === pageNumber ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange(pageNumber)}
+              className="min-w-[40px]"
+            >
+              {pageNumber}
+            </Button>
+          );
+        })}
+      </div>
 
-const PaginationEllipsis = ({
-  className,
-  ...props
-}: React.ComponentProps<"span">) => (
-  <span
-    aria-hidden
-    className={cn("flex h-9 w-9 items-center justify-center", className)}
-    {...props}
-  >
-    <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More pages</span>
-  </span>
-)
-PaginationEllipsis.displayName = "PaginationEllipsis"
+      {/* Next button */}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage >= totalPages}
+        className="flex items-center"
+      >
+        <span className="hidden sm:inline mr-1">Next</span>
+        <ChevronRight className="h-4 w-4" />
+      </Button>
 
-export {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+      {/* Last page button */}
+      {showFirstLast && currentPage < totalPages && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(totalPages)}
+          className="hidden sm:flex"
+        >
+          Last
+        </Button>
+      )}
+    </nav>
+  );
+}
+
+// Items per page selector component
+interface ItemsPerPageSelectorProps {
+  itemsPerPage: number;
+  onItemsPerPageChange: (items: number) => void;
+  options?: number[];
+}
+
+export function ItemsPerPageSelector({
+  itemsPerPage,
+  onItemsPerPageChange,
+  options = [12, 24, 48, 96]
+}: ItemsPerPageSelectorProps) {
+  return (
+    <div className="flex items-center space-x-2 text-sm text-gray-600">
+      <span>Show:</span>
+      <select
+        value={itemsPerPage}
+        onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+        className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      <span>per page</span>
+    </div>
+  );
+}
+
+// Pagination info component
+interface PaginationInfoProps {
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
+}
+
+export function PaginationInfo({
+  currentPage,
+  itemsPerPage,
+  totalItems
+}: PaginationInfoProps) {
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+  return (
+    <div className="text-sm text-gray-600">
+      Showing {startItem}-{endItem} of {totalItems} results
+    </div>
+  );
 }
