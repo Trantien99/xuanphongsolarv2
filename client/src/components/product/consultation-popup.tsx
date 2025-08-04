@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,17 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { t } from "@/lib/i18n";
+
+const POPUP_OPEN_EVENT = 'popup-open';
+const POPUP_CLOSE_EVENT = 'popup-close';
+
+export const openPopup = () => {
+  window.dispatchEvent(new CustomEvent(POPUP_OPEN_EVENT));
+};
+
+export const closePopup = () => {
+  window.dispatchEvent(new CustomEvent(POPUP_CLOSE_EVENT));
+};
 
 interface ConsultationFormData {
   category: string;
@@ -50,6 +61,20 @@ export function ConsultationPopup() {
     content: "",
   });
 
+  useEffect(() => {
+    const handleOpen = () => {
+      setIsOpen(true);
+    };
+    const handleClose = () => {
+      setIsOpen(false);
+    };
+    window.addEventListener(POPUP_OPEN_EVENT, handleOpen);
+    window.addEventListener(POPUP_CLOSE_EVENT, handleClose);
+    return () => {
+      window.removeEventListener(POPUP_OPEN_EVENT, handleOpen);
+      window.removeEventListener(POPUP_CLOSE_EVENT, handleClose);
+    }
+  }, []);
   const handleInputChange = (field: keyof ConsultationFormData, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -128,7 +153,7 @@ export function ConsultationPopup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -161,7 +186,7 @@ export function ConsultationPopup() {
         email: "",
         content: "",
       });
-      
+
       setIsOpen(false);
     } catch (error) {
       toast({
@@ -175,120 +200,125 @@ export function ConsultationPopup() {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 md:h-auto md:w-auto md:rounded-md md:px-4 md:py-2 pulse-subtle">
-          <MessageCircle className="h-6 w-6 md:mr-2" />
-          <span className="hidden md:inline">{t('consultationButton')}</span>
-        </Button>
-      </DialogTrigger>
-      
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center">
-            {t('consultationTitle')}
-          </DialogTitle>
-          <p className="text-sm text-gray-600 text-center">
-            {t('consultationSubtitle')}
-          </p>
-        </DialogHeader>
+    <>
+      {/* <Button className="fixed bottom-[60px] right-6 h-14 w-14 rounded-full shadow-lg z-50 md:h-auto md:w-auto md:rounded-md md:px-4 md:py-2" onClick={() => setIsOpen(true)}>
+        <MessageCircle className="h-6 w-6" />
+      </Button> */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
+          <Button className="fixed bottom-24 right-4 h-14 w-14 rounded-full shadow-lg z-50 md:h-auto md:w-auto md:rounded-md md:px-4 md:py-2 pulse-subtle">
+            <MessageCircle className="h-6 w-6 md:mr-2" />
+            <span className="hidden md:inline">{t('consultationButton')}</span>
+          </Button>
+        </DialogTrigger>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="category">{t('consultationCategory')} *</Label>
-            <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn danh mục..." />
-              </SelectTrigger>
-              <SelectContent>
-                {consultationCategories.map((category) => (
-                  <SelectItem key={category.value} value={category.value}>
-                    {category.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-center">
+              {t('consultationTitle')}
+            </DialogTitle>
+            <p className="text-sm text-gray-600 text-center">
+              {t('consultationSubtitle')}
+            </p>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="category">{t('consultationCategory')} *</Label>
+              <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn danh mục..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {consultationCategories.map((category) => (
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="name">{t('consultationName')} *</Label>
+              <Input
+                id="name"
+                placeholder={t('consultationName')}
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">{t('consultationPhone')} *</Label>
+              <Input
+                id="phone"
+                placeholder={t('consultationPhone')}
+                value={formData.phone}
+                onChange={(e) => handleInputChange("phone", e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('consultationEmail')} *</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder={t('consultationEmail')}
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="content">{t('consultationContent')} *</Label>
+              <Textarea
+                id="content"
+                placeholder={t('consultationPlaceholder')}
+                rows={4}
+                value={formData.content}
+                onChange={(e) => handleInputChange("content", e.target.value)}
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => setIsOpen(false)}
+              >
+                {t('cancel')}
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    {t('sending')}
+                  </div>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    {t('sendRequest')}
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+
+          <div className="text-xs text-gray-500 text-center pt-2">
+            {t('privacyText')}{" "}
+            <span className="text-primary cursor-pointer hover:underline">
+              {t('privacyPolicy')}
+            </span>{" "}
+            của chúng tôi
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="name">{t('consultationName')} *</Label>
-            <Input
-              id="name"
-              placeholder={t('consultationName')}
-              value={formData.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">{t('consultationPhone')} *</Label>
-            <Input
-              id="phone"
-              placeholder={t('consultationPhone')}
-              value={formData.phone}
-              onChange={(e) => handleInputChange("phone", e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('consultationEmail')} *</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder={t('consultationEmail')}
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="content">{t('consultationContent')} *</Label>
-            <Textarea
-              id="content"
-              placeholder={t('consultationPlaceholder')}
-              rows={4}
-              value={formData.content}
-              onChange={(e) => handleInputChange("content", e.target.value)}
-            />
-          </div>
-
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => setIsOpen(false)}
-            >
-              {t('cancel')}
-            </Button>
-            <Button
-              type="submit"
-              className="flex-1"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  {t('sending')}
-                </div>
-              ) : (
-                <>
-                  <Send className="h-4 w-4 mr-2" />
-                  {t('sendRequest')}
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
-
-        <div className="text-xs text-gray-500 text-center pt-2">
-          {t('privacyText')}{" "}
-          <span className="text-primary cursor-pointer hover:underline">
-            {t('privacyPolicy')}
-          </span>{" "}
-          của chúng tôi
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

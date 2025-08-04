@@ -9,6 +9,7 @@ import { useTitle } from "@/hooks/use-title";
 import { useState, useRef } from "react";
 import { scrollToElement } from "@/lib/utils";
 import type { News } from "@shared/schema";
+import { t } from "@/lib/i18n";
 
 interface NewsResponse {
   news: News[];
@@ -253,10 +254,9 @@ function NewsList() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Industry News</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t("home.industryNews")}</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Stay updated with the latest industry trends, product launches, and 
-            professional insights from the industrial equipment world.
+            {t("home.industryNewsDesc")}
           </p>
         </div>
 

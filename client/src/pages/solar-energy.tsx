@@ -10,6 +10,7 @@ import { useCart } from "@/components/cart/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import { useTitle } from "@/hooks/use-title";
 import { t } from "@/lib/i18n";
+import { closePopup, openPopup } from "@/components/product/consultation-popup";
 
 const getFeatures = () => [
   {
@@ -116,7 +117,7 @@ export default function SolarEnergyLanding() {
               <Button size="lg" className="bg-white text-yellow-600 hover:bg-gray-100">
                 Xem Sản Phẩm
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-yellow-600">
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-yellow-600" onClick={() => openPopup()}>
                 Tư Vấn Miễn Phí
               </Button>
             </div>
@@ -310,7 +311,7 @@ export default function SolarEnergyLanding() {
             <Button size="lg" className="bg-white text-yellow-600 hover:bg-gray-100">
               Gọi Ngay: 1900-SOLAR
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-yellow-600">
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-yellow-600" onClick={() => openPopup()}>
               Đăng Ký Tư Vấn
             </Button>
           </div>

@@ -4,11 +4,12 @@ import { Camera, ArrowRight, Wrench, HardHat, ServerCog, Zap, Package, Gavel } f
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProductGrid } from "@/components/product/product-grid";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { VisualSearchModal } from "@/components/search/visual-search-modal";
 import { useTranslation } from "@/lib/i18n";
 import { useTitle, useMetaDescription } from "@/hooks/use-title";
-import type { Product, Category } from "@shared/schema";
+import { useAppContext } from "@/App";
+import { Category } from "@/model/category.model";
 
 const categoryIcons = {
   "Công cụ điện": Wrench,
@@ -22,14 +23,20 @@ const categoryIcons = {
 export default function Home() {
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
   const { t } = useTranslation();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const appContext = useAppContext();
+
+  useEffect(() => {
+    setCategories(appContext?.data?.categories || []);
+  }, [appContext])
   
   // Set dynamic title and meta description
   useTitle("meta.title");
   useMetaDescription("meta.description");
 
-  const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ["/api/categories"],
-  });
+  // const { data: categories = [] } = useQuery<Category[]>({
+  //   queryKey: ["/api/categories"],
+  // });
 
   const { data: featuredProducts = [], isLoading: isLoadingProducts } = useQuery<Product[]>({
     queryKey: ["/api/products"],
@@ -40,6 +47,9 @@ export default function Home() {
     queryKey: ["/api/news"],
     queryFn: () => fetch("/api/news?limit=2").then(res => res.json()),
   });
+
+  const sectionProductRef = useRef<HTMLDivElement | null>(null);
+  const sectionNewsRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,20 +68,21 @@ export default function Home() {
                 <Button
                   size="lg"
                   className="bg-white text-primary hover:bg-gray-100"
-                  onClick={() => setIsVisualSearchOpen(true)}
+                  onClick={() => sectionProductRef.current?.scrollIntoView({ behavior: "smooth" })}
                 >
-                  <Camera className="h-5 w-5 mr-2" />
-                  {t('home.tryVisualSearch')}
+                  {/* <Camera className="h-5 w-5 mr-2" /> */}
+                  {t('home.featuredProducts')}
                 </Button>
-                <Link href="/products">
+                {/* <Link href="/products"> */}
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-primary"
+                    className="border-white text-primary hover:bg-white hover:text-primary"
+                    onClick={() => sectionNewsRef.current?.scrollIntoView({ behavior: "smooth" })}
                   >
-                    {t('home.browseCatalog')}
+                    {t('home.featuredNews')}
                   </Button>
-                </Link>
+                {/* </Link> */}
               </div>
             </div>
             <div className="hidden lg:block">
@@ -97,20 +108,20 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {categories.map((category) => {
-              const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || Package;
+              const IconComponent = categoryIcons[category.label as keyof typeof categoryIcons] || Package;
               
               return (
-                <Link key={category.id} href={`/products?category=${category.slug}`}>
-                  <Card className="cursor-pointer hover:shadow-lg transition-all group hover:bg-primary/5">
-                    <CardContent className="p-6 text-center">
+                <Link key={category.id} href={`/products?category=${category.key}`}>
+                  <Card className="cursor-pointer hover:shadow-lg transition-all group hover:bg-primary/5 h-full">
+                    <CardContent className="p-6 text-center h-full">
                       <div className="text-3xl text-primary mb-3 group-hover:text-primary/80">
                         <IconComponent className="h-8 w-8 mx-auto" />
                       </div>
                       <h3 className="font-semibold text-gray-900 mb-1">
-                        {category.name}
+                        {category.label}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {category.itemCount} {t('home.items')}
+                        {category.itemCount || 0} {t('home.items')}
                       </p>
                     </CardContent>
                   </Card>
@@ -122,7 +133,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-gray-50" ref={sectionProductRef}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
             <div>
@@ -145,11 +156,11 @@ export default function Home() {
 
       {/* News Section */}
       {news.length > 0 && (
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-white" ref={sectionNewsRef}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center mb-12">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('home.industryNews')}</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('home.featuredNews')}</h2>
                 <p className="text-lg text-gray-600">
                   {t('home.industryNewsDesc')}
                 </p>

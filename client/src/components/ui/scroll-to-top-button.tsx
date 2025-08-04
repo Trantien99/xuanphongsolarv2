@@ -40,15 +40,16 @@ export function ScrollToTopButton({
       onClick={handleClick}
       size="sm"
       className={`
-        fixed bottom-20 right-4 z-50 rounded-full p-3 shadow-lg
+        fixed bottom-40 right-4 z-50 rounded-full p-3 shadow-lg
         bg-primary hover:bg-primary/90 text-primary-foreground
         transition-all duration-300 ease-in-out
-        md:bottom-4
+        md:bottom-50
+        h-10 w-10
         ${className}
       `}
       aria-label="Cuộn lên đầu trang"
     >
-      <ArrowUp className="h-5 w-5" />
+      <ArrowUp className="h-10 w-5" />
     </Button>
   );
 }

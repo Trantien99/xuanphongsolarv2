@@ -5,6 +5,7 @@ export interface Translations {
 export const translations: Translations = {
 
   vi: {
+    appName: "Xuan Phong Solar",
     // Navigation
     nav: {
       home: "Trang chủ",
@@ -29,15 +30,16 @@ export const translations: Translations = {
 
     // Home page
     home: {
-      heroTitle: "Tìm sản phẩm nhanh hơn với tìm kiếm hình ảnh",
-      heroSubtitle: "Tải lên một bức ảnh hoặc bản phác thảo về những gì bạn cần. Tìm kiếm hình ảnh được hỗ trợ bởi AI của chúng tôi tìm ra các kết quả khớp chính xác từ hàng nghìn sản phẩm công nghiệp.",
-      tryVisualSearch: "Thử tìm kiếm hình ảnh",
-      browseCatalog: "Duyệt danh mục",
-      shopByCategory: "Mua sắm theo danh mục",
+      heroTitle: "Giải pháp năng lượng bền vững cho tương lai",
+      heroSubtitle: "Chúng tôi là đơn vị tiên phong trong lĩnh vực cung cấp hệ thống năng lượng mặt trời uy tín, hiệu quả và tiết kiệm tại Việt Nam. Với sứ mệnh mang lại nguồn năng lượng xanh cho mọi công trình, Xuân Phong Solar còn cung cấp các sản phẩm và dịch vụ chất lượng cao đi kèm như thang máy nhà phố, thiết bị chiếu sáng tiết kiệm điện, và nhiều giải pháp công nghệ thông minh khác...",
+      tryVisualSearch: "Sản phẩm nổi bật",
+      browseCatalog: "Tin tức ngành",
+      shopByCategory: "Khám phá theo danh mục",
       shopByCategoryDesc: "Tìm chính xác những gì bạn cần từ các danh mục sản phẩm toàn diện của chúng tôi",
       featuredProducts: "Sản phẩm nổi bật",
       featuredProductsDesc: "Sản phẩm được đánh giá cao nhất được tin tưởng bởi các chuyên gia ngành",
       viewAllProducts: "Xem tất cả sản phẩm",
+      featuredNews: "Tin tức nổi bật",
       industryNews: "Tin tức ngành",
       industryNewsDesc: "Cập nhật những xu hướng mới nhất trong ngành và cập nhật sản phẩm",
       viewAllNews: "Xem tất cả tin tức",
@@ -182,6 +184,7 @@ export const translations: Translations = {
     sort: "Sắp xếp",
     viewAll: "Xem tất cả",
     backToProducts: "Quay lại sản phẩm",
+    allProducts: "Tất cả sản phẩm",
 
     // Navigation
     navigation: {
@@ -220,10 +223,6 @@ export const translations: Translations = {
     writeReview: "Viết đánh giá",
     featured: "Nổi bật",
     share: "Chia sẻ",
-    sharing: "Đang chia sẻ...",
-    sharedSuccessfully: "Chia sẻ thành công!",
-    linkCopied: "Đã sao chép liên kết!",
-    shareError: "Không thể chia sẻ. Vui lòng thử lại.",
     favorite: "Yêu thích",
 
     // Image Gallery

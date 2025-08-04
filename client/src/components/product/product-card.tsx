@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/components/cart/cart-context";
 import type { Product } from "@shared/schema";
+import { t } from "@/lib/i18n";
 
 interface ProductCardProps {
   product: Product;
@@ -54,7 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </h3>
             {product.isFeatured && (
               <Badge variant="secondary" className="ml-2 shrink-0">
-                Featured
+                {t("featured")}
               </Badge>
             )}
           </div>

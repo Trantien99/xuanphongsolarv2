@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Facebook, Twitter, Linkedin } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Youtube } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
 export function Footer() {
@@ -10,7 +10,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">IndustrialSource</h3>
+            <h3 className="text-xl font-bold mb-4">{t('appName')}</h3>
             <p className="text-gray-400 mb-4">
               {t('footer.companyDesc')}
             </p>
@@ -19,11 +19,14 @@ export function Footer() {
                 <Facebook className="h-5 w-5" />
               </a>
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Youtube className="h-5 w-5" />
+              </a>
+              {/* <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Twitter className="h-5 w-5" />
               </a>
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Linkedin className="h-5 w-5" />
-              </a>
+              </a> */}
             </div>
           </div>
 

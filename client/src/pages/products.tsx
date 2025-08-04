@@ -14,6 +14,7 @@ import { useTitle } from "@/hooks/use-title";
 import type { Product, Category } from "@shared/schema";
 import { FilterSidebar } from "@/components/product/filter-sidebar";
 import { scrollToElement } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 
 export default function Products() {
   const [location, setLocation] = useLocation();
@@ -25,6 +26,7 @@ export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(24);
   const productsRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   
   // Set dynamic title
   useTitle("pageTitle.products");
@@ -74,7 +76,7 @@ export default function Products() {
 
   const getCategoryName = (slug: string) => {
     const category = categories.find(c => c.slug === slug);
-    return category?.name || "All Products";
+    return category?.name || t("allProducts");
   };
 
   // Note: Filtering and sorting are now handled server-side

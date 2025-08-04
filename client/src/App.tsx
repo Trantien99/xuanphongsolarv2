@@ -18,14 +18,33 @@ import ProductDetail from "@/pages/product-detail";
 import Cart from "@/pages/cart";
 import Checkout from "@/pages/checkout";
 import News from "@/pages/news";
-import NewsDetail from "@/pages/news-detail";  
+import NewsDetail from "@/pages/news-detail";
 import SolarEnergyLanding from "@/pages/solar-energy";
 import NotFound from "@/pages/not-found";
+import { ConsultationPopup } from "./components/product/consultation-popup";
+import { create } from 'zustand';
+import { c } from "node_modules/vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
+import { useEffect } from "react";
+import { CategoryService } from "./service/category.service";
+
+interface AppContextModel {
+  categories: any[]
+};
+
+interface AppContextStore {
+  data: AppContextModel | null;
+  setData: (data: AppContextModel) => void;
+}
+
+export const useAppContext = create<AppContextStore>((set) => ({
+  data: null,
+  setData: (data) => set({ data }),
+}));
 
 function Router() {
   // Auto scroll to top when route changes
   useScrollToTop('instant');
-  
+
   return (
     <Switch>
       <Route path="/" component={Home} />
@@ -42,25 +61,40 @@ function Router() {
 }
 
 function App() {
+  const { data } = useAppContext();
+  useEffect(() => {
+    CategoryService.findByCondition({ filter: { status: '=ACTIVE' }, page: 1, pageSize: 100 }).then(res => {
+      console.log('CategoryService.findByCondition', res);
+      useAppContext.setState({ data: { categories: [...(res?.data || [])].map(c => ({ ...c, href: `/products?category=${c.key}` })) } });
+    });
+    return () => {
+
+    }
+  }, [])
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <CartProvider>
-          <div className="min-h-screen bg-gray-50">
-            <Header />
-            <main>
-              <Router />
-            </main>
-            <Footer />
-            
-            {/* Mobile Action Buttons - Only visible on mobile */}
-            <MobileActionButtons />
-            {/* <MobileCartButton /> */}
-            {/* <QuickCallButton /> */}
-            
-            {/* Scroll to top button */}
-            <ScrollToTopButton />
-          </div>
+          {
+            data &&
+            <div className="min-h-screen bg-gray-50">
+              <Header />
+              <main>
+                <Router />
+              </main>
+              <Footer />
+
+              {/* Mobile Action Buttons - Only visible on mobile */}
+              <MobileActionButtons />
+              {/* <MobileCartButton /> */}
+              {/* <QuickCallButton /> */}
+
+              {/* Scroll to top button */}
+              <ScrollToTopButton />
+              {/* Consultation Popup */}
+              <ConsultationPopup />
+            </div>
+          }
           <Toaster />
         </CartProvider>
       </TooltipProvider>

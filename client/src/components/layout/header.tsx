@@ -10,6 +10,8 @@ import { CartSidebar } from "@/components/cart/cart-sidebar";
 import { VisualSearchModal } from "@/components/search/visual-search-modal";
 import { AutocompleteSearch } from "@/components/search/autocomplete-search";
 import { useTranslation } from "@/lib/i18n";
+import { useAppContext } from "@/App";
+import { Category } from "@/model/category.model";
 
 const categories = [
   { name: "Tất cả danh mục", href: "/products", highlight: false },
@@ -21,12 +23,6 @@ const categories = [
   { name: "Vật liệu", href: "/products?category=materials", highlight: false },
 ];
 
-interface Category {
-  name: string;
-  href: string;
-  highlight: boolean;
-}
-
 function MobileCategoryMenu({ categories }: { categories: Category[] }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [showMore, setShowMore] = useState(false);
@@ -35,11 +31,12 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
   const touchStartY = useRef<number>(0);
   const touchEndY = useRef<number>(0);
   const isHorizontalSwipe = useRef<boolean | null>(null);
-  
+
+
   // Hiển thị 4 items per page để có thể fit 2 hàng x 2 items
   const itemsPerPage = 4;
   const totalPages = Math.ceil(categories.length / itemsPerPage);
-  
+
   // Lấy items cho trang hiện tại
   const getCurrentPageItems = () => {
     const startIndex = currentPage * itemsPerPage;
@@ -56,19 +53,19 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!touchStartX.current || !touchStartY.current) return;
-    
+
     touchEndX.current = e.targetTouches[0].clientX;
     touchEndY.current = e.targetTouches[0].clientY;
-    
+
     // Calculate movement distances
     const deltaX = Math.abs(touchEndX.current - touchStartX.current);
     const deltaY = Math.abs(touchEndY.current - touchStartY.current);
-    
+
     // Determine swipe direction if not already determined
     if (isHorizontalSwipe.current === null && (deltaX > 10 || deltaY > 10)) {
       isHorizontalSwipe.current = deltaX > deltaY;
     }
-    
+
     // Only prevent default for horizontal swipes (category navigation)
     // Allow vertical swipes (page scrolling) to work normally
     if (isHorizontalSwipe.current && totalPages > 1) {
@@ -87,7 +84,7 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
       isHorizontalSwipe.current = null;
       return;
     }
-    
+
     // Only handle horizontal swipes for category navigation
     if (isHorizontalSwipe.current && totalPages > 1) {
       const distance = touchStartX.current - touchEndX.current;
@@ -101,7 +98,7 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
         setCurrentPage(currentPage - 1);
       }
     }
-    
+
     // Reset touch positions
     touchStartX.current = 0;
     touchEndX.current = 0;
@@ -124,14 +121,14 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
 
   return (
     <div className="relative">
-      <div 
+      <div
         className="overflow-hidden"
         style={{ touchAction: 'pan-y' }} // Allow vertical panning (scrolling) but restrict horizontal
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div 
+        <div
           className="flex transition-transform duration-300 ease-in-out"
           style={{ transform: `translateX(-${currentPage * 100}%)` }}
         >
@@ -141,13 +138,12 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
                 {categories
                   .slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage)
                   .map((category: Category) => (
-                    <Link key={category.name} href={category.href}>
-                      <div className={`p-2 rounded-lg border text-center text-xs font-medium transition-colors ${
-                        category.highlight 
-                          ? "bg-yellow-50 border-yellow-200 text-yellow-700" 
-                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                      }`}>
-                        {category.name}
+                    <Link key={category.label} href={category.href}>
+                      <div className={`p-2 rounded-lg border text-center text-xs font-medium transition-colors ${category.key === ''
+                        ? "bg-yellow-50 border-yellow-200 text-yellow-700"
+                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                        }`}>
+                        {category.label}
                       </div>
                     </Link>
                   ))}
@@ -156,21 +152,20 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
           ))}
         </div>
       </div>
-      
+
       {/* Navigation dots and next button */}
       <div className="flex items-center justify-between mt-2">
         <div className="flex space-x-1">
           {Array.from({ length: totalPages }, (_, index) => (
             <button
               key={index}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentPage ? "bg-primary" : "bg-gray-300"
-              }`}
+              className={`w-2 h-2 rounded-full transition-colors ${index === currentPage ? "bg-primary" : "bg-gray-300"
+                }`}
               onClick={() => setCurrentPage(index)}
             />
           ))}
         </div>
-        
+
         {currentPage < totalPages - 1 && (
           <button
             onClick={nextPage}
@@ -191,24 +186,52 @@ export function Header() {
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
   const { state } = useCart();
   const { t } = useTranslation();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const categoryContext = useAppContext((state) => state?.data?.categories);
+  useEffect(() => {
+    console.log('categoryContext', categoryContext);
+    setCategories([
+      {
+        "id": "681b79855935838ad4c3c8b966",
+        "label": "Tất cả sản phẩm",
+        "key": "he-thong-pin-mat-troi",
+        "status": "ACTIVE",
+        "icon": "SolarIcon",
+        "order": 1,
+        "menuItems": [],
+        href: "/products"
+      },
+      {
+        "id": "681b79855935838ad4c3c8b9",
+        "label": "Hệ thống năng lượng mặt trời",
+        "key": "solar-energy",
+        "status": "ACTIVE",
+        "icon": "SolarIcon",
+        "order": 1,
+        "menuItems": [],
+        href: "/solar-energy"
+      },
+      ...(categoryContext || []),
+    ]);
+  }, [categoryContext]);
 
   return (
     <>
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-[51]">
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-[50]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/">
                 <h1 className="text-2xl font-bold text-primary cursor-pointer">
-                  IndustrialSource
+                  {t('appName')}
                 </h1>
               </Link>
             </div>
 
             {/* Search Bar - Desktop */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-8 relative">
-              <AutocompleteSearch 
+              <AutocompleteSearch
                 placeholder={t('nav.searchPlaceholder')}
                 className="w-full"
               />
@@ -236,13 +259,13 @@ export function Header() {
                     <Link href="/">
                       <h2 className="text-xl font-bold text-primary">IndustrialSource</h2>
                     </Link>
-                    
+
                     {/* Mobile Search */}
-                    <AutocompleteSearch 
+                    <AutocompleteSearch
                       placeholder={t('nav.searchPlaceholder')}
                       className="w-full"
                     />
-                    
+
                     <Button
                       onClick={() => setIsVisualSearchOpen(true)}
                       className="w-full"
@@ -279,9 +302,9 @@ export function Header() {
                       <h3 className="text-sm font-semibold text-gray-600 mb-2">Danh mục sản phẩm</h3>
                       <div className="space-y-1">
                         {categories.slice(1).map((category) => (
-                          <Link key={category.name} href={category.href}>
+                          <Link key={category.label} href={category.href}>
                             <Button variant="ghost" size="sm" className="w-full justify-start text-sm">
-                              {category.name}
+                              {category.label}
                             </Button>
                           </Link>
                         ))}
@@ -298,17 +321,17 @@ export function Header() {
                     {t('nav.products')}
                   </Button>
                 </Link>
-                
+
                 <Link href="/news">
                   <Button variant="ghost" className={location === "/news" || location.startsWith("/news/") ? "bg-gray-100" : ""}>
                     {t('nav.news')}
                   </Button>
                 </Link>
-                
+
                 <Button variant="ghost" size="icon">
                   <User className="h-5 w-5" />
                 </Button>
-                
+
                 <Button
                   variant="ghost"
                   size="icon"
@@ -333,13 +356,12 @@ export function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8 py-3 overflow-x-auto">
               {categories.map((category) => (
-                <Link key={category.name} href={category.href}>
-                  <span className={`font-medium whitespace-nowrap cursor-pointer ${
-                    category.highlight 
-                      ? "text-yellow-600 hover:text-yellow-700 font-semibold" 
-                      : "text-gray-700 hover:text-primary"
-                  }`}>
-                    {category.name}
+                <Link key={category.label} href={category.href}>
+                  <span className={`font-medium whitespace-nowrap cursor-pointer ${category.key == ''
+                    ? "text-yellow-600 hover:text-yellow-700 font-semibold"
+                    : "text-gray-700 hover:text-primary"
+                    }`}>
+                    {category.label}
                   </span>
                 </Link>
               ))}
@@ -354,9 +376,9 @@ export function Header() {
       </header>
 
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <VisualSearchModal 
-        isOpen={isVisualSearchOpen} 
-        onClose={() => setIsVisualSearchOpen(false)} 
+      <VisualSearchModal
+        isOpen={isVisualSearchOpen}
+        onClose={() => setIsVisualSearchOpen(false)}
       />
     </>
   );
