@@ -35,7 +35,7 @@ export default function Products() {
   // Dynamic SEO meta tags for SPA
   const getCategoryName = () => {
     if (!selectedCategory) return t("allProducts");
-    const category = categories.find(c => c.key === selectedCategory);
+    const category = categories.find(c => c.slug === selectedCategory);
     return category?.name || t("allProducts");
   };
 

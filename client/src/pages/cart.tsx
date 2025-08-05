@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/components/cart/cart-context";
 import { useTranslation } from "@/lib/i18n";
 import { useTitle } from "@/hooks/use-title";
+import { useMeta } from "@/components/seo/meta-manager";
 
 export default function Cart() {
   const { state, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -13,6 +14,18 @@ export default function Cart() {
   
   // Set dynamic title
   useTitle("pageTitle.cart");
+
+  // Dynamic SEO meta tags for cart page
+  useMeta({
+    title: `Giỏ hàng (${state.items.length} sản phẩm) | IndustrialSource`,
+    description: "Xem lại các sản phẩm trong giỏ hàng của bạn. Cập nhật số lượng, xóa sản phẩm hoặc tiến hành thanh toán tại IndustrialSource.",
+    keywords: "giỏ hàng, mua sắm, thanh toán, sản phẩm công nghiệp",
+    ogTitle: `Giỏ hàng - ${state.items.length} sản phẩm`,
+    ogDescription: "Xem lại các sản phẩm trong giỏ hàng và tiến hành thanh toán.",
+    ogImage: "https://industrialsource.com/og-cart.jpg",
+    ogUrl: window.location.href,
+    canonical: window.location.href
+  });
 
   const handleQuantityChange = async (itemId: string, change: number) => {
     const item = state.items.find(i => i.id === itemId);

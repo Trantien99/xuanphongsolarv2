@@ -68,7 +68,7 @@ class RoutePreloader {
   }
 
   // Preload route on hover (for links)
-  preloadOnHover(element: HTMLElement, path: string): void {
+  preloadOnHover(element: HTMLElement, path: string): (() => void) {
     let timeoutId: NodeJS.Timeout;
 
     const handleMouseEnter = () => {

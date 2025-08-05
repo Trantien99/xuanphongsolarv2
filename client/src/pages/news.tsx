@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/ui/pagination";
 import { useTitle } from "@/hooks/use-title";
+import { useMeta } from "@/components/seo/meta-manager";
 import { useState, useRef } from "react";
 import { scrollToElement } from "@/lib/utils";
 import type { News } from "@shared/schema";
@@ -248,6 +249,18 @@ function AllNewsList() {
 function NewsList() {
   // Set dynamic title
   useTitle("pageTitle.news");
+
+  // Dynamic SEO meta tags for news page
+  useMeta({
+    title: "Tin tức ngành công nghiệp - Cập nhật xu hướng mới nhất | IndustrialSource",
+    description: "Đọc tin tức và xu hướng mới nhất trong ngành công nghiệp. Cập nhật thông tin về công nghệ, sản phẩm mới và thị trường từ IndustrialSource.",
+    keywords: "tin tức công nghiệp, xu hướng ngành, công nghệ mới, thị trường công nghiệp, cập nhật ngành",
+    ogTitle: "Tin tức ngành công nghiệp | IndustrialSource",
+    ogDescription: "Đọc tin tức và xu hướng mới nhất trong ngành công nghiệp. Cập nhật thông tin về công nghệ, sản phẩm mới và thị trường.",
+    ogImage: "https://industrialsource.com/og-news.jpg",
+    ogUrl: window.location.href,
+    canonical: window.location.href
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">

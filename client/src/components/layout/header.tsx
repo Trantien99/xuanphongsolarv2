@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Search, Camera, User, ShoppingCart, Menu, X, ChevronRight } from "lucide-react";
+import { SmartLink } from "@/components/navigation/smart-link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";

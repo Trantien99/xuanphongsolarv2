@@ -11,6 +11,7 @@ import { useTitle, useMetaDescription } from "@/hooks/use-title";
 import { useAppContext } from "@/App";
 import { Category } from "@/model/category.model";
 import { useMeta } from "@/components/seo/meta-manager";
+import type { Product } from "@shared/schema";
 
 const categoryIcons = {
   "Công cụ điện": Wrench,

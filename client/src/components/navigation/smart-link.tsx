@@ -1,8 +1,8 @@
 import { useRef, useEffect } from 'react';
-import { Link, LinkProps } from 'wouter';
+import { Link } from 'wouter';
 import { useRoutePreloader } from '@/lib/route-preloader';
 
-interface SmartLinkProps extends LinkProps {
+interface SmartLinkProps {
   href: string;
   children: React.ReactNode;
   preload?: boolean;
@@ -13,8 +13,7 @@ export function SmartLink({
   href, 
   children, 
   preload = true, 
-  className,
-  ...props 
+  className
 }: SmartLinkProps) {
   const linkRef = useRef<HTMLAnchorElement>(null);
   const { preloadOnHover } = useRoutePreloader();
@@ -27,7 +26,7 @@ export function SmartLink({
   }, [href, preload, preloadOnHover]);
 
   return (
-    <Link href={href} {...props}>
+    <Link href={href}>
       <a ref={linkRef} className={className}>
         {children}
       </a>
