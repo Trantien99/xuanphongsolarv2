@@ -15,6 +15,7 @@ import type { Product, Category } from "@shared/schema";
 import { FilterSidebar } from "@/components/product/filter-sidebar";
 import { scrollToElement } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
+import { useMeta } from "@/components/seo/meta-manager";
 
 export default function Products() {
   const [location, setLocation] = useLocation();
@@ -30,6 +31,25 @@ export default function Products() {
   
   // Set dynamic title
   useTitle("pageTitle.products");
+  
+  // Dynamic SEO meta tags for SPA
+  const getCategoryName = () => {
+    if (!selectedCategory) return t("allProducts");
+    const category = categories.find(c => c.key === selectedCategory);
+    return category?.name || t("allProducts");
+  };
+
+  useMeta({
+    title: `${getCategoryName()} - Sản phẩm công nghiệp chất lượng cao | IndustrialSource`,
+    description: `Khám phá ${getCategoryName().toLowerCase()} chất lượng cao tại IndustrialSource. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín với công nghệ tìm kiếm hình ảnh tiên tiến.`,
+    keywords: `${getCategoryName().toLowerCase()}, sản phẩm công nghiệp, mua sắm B2B, thiết bị chuyên nghiệp, công cụ công nghiệp`,
+    ogTitle: `${getCategoryName()} - Sản phẩm công nghiệp | IndustrialSource`,
+    ogDescription: `Khám phá ${getCategoryName().toLowerCase()} chất lượng cao tại IndustrialSource. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín.`,
+    ogImage: "https://industrialsource.com/og-products.jpg",
+    ogUrl: window.location.href,
+    canonical: window.location.href
+  });
+
   const [sortBy, setSortBy] = useState("popular");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
@@ -74,10 +94,7 @@ export default function Products() {
     return category?.id || "";
   };
 
-  const getCategoryName = (slug: string) => {
-    const category = categories.find(c => c.slug === slug);
-    return category?.name || t("allProducts");
-  };
+
 
   // Note: Filtering and sorting are now handled server-side
   // Client-side filters like brand and price range are applied to the already paginated results
@@ -262,7 +279,7 @@ export default function Products() {
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-            {selectedCategory ? getCategoryName(selectedCategory) : "All Products"}
+            {getCategoryName()}
           </h1>
           {searchQuery && (
             <p className="text-base sm:text-lg text-gray-600">

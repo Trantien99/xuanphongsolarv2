@@ -10,6 +10,7 @@ import { useTranslation } from "@/lib/i18n";
 import { useTitle, useMetaDescription } from "@/hooks/use-title";
 import { useAppContext } from "@/App";
 import { Category } from "@/model/category.model";
+import { useMeta } from "@/components/seo/meta-manager";
 
 const categoryIcons = {
   "Công cụ điện": Wrench,
@@ -33,6 +34,18 @@ export default function Home() {
   // Set dynamic title and meta description
   useTitle("meta.title");
   useMetaDescription("meta.description");
+
+  // Dynamic SEO meta tags for SPA
+  useMeta({
+    title: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+    description: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành với công cụ khám phá sản phẩm tiên tiến.",
+    keywords: "sản phẩm công nghiệp, tìm kiếm hình ảnh, thị trường B2B, công cụ chuyên nghiệp, tìm nguồn cung thiết bị",
+    ogTitle: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+    ogDescription: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành.",
+    ogImage: "https://industrialsource.com/og-image.jpg",
+    ogUrl: window.location.href,
+    canonical: window.location.href
+  });
 
   // const { data: categories = [] } = useQuery<Category[]>({
   //   queryKey: ["/api/categories"],
