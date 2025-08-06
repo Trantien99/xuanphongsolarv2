@@ -14,6 +14,7 @@ import { ImageGallery } from "@/components/product/image-gallery";
 import { RelatedProducts } from "@/components/product/related-products";
 import { t, formatCurrency } from "@/lib/i18n";
 import { useTitle } from "@/hooks/use-title";
+import { useMeta } from "@/components/seo/meta-manager";
 import type { Product } from "@shared/schema";
 
 export default function ProductDetail() {
@@ -39,6 +40,20 @@ export default function ProductDetail() {
 
   // Set dynamic title based on product name
   useTitle("pageTitle.productDetail", product?.name);
+
+  // Dynamic SEO meta tags for product
+  if (product) {
+    useMeta({
+      title: `${product.name} - ${formatCurrency(product.price)} | IndustrialSource`,
+      description: `${product.description}. Mua ${product.name} chính hãng với giá ${formatCurrency(product.price)} tại IndustrialSource. Miễn phí vận chuyển.`,
+      keywords: `${product.name}, ${product.brand}, ${product.categoryId}, sản phẩm công nghiệp, mua ${product.name}`,
+      ogTitle: `${product.name} - ${formatCurrency(product.price)}`,
+      ogDescription: product.description,
+      ogImage: product.images?.[0] || "https://industrialsource.com/og-product.jpg",
+      ogUrl: window.location.href,
+      canonical: window.location.href
+    });
+  }
 
   if (isLoading) {
     return (
@@ -111,7 +126,7 @@ export default function ProductDetail() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Images */}
-            <ImageGallery images={product.images} productName={product.name} />
+            <ImageGallery images={product.images || []} productName={product.name} />
 
             {/* Product Info */}
             <div className="space-y-6">
