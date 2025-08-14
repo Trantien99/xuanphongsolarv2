@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { ArrowLeft, Plus, Minus, Trash2, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,12 +17,12 @@ export default function Cart() {
 
   // Dynamic SEO meta tags for cart page
   useMeta({
-    title: `Giỏ hàng (${state.items.length} sản phẩm) | IndustrialSource`,
-    description: "Xem lại các sản phẩm trong giỏ hàng của bạn. Cập nhật số lượng, xóa sản phẩm hoặc tiến hành thanh toán tại IndustrialSource.",
+    title: `Giỏ hàng (${state.items.length} sản phẩm) | Xuân Phong Solar`,
+    description: "Xem lại các sản phẩm trong giỏ hàng của bạn. Cập nhật số lượng, xóa sản phẩm hoặc tiến hành thanh toán tại Xuân Phong Solar.",
     keywords: "giỏ hàng, mua sắm, thanh toán, sản phẩm công nghiệp",
     ogTitle: `Giỏ hàng - ${state.items.length} sản phẩm`,
     ogDescription: "Xem lại các sản phẩm trong giỏ hàng và tiến hành thanh toán.",
-    ogImage: "https://industrialsource.com/og-cart.jpg",
+    ogImage: "https://xuanphongsolar.com/og-cart.jpg",
     ogUrl: window.location.href,
     canonical: window.location.href
   });
@@ -48,7 +48,7 @@ export default function Cart() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-          <Link href="/products">
+          <Link to="/products">
             <Button variant="outline" className="mb-4 sm:mb-6">
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('nav.products')}
@@ -61,7 +61,7 @@ export default function Cart() {
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 px-4">
               {t('cart.emptyCartDesc')}
             </p>
-            <Link href="/products">
+            <Link to="/products">
               <Button size="lg">
                 {t('cart.continueShopping')}
               </Button>
@@ -75,7 +75,7 @@ export default function Cart() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        <Link href="/products">
+        <Link to="/products">
           <Button variant="outline" className="mb-4 sm:mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('cart.continueShopping')}
@@ -212,14 +212,14 @@ export default function Cart() {
                     Miễn phí vận chuyển cho đơn hàng trên $100
                   </p>
                 )}
-                <Link href="/checkout">
+                <Link to="/checkout">
                   <Button className="w-full mt-4 sm:mt-6" size="lg">
                     {t('cart.checkout')}
                   </Button>
                 </Link>
 
                 <div className="text-center">
-                  <Link href="/products">
+                  <Link to="/products">
                     <Button variant="outline" className="w-full">
                       {t('cart.continueShopping')}
                     </Button>

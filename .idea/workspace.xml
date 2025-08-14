@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2c9b6721-9aca-44c7-b971-9e663069fad2" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/client/src/utils/AppUtils.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/cart/cart-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/cart/cart-sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/layout/footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/layout/footer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/layout/header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/layout/header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/mobile/mobile-action-buttons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/mobile/mobile-action-buttons.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/mobile/mobile-floating-actions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/mobile/mobile-floating-actions.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/navigation/smart-link.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/navigation/smart-link.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/product/product-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/product/product-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/product/related-products.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/product/related-products.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/search/autocomplete-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/search/autocomplete-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/search/visual-search-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/search/visual-search-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/hooks/use-scroll-to-top.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/use-scroll-to-top.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/lib/i18n.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/lib/i18n.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/model/product.model.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/model/product.model.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/cart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/cart.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/checkout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/checkout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/news-detail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/news-detail.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/news.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/news.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/product-detail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/product-detail.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/products.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/products.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/solar-energy.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/solar-energy.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/service/client.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/service/client.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="v3" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="31BwyHNhpTzlpt48fD7SQ5RULkX" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "D:/Project/ProductVision/ProductVision"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2c9b6721-9aca-44c7-b971-9e663069fad2" name="Changes" comment="" />
+      <created>1755011027691</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1755011027691</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

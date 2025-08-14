@@ -14,6 +14,7 @@ export class Category {
     firstNote?: any;
     itemCount?: any;
     href: string;
+    highlight?: boolean;
 
     constructor() {
         this.id = '';

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, useRoute } from "wouter";
+import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, User, Tag, Clock, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +11,7 @@ import { t } from "@/lib/i18n";
 import type { News } from "@shared/schema";
 
 export default function NewsDetail() {
-  const [match, params] = useRoute("/news/:slug");
+  const params = useParams();
   const { share, isSharing, isMobileDevice, hasWebShareSupport } = useShare();
   
   const { data: article, isLoading, error } = useQuery<News>({
@@ -51,7 +51,7 @@ export default function NewsDetail() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Article Not Found</h1>
           <p className="text-gray-600 mb-6">The article you're looking for doesn't exist or has been removed.</p>
-          <Link href="/news">
+          <Link to="/news">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to News
@@ -77,7 +77,7 @@ export default function NewsDetail() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <Link href="/news">
+          <Link to="/news">
             <Button variant="outline" className="mb-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to News
@@ -176,7 +176,7 @@ export default function NewsDetail() {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {relatedNews.map((relatedArticle) => (
-                <Link key={relatedArticle.id} href={`/news/${relatedArticle.slug}`}>
+                <Link key={relatedArticle.id} to={`/news/${relatedArticle.slug}`}>
                   <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full">
                     {relatedArticle.imageUrl && (
                       <div className="aspect-video overflow-hidden rounded-t-lg">
@@ -210,7 +210,7 @@ export default function NewsDetail() {
 
         {/* Back to Top */}
         <div className="mt-8 sm:mt-12 text-center">
-          <Link href="/news">
+          <Link to="/news">
             <Button variant="outline" size="lg" className="w-full sm:w-auto">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to All News

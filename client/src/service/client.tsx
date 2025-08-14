@@ -3,7 +3,8 @@ import axios from 'axios';
 // Tạo instance của axios
 const ApiClient = axios.create({
     // baseURL: window.location.origin,
-    baseURL: 'https://xuanphongsolar.com',
+    // baseURL: 'https://xuanphongsolar.com',
+    baseURL: 'http://localhost:3000',
     headers: {
         'Content-Type': 'application/json',
     },

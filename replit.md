@@ -1,8 +1,8 @@
-# IndustrialSource - Visual Product Discovery Platform
+# Xuân Phong Solar - Visual Product Discovery Platform
 
 ## Overview
 
-IndustrialSource is a B2B e-commerce platform designed for industry professionals to discover and purchase industrial products. The application features advanced visual search capabilities, allowing users to upload photos or sketches to find matching products using AI-powered image recognition. The platform serves various industrial categories including power tools, safety equipment, machinery, electronics, materials, and hand tools.
+Xuân Phong Solar is a B2B e-commerce platform designed for industry professionals to discover and purchase industrial products. The application features advanced visual search capabilities, allowing users to upload photos or sketches to find matching products using AI-powered image recognition. The platform serves various industrial categories including power tools, safety equipment, machinery, electronics, materials, and hand tools.
 
 ## User Preferences
 

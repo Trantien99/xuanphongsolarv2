@@ -1,7 +1,7 @@
 import React from "react";
 import { Phone, MessageCircle, ShoppingCart, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "@/components/cart/cart-context";
 
 interface ActionButton {
@@ -14,7 +14,7 @@ interface ActionButton {
 }
 
 export function MobileActionButtons() {
-  const [, navigate] = useLocation();
+  const navigate = useNavigate();
   const { state } = useCart();
   const cartItemCount = state.itemCount;
 

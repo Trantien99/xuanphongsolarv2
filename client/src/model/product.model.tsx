@@ -20,6 +20,25 @@ class Product {
     content: string;
     status: string;
     category: string;
+
+    rating?: number;
+    reviewCount?: number;
+    isFeatured?: boolean;
+    isNew?: boolean;
+    isBestSeller?: boolean;
+    isTopRated?: boolean;
+    isTopSeller?: boolean;
+    inStock?: boolean;
+    stockQuantity?: number;
+    description?: string;
+    specifications?: Record<string, string>;
+    features?: string[];
+    additionalInfo?: string;
+    relatedProducts?: string[];
+    // reviews?: Review[];
+    reviews?: any[];
+    relatedCategories?: string[];
+    relatedBrands?: string[];
     constructor() {
         this.id = '';
         this.name = '';

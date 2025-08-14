@@ -10,12 +10,12 @@ import {
   X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "@/components/cart/cart-context";
 
 export function MobileFloatingActions() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [, navigate] = useLocation();
+  const navigate = useNavigate();
   const { state } = useCart();
   const cartItemCount = state.itemCount;
 
@@ -120,7 +120,7 @@ export function MobileFloatingActions() {
 
 // Separate cart floating button
 export function MobileCartButton() {
-  const [, navigate] = useLocation();
+  const navigate = useNavigate();
   const { state } = useCart();
   const cartItemCount = state.itemCount;
 

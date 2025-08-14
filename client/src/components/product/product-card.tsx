@@ -1,11 +1,12 @@
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Star, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/components/cart/cart-context";
-import type { Product } from "@shared/schema";
 import { t } from "@/lib/i18n";
+import Product from "@/model/product.model";
+import { AppUtils } from "@/utils/AppUtils";
 
 interface ProductCardProps {
   product: Product;
@@ -39,11 +40,11 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Link href={`/products/${product.slug}`}>
+    <Link to={`/products/${product.id}`}>
       <Card className="group cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 h-full flex flex-col">
         <div className="aspect-square overflow-hidden rounded-t-lg bg-gray-100">
           <img
-            src={product.images[0] || "https://via.placeholder.com/400x400?text=No+Image"}
+            src={product.imageUrls?.[0] || "https://via.placeholder.com/400x400?text=No+Image"}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
           />
@@ -61,17 +62,17 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
           
           <p className="text-sm text-gray-600 mb-3 line-clamp-2 min-h-[2.5rem]">
-            {product.shortDescription}
+            {product.description}
           </p>
           
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
               <span className="text-xl font-bold text-gray-900">
-                ${product.price}
+                {AppUtils.calculateDiscountString(product.price, product.discount?.value || 0, product.discount?.type || '')}
               </span>
-              {product.originalPrice && (
+              {product.price && (
                 <span className="text-sm text-gray-500 line-through">
-                  ${product.originalPrice}
+                  {AppUtils.formatCurrency(product.price)}
                 </span>
               )}
             </div>
@@ -79,19 +80,19 @@ export function ProductCard({ product }: ProductCardProps) {
           
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-1">
-              {renderStars(product.rating)}
+              {renderStars(product?.rating?.toString() || "5")}
             </div>
             <span className="text-sm text-gray-500">
-              ({product.reviewCount} reviews)
+              ({product.reviewCount || 0} đánh giá)
             </span>
           </div>
           
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium text-gray-700">
-              {product.brand}
+              {product.brand || ""}
             </span>
             <span className={`text-sm ${product.inStock ? "text-green-600" : "text-red-600"}`}>
-              {product.inStock ? `${product.stockQuantity} in stock` : "Out of stock"}
+              {product.inStock ? `${product.stockQuantity || 0} có sẵn` : "Hết hàng"}
             </span>
           </div>
           

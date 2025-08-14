@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { useRoute, Link } from "wouter";
+import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Star, ShoppingCart, Heart, Share2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,13 +15,17 @@ import { RelatedProducts } from "@/components/product/related-products";
 import { t, formatCurrency } from "@/lib/i18n";
 import { useTitle } from "@/hooks/use-title";
 import { useMeta } from "@/components/seo/meta-manager";
-import type { Product } from "@shared/schema";
+import { ProductService } from "@/service/product.service";
+import Product from "@/model/product.model";
+import { AppUtils } from "@/utils/AppUtils";
 
 export default function ProductDetail() {
-  const [match, params] = useRoute("/products/:slug");
+  const params = useParams();
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const { share, isSharing, isMobileDevice, hasWebShareSupport } = useShare();
+  const [product, setProduct] = useState<Product>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleShare = async () => {
     if (!product) return;
@@ -33,27 +37,32 @@ export default function ProductDetail() {
     });
   };
 
-  const { data: product, isLoading } = useQuery<Product>({
-    queryKey: ["/api/products/slug", params?.slug],
-    enabled: !!params?.slug,
-  });
+  useEffect(() => {
+    if (params?.id) {
+      setIsLoading(true);
+      ProductService.getProductById(params.id).then((response) => {
+        response && setProduct({...new Product(), ...response});
+        setIsLoading(false);
+      });
+    }
+  }, [params?.id]);
 
   // Set dynamic title based on product name
   useTitle("pageTitle.productDetail", product?.name);
 
   // Dynamic SEO meta tags for product
-  if (product) {
+  // if (product) {
     useMeta({
-      title: `${product.name} - ${formatCurrency(product.price)} | IndustrialSource`,
-      description: `${product.description}. Mua ${product.name} chính hãng với giá ${formatCurrency(product.price)} tại IndustrialSource. Miễn phí vận chuyển.`,
-      keywords: `${product.name}, ${product.brand}, ${product.categoryId}, sản phẩm công nghiệp, mua ${product.name}`,
-      ogTitle: `${product.name} - ${formatCurrency(product.price)}`,
-      ogDescription: product.description,
-      ogImage: product.images?.[0] || "https://industrialsource.com/og-product.jpg",
+      title: `${product?.name} - ${formatCurrency(product?.price || 0)} | Xuân Phong Solar`,
+      description: `${product?.description}. Mua ${product?.name} chính hãng với giá ${formatCurrency(product?.price || 0)} tại Xuân Phong Solar. Miễn phí vận chuyển.`,
+      keywords: `${product?.name}, ${product?.brand}, ${product?.category}, sản phẩm công nghiệp, mua ${product?.name}`,
+      ogTitle: `${product?.name} - ${formatCurrency(product?.price || 0)}`,
+      ogDescription: product?.description,
+      ogImage: window.location.href + "/" + product?.avatar || "https://xuanphongsolar.com/og-product.jpg",
       ogUrl: window.location.href,
       canonical: window.location.href
     });
-  }
+  // }
 
   if (isLoading) {
     return (
@@ -71,7 +80,7 @@ export default function ProductDetail() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('productNotFound')}</h1>
-          <Link href="/products">
+          <Link to="/products">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('backToProducts')}
@@ -109,15 +118,15 @@ export default function ProductDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
           <div className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
-            <Link href="/" className="hover:text-primary">{t('breadcrumb.home')}</Link>
+            <Link to="/" className="hover:text-primary">{t('breadcrumb.home')}</Link>
             <span>/</span>
-            <Link href="/products" className="hover:text-primary">{t('breadcrumb.products')}</Link>
+            <Link to="/products" className="hover:text-primary">{t('breadcrumb.products')}</Link>
             <span>/</span>
             <span className="text-gray-900">{product.name}</span>
           </div>
 
           {/* Back Button */}
-          <Link href="/products">
+          <Link to="/products">
             <Button variant="outline" className="mb-6">
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('backToProducts')}
@@ -126,7 +135,7 @@ export default function ProductDetail() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Images */}
-            <ImageGallery images={product.images || []} productName={product.name} />
+            <ImageGallery images={product.imageUrls || []} productName={product.name} />
 
             {/* Product Info */}
             <div className="space-y-6">
@@ -175,26 +184,26 @@ export default function ProductDetail() {
 
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="flex items-center space-x-1">
-                    {renderStars(product.rating)}
+                    {renderStars(product.rating?.toString() || "5")}
                     <span className="ml-2 text-sm text-gray-600">
-                      ({product.reviewCount} {t('reviewCount')})
+                      ({product.reviewCount || 0} {t('reviewCount')})
                     </span>
                   </div>
-                  <Badge variant="secondary">{product.brand}</Badge>
+                  <Badge variant="secondary">{product.brand || ""}</Badge>
                   {product.isFeatured && <Badge>{t('featured')}</Badge>}
                 </div>
 
-                <p className="text-gray-600 mb-6">{product.description}</p>
+                <p className="text-gray-600 mb-6">{product.description || ""}</p>
               </div>
 
               {/* Price */}
               <div className="flex items-center space-x-4">
                 <span className="text-3xl font-bold text-gray-900">
-                  {formatCurrency(product.price)}
+                  {AppUtils.calculateDiscountString(product.price || 0, product?.discount?.value || 0, product?.discount?.type || '')}
                 </span>
-                {product.originalPrice && (
+                {product.price && (
                   <span className="text-xl text-gray-500 line-through">
-                    {formatCurrency(product.originalPrice)}
+                    {AppUtils.formatCurrency(product.price)}
                   </span>
                 )}
               </div>
@@ -203,7 +212,7 @@ export default function ProductDetail() {
               <div className={`text-sm font-medium ${product.inStock ? "text-green-600" : "text-red-600"
                 }`}>
                 {product.inStock
-                  ? `${t('inStock')} (${product.stockQuantity} ${t('stockAvailable')})`
+                  ? `${t('inStock')} (${product.stockQuantity || 0} ${t('stockAvailable')})`
                   : t('outOfStock')
                 }
               </div>
@@ -224,7 +233,7 @@ export default function ProductDetail() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setQuantity(quantity + 1)}
-                    disabled={quantity >= product.stockQuantity}
+                    disabled={quantity >= (product.stockQuantity || 0)}
                   >
                     +
                   </Button>
@@ -243,9 +252,10 @@ export default function ProductDetail() {
 
               {/* Product Details Tabs */}
               <Tabs defaultValue="specifications" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 md:gap-0 h-auto">
                   <TabsTrigger value="specifications">{t('specifications')}</TabsTrigger>
                   <TabsTrigger value="features">{t('features')}</TabsTrigger>
+                  <TabsTrigger value="additional">{t('additionalInfo')}</TabsTrigger>
                   <TabsTrigger value="reviews">{t('reviews')}</TabsTrigger>
                 </TabsList>
 
@@ -255,7 +265,7 @@ export default function ProductDetail() {
                       <CardTitle>{t('specifications')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {Object.keys(product.specifications).length > 0 ? (
+                      {product.specifications && Object.keys(product.specifications).length > 0 ? (
                         <dl className="space-y-3">
                           {Object.entries(product.specifications).map(([key, value]) => (
                             <div key={key} className="flex justify-between">
@@ -277,7 +287,7 @@ export default function ProductDetail() {
                       <CardTitle>{t('features')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {product.features.length > 0 ? (
+                      {product.features && product.features.length > 0 ? (
                         <ul className="space-y-2">
                           {product.features.map((feature, index) => (
                             <li key={index} className="flex items-start">
@@ -293,6 +303,89 @@ export default function ProductDetail() {
                   </Card>
                 </TabsContent>
 
+                <TabsContent value="additional" className="mt-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{t('additionalInfo')}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <dl className="space-y-3">
+                        {product.warranty && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('warranty')}:</dt>
+                            <dd className="text-gray-600">{product.warranty}</dd>
+                          </div>
+                        )}
+                        {product.warrantyType && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('warrantyType')}:</dt>
+                            <dd className="text-gray-600">{product.warrantyType}</dd>
+                          </div>
+                        )}
+                        {product.origin && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('origin')}:</dt>
+                            <dd className="text-gray-600">{product.origin}</dd>
+                          </div>
+                        )}
+                        {product.material && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('material')}:</dt>
+                            <dd className="text-gray-600">{product.material}</dd>
+                          </div>
+                        )}
+                        {product.style && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('style')}:</dt>
+                            <dd className="text-gray-600">{product.style}</dd>
+                          </div>
+                        )}
+                        {/* {product.weight && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('weight')}:</dt>
+                            <dd className="text-gray-600">{product.weight} kg</dd>
+                          </div>
+                        )} */}
+                        {/* {product.dimensions && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('dimensions')}:</dt>
+                            <dd className="text-gray-600">
+                              {product.dimensions.length && product.dimensions.width && product.dimensions.height
+                                ? `${product.dimensions.length} × ${product.dimensions.width} × ${product.dimensions.height} ${product.dimensions.unit || 'cm'}`
+                                : t('notAvailable')
+                              }
+                            </dd>
+                          </div>
+                        )}
+                        {product.color && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('color')}:</dt>
+                            <dd className="text-gray-600">{product.color}</dd>
+                          </div>
+                        )}
+                        {product.model && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('model')}:</dt>
+                            <dd className="text-gray-600">{product.model}</dd>
+                          </div>
+                        )}
+                        {product.year && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('year')}:</dt>
+                            <dd className="text-gray-600">{product.year}</dd>
+                          </div>
+                        )}
+                        {product.sku && (
+                          <div className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{t('sku')}:</dt>
+                            <dd className="text-gray-600">{product.sku}</dd>
+                          </div>
+                        )} */}
+                      </dl>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
                 <TabsContent value="reviews" className="mt-6">
                   <Card>
                     <CardHeader>
@@ -301,8 +394,7 @@ export default function ProductDetail() {
                     <CardContent>
                       <div className="text-center py-8">
                         <p className="text-gray-600 mb-4">
-                          Tính năng đánh giá sẽ sớm có mặt. Sản phẩm này có {product.reviewCount} {t('reviewCount')}
-                          với điểm đánh giá trung bình {product.rating}/5.
+                          {`Tính năng đánh giá sẽ sớm có mặt. Sản phẩm này có ${product.reviewCount || 0} ${t('reviewCount')} với điểm đánh giá trung bình ${product.rating || 5}/5.`}
                         </p>
                         <Button variant="outline">{t('writeReview')}</Button>
                       </div>
@@ -316,7 +408,7 @@ export default function ProductDetail() {
           {/* Related Products */}
           <RelatedProducts
             currentProductId={product.id}
-            categoryId={product.categoryId}
+            categoryId={product.category}
           />
         </div>
       </div>

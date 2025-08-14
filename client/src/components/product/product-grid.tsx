@@ -1,6 +1,6 @@
+import Product from "@/model/product.model";
 import { ProductCard } from "./product-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Product } from "@shared/schema";
 
 interface ProductGridProps {
   products: Product[];

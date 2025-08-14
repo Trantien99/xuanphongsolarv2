@@ -1,6 +1,6 @@
 {
-  "name": "IndustrialSource - Sản phẩm công nghiệp",
-  "short_name": "IndustrialSource",
+  "name": "Xuân Phong Solar - Sản phẩm công nghiệp",
+  "short_name": "Xuân Phong Solar",
   "description": "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành.",
   "start_url": "/",
   "display": "standalone",
@@ -87,14 +87,14 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "IndustrialSource Desktop View"
+      "label": "Xuân Phong Solar Desktop View"
     },
     {
       "src": "/screenshot-mobile.png",
       "sizes": "360x640",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "IndustrialSource Mobile View"
+      "label": "Xuân Phong Solar Mobile View"
     }
   ]
 }

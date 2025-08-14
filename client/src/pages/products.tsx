@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { useLocation, useRoute } from "wouter";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Search, Grid, List, Filter } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,138 +11,153 @@ import { ProductGrid } from "@/components/product/product-grid";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Pagination, ItemsPerPageSelector, PaginationInfo } from "@/components/ui/pagination";
 import { useTitle } from "@/hooks/use-title";
-import type { Product, Category } from "@shared/schema";
+import { Category } from "@/model/category.model";
 import { FilterSidebar } from "@/components/product/filter-sidebar";
 import { scrollToElement } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { useMeta } from "@/components/seo/meta-manager";
+import { ProductService } from "@/service/product.service";
+import PageModel from "@/model/page.model";
+import Product from "@/model/product.model";
+import { set } from "date-fns";
 
-export default function Products() {
-  const [location, setLocation] = useLocation();
-  const [match, params] = useRoute("/products/:slug");
+interface ProductsProps {
+  categories: Category[];
+}
+
+export default function Products({ categories }: ProductsProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(24);
+  const [pageTitle, setPageTitle] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [page, setPage] = useState<PageModel<Product>>(new PageModel<Product>());
   const productsRef = useRef<HTMLDivElement>(null);
+  const [searchParams] = useSearchParams();
   const { t } = useTranslation();
-  
+  const [categoryName, setCategoryName] = useState(t("allProducts"));
+
   // Set dynamic title
   useTitle("pageTitle.products");
-  
+
   // Dynamic SEO meta tags for SPA
-  const getCategoryName = () => {
+  const getCategoryName = (searchQuery?: string) => {
+    // If there's a title parameter, use it
+    // if (pageTitle) {
+    //   return pageTitle;
+    // }
+
+    // If there's a search query, show search results
+    if (searchQuery) {
+      return `${t('products.searchResultsFor')} "${searchQuery}"`;
+    }
+
+    // Otherwise, show category name
     if (!selectedCategory) return t("allProducts");
-    const category = categories.find(c => c.slug === selectedCategory);
-    return category?.name || t("allProducts");
+    const category = categories.find(c => c.key === selectedCategory);
+    return category?.label || t("allProducts");
   };
 
   useMeta({
-    title: `${getCategoryName()} - Sản phẩm công nghiệp chất lượng cao | IndustrialSource`,
-    description: `Khám phá ${getCategoryName().toLowerCase()} chất lượng cao tại IndustrialSource. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín với công nghệ tìm kiếm hình ảnh tiên tiến.`,
+    title: `${getCategoryName()} - Sản phẩm công nghiệp chất lượng cao | Xuân Phong Solar`,
+    description: `Khám phá ${getCategoryName().toLowerCase()} chất lượng cao tại Xuân Phong Solar. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín với công nghệ tìm kiếm hình ảnh tiên tiến.`,
     keywords: `${getCategoryName().toLowerCase()}, sản phẩm công nghiệp, mua sắm B2B, thiết bị chuyên nghiệp, công cụ công nghiệp`,
-    ogTitle: `${getCategoryName()} - Sản phẩm công nghiệp | IndustrialSource`,
-    ogDescription: `Khám phá ${getCategoryName().toLowerCase()} chất lượng cao tại IndustrialSource. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín.`,
-    ogImage: "https://industrialsource.com/og-products.jpg",
+    ogTitle: `${getCategoryName()} - Sản phẩm công nghiệp | Xuân Phong Solar`,
+    ogDescription: `Khám phá ${getCategoryName().toLowerCase()} chất lượng cao tại Xuân Phong Solar. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín.`,
+    ogImage: "https://xuanphongsolar.com/og-products.jpg",
     ogUrl: window.location.href,
     canonical: window.location.href
   });
 
   const [sortBy, setSortBy] = useState("popular");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
+  console.log("Location object:", location);
   // Parse URL parameters
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(location.search);
     const category = urlParams.get("category") || "";
     const search = urlParams.get("search") || "";
+    if(search){
+      setCategoryName(getCategoryName(search));
+    }
+    console.log('search',search);
     const page = parseInt(urlParams.get("page") || "1");
     const perPage = parseInt(urlParams.get("per_page") || "24");
-    
+    const title = urlParams.get("title") || "";
     setSelectedCategory(category);
     setSearchQuery(search);
     setCurrentPage(page);
     setItemsPerPage(perPage);
-  }, [location]);
+    setPageTitle(title);
+    getProducts({ category, search, page, perPage });
+  }, [location.search]);
 
-  const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ["/api/categories"],
-  });
+  const getProducts = ({ category, search, page, perPage }: { category?: string; search?: string; page?: number; perPage?: number; }) => {
+    setIsFetching(true);
+      // Base filter
+    const filter: Record<string, any> = {};
 
-  const { data: productsData, isLoading } = useQuery<{ products: Product[]; total: number }>({
-    queryKey: ["/api/products", selectedCategory, searchQuery, currentPage, itemsPerPage],
-    queryFn: () => {
-      const params = new URLSearchParams();
-      if (selectedCategory) params.append("categoryId", getCategoryId(selectedCategory));
-      if (searchQuery) params.append("search", searchQuery);
-      params.append("limit", itemsPerPage.toString());
-      params.append("offset", ((currentPage - 1) * itemsPerPage).toString());
-      params.append("withCount", "true");
-      
-      return fetch(`/api/products?${params.toString()}`).then(res => res.json());
-    },
-  });
+    // Ưu tiên category được truyền vào
+    if (category) {
+      filter.category = [category];
+    }
 
-  const products = productsData?.products || [];
-  const totalProducts = productsData?.total || 0;
-  const totalPages = Math.ceil(totalProducts / itemsPerPage);
+    // Search theo tên
+    if (search) {
+      filter.name = search;
+    }
+
+    // Tạo model tìm kiếm
+    const searchModel = {
+      filter,
+      page: page ?? 1,
+      pageSize: perPage ?? 24,
+      search: search ?? ''
+    };
+
+    ProductService.findByCondition(searchModel).then((result) => {
+      setPage({
+        data: Array.isArray(result.data) ? result.data : [],
+        total: result.total || 0,
+        pageIndex: result.page,
+        pageSize: result.pageSize
+      });
+      setIsFetching(false);
+    });
+  }
 
   const getCategoryId = (slug: string) => {
-    const category = categories.find(c => c.slug === slug);
+    const category = categories.find(c => c.key === slug);
     return category?.id || "";
   };
 
+  // // Sort products based on selected sort option
+  // const sortedProducts = [...products].sort((a, b) => {
+  //   switch (sortBy) {
+  //     case "price-low":
+  //       return parseFloat(a.price + "" || "0") - parseFloat(b.price + "" || "0");
+  //     case "price-high":
+  //       return parseFloat(b.price + "" || "0") - parseFloat(a.price + "" || "0");
+  //     case "name":
+  //       return (a.name || "").localeCompare(b.name || "");
+  //     case "rating":
+  //       return parseFloat(b.rating + "" || "0") - parseFloat(a.rating + "" || "0");
+  //     default: // popular
+  //       return (b.reviewCount || 0) - (a.reviewCount || 0);
+  //   }
+  // });
 
-
-  // Note: Filtering and sorting are now handled server-side
-  // Client-side filters like brand and price range are applied to the already paginated results
-  const filteredProducts = products.filter(product => {
-    if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) {
-      return false;
-    }
-    
-    if (priceRange) {
-      const price = parseFloat(product.price);
-      switch (priceRange) {
-        case "under-50":
-          return price < 50;
-        case "50-200":
-          return price >= 50 && price <= 200;
-        case "200-500":
-          return price >= 200 && price <= 500;
-        case "over-500":
-          return price > 500;
-        default:
-          return true;
-      }
-    }
-    
-    return true;
-  });
-
-  // Sort the filtered products (client-side for additional sorting)
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (sortBy) {
-      case "price-low":
-        return parseFloat(a.price) - parseFloat(b.price);
-      case "price-high":
-        return parseFloat(b.price) - parseFloat(a.price);
-      case "name":
-        return a.name.localeCompare(b.name);
-      case "rating":
-        return parseFloat(b.rating) - parseFloat(a.rating);
-      default: // popular
-        return b.reviewCount - a.reviewCount;
-    }
-  });
-
-  const uniqueBrands = Array.from(new Set(products.map(p => p.brand))).sort();
+  const uniqueBrands = Array.from(new Set(products.map(p => p.brand || ""))).sort();
 
   const handleBrandToggle = (brand: string) => {
-    setSelectedBrands(prev => 
-      prev.includes(brand) 
+    setSelectedBrands(prev =>
+      prev.includes(brand)
         ? prev.filter(b => b !== brand)
         : [...prev, brand]
     );
@@ -154,49 +169,51 @@ export default function Products() {
   };
 
   const updateURL = (updates: { page?: number; perPage?: number; category?: string; search?: string }) => {
-    const params = new URLSearchParams(window.location.search);
-    
+    const urlParams = new URLSearchParams(location.search);
+
     if (updates.page !== undefined) {
       if (updates.page === 1) {
-        params.delete("page");
+        urlParams.delete("page");
       } else {
-        params.set("page", updates.page.toString());
+        urlParams.set("page", updates.page.toString());
       }
     }
-    
+
     if (updates.perPage !== undefined) {
       if (updates.perPage === 24) {
-        params.delete("per_page");
+        urlParams.delete("per_page");
       } else {
-        params.set("per_page", updates.perPage.toString());
+        urlParams.set("per_page", updates.perPage.toString());
       }
     }
-    
+
     if (updates.category !== undefined) {
       if (updates.category) {
-        params.set("category", updates.category);
+        urlParams.set("category", updates.category);
       } else {
-        params.delete("category");
+        urlParams.delete("category");
       }
     }
-    
+
     if (updates.search !== undefined) {
       if (updates.search) {
-        params.set("search", updates.search);
+        urlParams.set("search", updates.search);
       } else {
-        params.delete("search");
+        urlParams.delete("search");
       }
     }
-    
-    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.pushState({}, '', newUrl);
-    setLocation(newUrl);
+
+    const newUrl = `${location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`;
+    // window.history.pushState({}, '', newUrl);
+
+    // 👇 dùng navigate thay vì pushState
+    navigate(newUrl, { replace: false }); // replace: true nếu muốn ghi đè
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     updateURL({ page });
-    
+
     // Scroll to the top of the products section with mobile optimization
     scrollToElement(productsRef.current, {
       headerOffset: 80, // Desktop offset
@@ -222,9 +239,9 @@ export default function Products() {
   const FilterSidebar = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="font-semibold text-gray-900 mb-4">Filters</h3>
+        <h3 className="font-semibold text-gray-900 mb-4">Bộ lọc</h3>
         <Button variant="outline" size="sm" onClick={clearFilters}>
-          Clear All
+          Xóa tất cả
         </Button>
       </div>
 
@@ -233,7 +250,7 @@ export default function Products() {
         <h4 className="font-medium text-gray-700 mb-3">Price Range</h4>
         <div className="space-y-2">
           {[
-            { value: "under-50", label: "Under $50" },
+            { value: "500", label: "Under $50" },
             { value: "50-200", label: "$50 - $200" },
             { value: "200-500", label: "$200 - $500" },
             { value: "over-500", label: "Over $500" },
@@ -279,13 +296,13 @@ export default function Products() {
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-            {getCategoryName()}
+            {categoryName}
           </h1>
-          {searchQuery && (
+          {/* {searchQuery && pageTitle && (
             <p className="text-base sm:text-lg text-gray-600">
-              Search results for "{searchQuery}"
+              Kết quả tìm kiếm với "{searchQuery}"
             </p>
-          )}
+          )} */}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
@@ -306,9 +323,9 @@ export default function Products() {
                 <PaginationInfo
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
-                  totalItems={totalProducts}
+                  totalItems={page?.total || 0}
                 />
-                
+
                 {/* Mobile Filter Button */}
                 <Sheet>
                   <SheetTrigger asChild>
@@ -369,15 +386,16 @@ export default function Products() {
             </div>
 
             {/* Products */}
-            <ProductGrid products={sortedProducts} isLoading={isLoading} />
+            <ProductGrid products={page?.data || []} isLoading={isFetching} />
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {page?.total > 1 && (
               <div className="mt-8 sm:mt-12">
                 <Pagination
                   currentPage={currentPage}
-                  totalPages={totalPages}
+                  totalPages={Math.ceil(page.total / itemsPerPage)}
                   onPageChange={handlePageChange}
+                  hasMore={currentPage < page.total}
                 />
               </div>
             )}

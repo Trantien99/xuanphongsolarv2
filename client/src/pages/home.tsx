@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Camera, ArrowRight, Wrench, HardHat, ServerCog, Zap, Package, Gavel } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProductGrid } from "@/components/product/product-grid";
 import { useEffect, useRef, useState } from "react";
-import { VisualSearchModal } from "@/components/search/visual-search-modal";
 import { useTranslation } from "@/lib/i18n";
 import { useTitle, useMetaDescription } from "@/hooks/use-title";
-import { useAppContext } from "@/App";
 import { Category } from "@/model/category.model";
 import { useMeta } from "@/components/seo/meta-manager";
-import type { Product } from "@shared/schema";
+import { ProductService } from "@/service/product.service";
+import Product from "@/model/product.model";
+import { VisualSearchModal } from "@/components/search/visual-search-modal";
 
 const categoryIcons = {
   "Công cụ điện": Wrench,
@@ -22,15 +22,12 @@ const categoryIcons = {
   "Công cụ cầm tay": Gavel,
 };
 
-export default function Home() {
-  const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
-  const { t } = useTranslation();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const appContext = useAppContext();
+interface HomeProps {
+  categories: Category[];
+}
 
-  useEffect(() => {
-    setCategories(appContext?.data?.categories || []);
-  }, [appContext])
+export default function Home({ categories }: HomeProps) {
+  const { t } = useTranslation();
   
   // Set dynamic title and meta description
   useTitle("meta.title");
@@ -38,23 +35,27 @@ export default function Home() {
 
   // Dynamic SEO meta tags for SPA
   useMeta({
-    title: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+    title: "Xuân Phong Solar - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
     description: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành với công cụ khám phá sản phẩm tiên tiến.",
     keywords: "sản phẩm công nghiệp, tìm kiếm hình ảnh, thị trường B2B, công cụ chuyên nghiệp, tìm nguồn cung thiết bị",
-    ogTitle: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+    ogTitle: "Xuân Phong Solar - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
     ogDescription: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành.",
-    ogImage: "https://industrialsource.com/og-image.jpg",
+    ogImage: "https://xuanphongsolar.com/og-image.jpg",
     ogUrl: window.location.href,
     canonical: window.location.href
   });
 
-  // const { data: categories = [] } = useQuery<Category[]>({
-  //   queryKey: ["/api/categories"],
-  // });
-
   const { data: featuredProducts = [], isLoading: isLoadingProducts } = useQuery<Product[]>({
-    queryKey: ["/api/products"],
-    queryFn: () => fetch("/api/products?featured=true&limit=4").then(res => res.json()),
+    queryKey: ["featured-products"],
+    queryFn: async () => {
+      const searchModel = {
+        filter: { isFeatured: true },
+        page: 1,
+        pageSize: 4,
+      };
+      const result = await ProductService.findByCondition(searchModel);
+      return Array.isArray(result.data) ? result.data : [];
+    },
   });
 
   const { data: news = [] } = useQuery({
@@ -125,7 +126,7 @@ export default function Home() {
               const IconComponent = categoryIcons[category.label as keyof typeof categoryIcons] || Package;
               
               return (
-                <Link key={category.id} href={`/products?category=${category.key}`}>
+                <Link key={category.id} to={`/products?category=${category.key}`}>
                   <Card className="cursor-pointer hover:shadow-lg transition-all group hover:bg-primary/5 h-full">
                     <CardContent className="p-6 text-center h-full">
                       <div className="text-3xl text-primary mb-3 group-hover:text-primary/80">
@@ -156,7 +157,7 @@ export default function Home() {
                 {t('home.featuredProductsDesc')}
               </p>
             </div>
-            <Link href="/products">
+            <Link to="/products">
               <Button variant="outline" className="group">
                 {t('home.viewAllProducts')}
                 <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -179,7 +180,7 @@ export default function Home() {
                   {t('home.industryNewsDesc')}
                 </p>
               </div>
-              <Link href="/news">
+              <Link to="/news">
                 <Button variant="outline" className="group">
                   {t('home.viewAllNews')}
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -189,7 +190,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {news.map((article: any) => (
-                <Link key={article.id} href={`/news/${article.slug}`}>
+                <Link key={article.id} to={`/news/${article.slug}`}>
                   <Card className="cursor-pointer hover:shadow-lg transition-shadow">
                     <div className="aspect-video overflow-hidden rounded-t-lg">
                       <img
@@ -218,10 +219,10 @@ export default function Home() {
         </section>
       )}
 
-      <VisualSearchModal
-        isOpen={isVisualSearchOpen}
+      {/* <VisualSearchModal
+        isOpen={falsx}
         onClose={() => setIsVisualSearchOpen(false)}
-      />
+      /> */}
     </div>
   );
 }

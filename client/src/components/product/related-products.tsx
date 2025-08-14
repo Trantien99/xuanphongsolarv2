@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "./product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { t } from "@/lib/i18n";
-import type { Product } from "@shared/schema";
+import { ProductService } from "@/service/product.service";
+import Product from "@/model/product.model";
 
 interface RelatedProductsProps {
   currentProductId: string;
@@ -13,13 +14,11 @@ interface RelatedProductsProps {
 
 export function RelatedProducts({ currentProductId, categoryId }: RelatedProductsProps) {
   const { data: relatedProducts, isLoading } = useQuery<Product[]>({
-    queryKey: ["/api/products/related", categoryId, currentProductId],
+    queryKey: ["related-products", categoryId, currentProductId],
     queryFn: async () => {
-      const response = await fetch(`/api/products/related/${categoryId}?exclude=${currentProductId}&limit=8`);
-      if (!response.ok) {
-        throw new Error(t('relatedProducts') + " loading error");
-      }
-      return response.json();
+      const products: Product[] = await ProductService.getProductByCategories([categoryId]);
+      // Filter out the current product
+      return products.filter(product => product.id !== currentProductId).slice(0, 8);
     },
   });
 
@@ -49,7 +48,7 @@ export function RelatedProducts({ currentProductId, categoryId }: RelatedProduct
     <div className="mt-16">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-gray-900">{t('relatedProducts')}</h2>
-        <Link href="/products">
+        <Link to="/products">
           <Button variant="outline">{t('viewAll')}</Button>
         </Link>
       </div>

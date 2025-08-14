@@ -31,7 +31,7 @@ export function Pagination({
         className="flex items-center gap-1"
       >
         <ChevronLeft className="h-4 w-4" />
-        Previous
+        Trang trước
       </Button>
       
       <div className="flex items-center gap-1">
@@ -88,7 +88,7 @@ export function Pagination({
         disabled={!canGoNext}
         className="flex items-center gap-1"
       >
-        Next
+        Trang tiếp
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>
@@ -109,7 +109,7 @@ export function ItemsPerPageSelector({
 }: ItemsPerPageSelectorProps) {
   return (
     <div className="flex items-center space-x-2 text-sm text-gray-600">
-      <span>Show:</span>
+      <span>Hiển thị:</span>
       <select
         value={itemsPerPage}
         onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
@@ -121,7 +121,7 @@ export function ItemsPerPageSelector({
           </option>
         ))}
       </select>
-      <span>per page</span>
+      <span>mỗi trang</span>
     </div>
   );
 }
@@ -143,7 +143,7 @@ export function PaginationInfo({
 
   return (
     <div className="text-sm text-gray-600">
-      Showing {startItem}-{endItem} of {totalItems} results
+      Hiển thị {startItem}-{endItem} của {totalItems} kết quả
     </div>
   );
 }

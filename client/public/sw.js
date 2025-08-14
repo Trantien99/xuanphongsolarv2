@@ -1,7 +1,7 @@
 // Service Worker for SPA caching and offline support
-const CACHE_NAME = 'industrialsource-spa-v1';
-const STATIC_CACHE_NAME = 'industrialsource-static-v1';
-const API_CACHE_NAME = 'industrialsource-api-v1';
+const CACHE_NAME = 'Xuân Phong Solar-spa-v1';
+const STATIC_CACHE_NAME = 'Xuân Phong Solar-static-v1';
+const API_CACHE_NAME = 'Xuân Phong Solar-api-v1';
 
 // Resources to cache on install
 const STATIC_RESOURCES = [

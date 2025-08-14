@@ -77,19 +77,21 @@ export const translations: Translations = {
 
     // Meta tags and SEO
     meta: {
-      title: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+      title: "Xuân Phong Solar - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
       description: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành với công cụ khám phá sản phẩm tiên tiến, công cụ điện, thiết bị an toàn và máy móc.",
       keywords: "sản phẩm công nghiệp, tìm kiếm hình ảnh, thị trường B2B, công cụ chuyên nghiệp, tìm nguồn cung thiết bị, công cụ điện, thiết bị an toàn, máy móc, thiết bị điện tử, vật liệu xây dựng",
-      author: "IndustrialSource",
-      ogTitle: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+      author: "Xuân Phong Solar",
+      ogTitle: "Xuân Phong Solar - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
       ogDescription: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành với công cụ khám phá sản phẩm tiên tiến.",
-      twitterTitle: "IndustrialSource - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
+      twitterTitle: "Xuân Phong Solar - Khám phá sản phẩm trực quan cho các chuyên gia ngành",
       twitterDescription: "Tìm sản phẩm công nghiệp nhanh hơn với tìm kiếm hình ảnh. Nền tảng thương mại điện tử chuyên nghiệp cho các chuyên gia ngành với công cụ khám phá sản phẩm tiên tiến.",
     },
 
     // Products page
     products: {
       pageTitle: "Sản phẩm",
+      searchResults: "Kết quả tìm kiếm",
+      searchResultsFor: "Kết quả tìm kiếm cho",
       filters: "Bộ lọc",
       sortBy: "Sắp xếp theo",
       sortOptions: {
@@ -204,6 +206,7 @@ export const translations: Translations = {
     noImages: "Chưa có hình ảnh",
     specifications: "Thông số kỹ thuật",
     features: "Tính năng",
+    additionalInfo: "Thông tin bổ sung",
     reviews: "Đánh giá",
     relatedProducts: "Sản phẩm liên quan",
     addToCart: "Thêm vào giỏ",
@@ -224,6 +227,17 @@ export const translations: Translations = {
     featured: "Nổi bật",
     share: "Chia sẻ",
     favorite: "Yêu thích",
+    warranty: "Bảo hành",
+    warrantyType: "Loại bảo hành",
+    origin: "Xuất xứ",
+    material: "Chất liệu",
+    style: "Kiểu dáng",
+    weight: "Trọng lượng",
+    dimensions: "Kích thước",
+    color: "Màu sắc",
+    model: "Model",
+    year: "Năm sản xuất",
+    notAvailable: "Chưa có thông tin",
 
     // Image Gallery
     imageCounter: "{current} / {total}",
@@ -428,7 +442,7 @@ export const plural = (count: number, singular: string, plural: string): string 
 };
 
 // Format currency
-export const formatCurrency = (amount: number | string): string => {
+export const formatCurrency = (amount: number): string => {
   const num = typeof amount === 'string' ? parseInt(amount) : amount;
   return `${num.toLocaleString('vi-VN')}${t('currency')}`;
 };

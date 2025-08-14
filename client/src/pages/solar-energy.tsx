@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Sun, Battery, Zap, Droplets, ArrowUp, Shield, Leaf, Star, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTitle } from "@/hooks/use-title";
 import { t } from "@/lib/i18n";
 import { closePopup, openPopup } from "@/components/product/consultation-popup";
+import { ProductService } from "@/service/product.service";
 
 const getFeatures = () => [
   {
@@ -70,11 +71,9 @@ export default function SolarEnergyLanding() {
   useTitle("pageTitle.products", "Năng lượng mặt trời");
 
   const { data: solarProducts = [], isLoading } = useQuery<Product[]>({
-    queryKey: ["/api/products", { categoryId: "7" }],
+    queryKey: ["solar-products"],
     queryFn: async () => {
-      const response = await fetch("/api/products?categoryId=7");
-      if (!response.ok) throw new Error("Failed to fetch solar products");
-      return response.json();
+      return await ProductService.getProductByCategories(["solar-energy"]);
     }
   });
 
@@ -114,10 +113,10 @@ export default function SolarEnergyLanding() {
               tiết kiệm năng lượng cho gia đình và doanh nghiệp
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-yellow-600 hover:bg-gray-100">
+              <Button size="lg" variant="outline" className="bg-white text-yellow-600 hover:bg-gray-100">
                 Xem Sản Phẩm
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-yellow-600" onClick={() => openPopup()}>
+              <Button size="lg" variant="outline" className="bg-white text-yellow-600 hover:bg-gray-100" onClick={() => openPopup()}>
                 Tư Vấn Miễn Phí
               </Button>
             </div>
@@ -270,7 +269,7 @@ export default function SolarEnergyLanding() {
                     </div>
                     
                     <div className="flex space-x-2">
-                      <Link href={`/products/${product.slug}`} className="flex-1">
+                      <Link to={`/products/${product.id}`} className="flex-1">
                         <Button variant="outline" className="w-full">
                           Xem Chi Tiết
                         </Button>
@@ -289,7 +288,7 @@ export default function SolarEnergyLanding() {
           )}
 
           <div className="text-center mt-12">
-            <Link href="/products?categoryId=7">
+            <Link to="/products?categoryId=7">
               <Button size="lg" className="bg-yellow-600 hover:bg-yellow-700">
                 Xem Tất Cả Sản Phẩm
               </Button>
@@ -308,10 +307,10 @@ export default function SolarEnergyLanding() {
             Liên hệ với chúng tôi ngay hôm nay để được tư vấn miễn phí và nhận báo giá tốt nhất
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-yellow-600 hover:bg-gray-100">
+            <Button size="lg" variant="outline" className="bg-white text-yellow-600 hover:bg-gray-100">
               Gọi Ngay: 1900-SOLAR
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-yellow-600" onClick={() => openPopup()}>
+            <Button size="lg" variant="outline" className="border-white hover:bg-white text-yellow-600" onClick={() => openPopup()}>
               Đăng Ký Tư Vấn
             </Button>
           </div>

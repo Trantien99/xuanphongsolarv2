@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation } from "react-router-dom";
 import { Search, Camera, User, ShoppingCart, Menu, X, ChevronRight } from "lucide-react";
 import { SmartLink } from "@/components/navigation/smart-link";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/components/cart/cart-context";
 import { CartSidebar } from "@/components/cart/cart-sidebar";
-import { VisualSearchModal } from "@/components/search/visual-search-modal";
 import { AutocompleteSearch } from "@/components/search/autocomplete-search";
 import { useTranslation } from "@/lib/i18n";
-import { useAppContext } from "@/App";
 import { Category } from "@/model/category.model";
 
 const categories = [
@@ -139,7 +137,7 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
                 {categories
                   .slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage)
                   .map((category: Category) => (
-                    <Link key={category.label} href={category.href}>
+                    <Link key={category.label} to={category.href}>
                       <div className={`p-2 rounded-lg border text-center text-xs font-medium transition-colors ${category.key === ''
                         ? "bg-yellow-50 border-yellow-200 text-yellow-700"
                         : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
@@ -181,40 +179,51 @@ function MobileCategoryMenu({ categories }: { categories: Category[] }) {
   );
 }
 
-export function Header() {
-  const [location] = useLocation();
+interface HeaderProps {
+  categories?: Category[];
+}
+
+export function Header({ categories: propCategories }: HeaderProps) {
+  const location = useLocation();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
   const { state } = useCart();
   const { t } = useTranslation();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const categoryContext = useAppContext((state) => state?.data?.categories);
-  useEffect(() => {
-    console.log('categoryContext', categoryContext);
-    setCategories([
-      {
-        "id": "681b79855935838ad4c3c8b966",
-        "label": "Tất cả sản phẩm",
-        "key": "he-thong-pin-mat-troi",
-        "status": "ACTIVE",
-        "icon": "SolarIcon",
-        "order": 1,
-        "menuItems": [],
-        href: "/products"
-      },
-      {
-        "id": "681b79855935838ad4c3c8b9",
-        "label": "Hệ thống năng lượng mặt trời",
-        "key": "solar-energy",
-        "status": "ACTIVE",
-        "icon": "SolarIcon",
-        "order": 1,
-        "menuItems": [],
-        href: "/solar-energy"
-      },
-      ...(categoryContext || []),
-    ]);
-  }, [categoryContext]);
+
+  // Combine default categories with context categories
+  const defaultCategories: Category[] = [
+    {
+      "id": "681b79855935838ad4c3c8b966",
+      "label": "Tất cả sản phẩm",
+      "key": "",
+      "status": "",
+      "icon": "SolarIcon",
+      "order": 1,
+      "menuItems": [],
+      "highlight": false,
+      href: "/products"
+    },
+    {
+      "id": "681b79855935838ad4c3c8b9",
+      "label": "Hệ thống năng lượng mặt trời",
+      "key": "solar-energy",
+      "status": "ACTIVE",
+      "icon": "SolarIcon",
+      "order": 1,
+      "menuItems": [],
+      "highlight": true,
+      href: "/solar-energy"
+    },
+  ];
+
+  // Use prop categories if provided, otherwise use context categories
+  const categories =  [...defaultCategories, ...propCategories || []];
+
+  const onSearchChange = () => {
+    const searchQuery = localStorage.getItem("searchQuery");
+    if(searchQuery) {
+      
+    }
+  }
 
   return (
     <>
@@ -223,8 +232,8 @@ export function Header() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center">
-              <Link href="/">
-                <h1 className="text-2xl font-bold text-primary cursor-pointer">
+              <Link to="/">
+                <h1 className={`text-2xl font-bold cursor-pointer ${location.pathname == '/solar-energy' ? "text-yellow-600" : "text-primary"}`}>
                   {t('appName')}
                 </h1>
               </Link>
@@ -236,14 +245,6 @@ export function Header() {
                 placeholder={t('nav.searchPlaceholder')}
                 className="w-full"
               />
-              <Button
-                type="button"
-                onClick={() => setIsVisualSearchOpen(true)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 py-2 bg-primary text-white rounded-r-lg hover:bg-primary/90 transition-colors z-10"
-              >
-                <Search className="h-4 w-4 mr-2" />
-                {t('nav.visualSearch')}
-              </Button>
             </div>
 
             {/* Navigation Icons */}
@@ -257,8 +258,8 @@ export function Header() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-72 mobile-menu-height overflow-y-auto mobile-safe-bottom">
                   <div className="flex flex-col space-y-4 h-full">
-                    <Link href="/">
-                      <h2 className="text-xl font-bold text-primary">IndustrialSource</h2>
+                    <Link to="/">
+                      <h2 className="text-xl font-bold text-primary">Xuân Phong Solar</h2>
                     </Link>
 
                     {/* Mobile Search */}
@@ -267,31 +268,23 @@ export function Header() {
                       className="w-full"
                     />
 
-                    <Button
-                      onClick={() => setIsVisualSearchOpen(true)}
-                      className="w-full"
-                    >
-                      <Camera className="h-4 w-4 mr-2" />
-                      {t('nav.visualSearch')}
-                    </Button>
-
                     <nav className="flex flex-col space-y-2 flex-1">
-                      <Link href="/">
+                      <Link to="/">
                         <Button variant="ghost" className="w-full justify-start">
                           {t('nav.home')}
                         </Button>
                       </Link>
-                      <Link href="/products">
+                      <Link to="/products">
                         <Button variant="ghost" className="w-full justify-start">
                           {t('nav.products')}
                         </Button>
                       </Link>
-                      <Link href="/news">
+                      <Link to="/news">
                         <Button variant="ghost" className="w-full justify-start">
                           {t('nav.news')}
                         </Button>
                       </Link>
-                      <Link href="/cart">
+                      <Link to="/cart">
                         <Button variant="ghost" className="w-full justify-start">
                           {t('nav.cart')} ({state.itemCount})
                         </Button>
@@ -302,8 +295,8 @@ export function Header() {
                     <div className="border-t pt-4">
                       <h3 className="text-sm font-semibold text-gray-600 mb-2">Danh mục sản phẩm</h3>
                       <div className="space-y-1">
-                        {categories.slice(1).map((category) => (
-                          <Link key={category.label} href={category.href}>
+                        {categories.map((category) => (
+                          <Link key={category.label} to={category.href} className={`${category?.highlight || false ? "text-yellow-600" : "text-gray-700" }`}>
                             <Button variant="ghost" size="sm" className="w-full justify-start text-sm">
                               {category.label}
                             </Button>
@@ -317,14 +310,14 @@ export function Header() {
 
               {/* Desktop Navigation */}
               <div className="hidden md:flex items-center space-x-4">
-                <Link href="/products">
-                  <Button variant="ghost" className={location === "/products" ? "bg-gray-100" : ""}>
+                <Link to="/products">
+                  <Button variant="ghost" className={location.pathname === "/products" ? "bg-gray-100" : ""}>
                     {t('nav.products')}
                   </Button>
                 </Link>
 
-                <Link href="/news">
-                  <Button variant="ghost" className={location === "/news" || location.startsWith("/news/") ? "bg-gray-100" : ""}>
+                <Link to="/news">
+                  <Button variant="ghost" className={location.pathname === "/news" || location.pathname.startsWith("/news/") ? "bg-gray-100" : ""}>
                     {t('nav.news')}
                   </Button>
                 </Link>
@@ -357,8 +350,8 @@ export function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8 py-3 overflow-x-auto">
               {categories.map((category) => (
-                <Link key={category.label} href={category.href}>
-                  <span className={`font-medium whitespace-nowrap cursor-pointer ${category.key == ''
+                <Link key={category.label} to={category.href}>
+                  <span className={`font-medium whitespace-nowrap cursor-pointer ${category?.highlight || false
                     ? "text-yellow-600 hover:text-yellow-700 font-semibold"
                     : "text-gray-700 hover:text-primary"
                     }`}>
@@ -377,10 +370,10 @@ export function Header() {
       </header>
 
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <VisualSearchModal
-        isOpen={isVisualSearchOpen}
-        onClose={() => setIsVisualSearchOpen(false)}
-      />
+{/*       <VisualSearchModal */}
+{/*         isOpen={isVisualSearchOpen} */}
+{/*         onClose={() => setIsVisualSearchOpen(false)} */}
+{/*       /> */}
     </>
   );
 }

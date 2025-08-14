@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation } from 'react-router-dom';
 
 /**
  * Hook to automatically scroll to top when route changes
@@ -7,7 +7,7 @@ import { useLocation } from 'wouter';
  * Also handles hash fragments (#section-id)
  */
 export function useScrollToTop(behavior: ScrollBehavior = 'instant') {
-  const [location] = useLocation();
+  const location = useLocation();
 
   useEffect(() => {
     // Small delay to ensure DOM is rendered
@@ -33,7 +33,7 @@ export function useScrollToTop(behavior: ScrollBehavior = 'instant') {
     }, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [location, behavior]);
+  }, [location.pathname, behavior]);
 }
 
 /**

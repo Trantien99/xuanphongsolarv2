@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, CreditCard, MapPin, User, Phone, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,7 +38,7 @@ interface CheckoutForm {
 export default function Checkout() {
   const { state, clearCart } = useCart();
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Set dynamic title
@@ -98,7 +98,7 @@ export default function Checkout() {
       });
       
       clearCart();
-      setLocation("/");
+      navigate("/");
     } catch (error) {
       toast({
         title: t("error"),
@@ -120,7 +120,7 @@ export default function Checkout() {
             <p className="text-lg text-gray-600 mb-8">
               Bạn cần thêm sản phẩm vào giỏ hàng trước khi thanh toán.
             </p>
-            <Link href="/products">
+            <Link to="/products">
               <Button size="lg">
                 Tiếp tục mua sắm
               </Button>
@@ -134,7 +134,7 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        <Link href="/cart">
+        <Link to="/cart">
           <Button variant="outline" className="mb-4 sm:mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Quay lại giỏ hàng

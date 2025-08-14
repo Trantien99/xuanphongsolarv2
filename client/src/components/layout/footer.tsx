@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Facebook, Twitter, Linkedin, Youtube } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
@@ -34,22 +34,22 @@ export function Footer() {
             <h4 className="font-semibold mb-4">{t('footer.products')}</h4>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <Link href="/products?category=power-tools">
+                <Link to="/products?category=power-tools">
                   <span className="hover:text-white cursor-pointer">{t('categories.powerTools')}</span>
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=safety-equipment">
+                <Link to="/products?category=safety-equipment">
                   <span className="hover:text-white cursor-pointer">{t('categories.safetyEquipment')}</span>
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=electronics">
+                <Link to="/products?category=electronics">
                   <span className="hover:text-white cursor-pointer">{t('categories.electronics')}</span>
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=machinery">
+                <Link to="/products?category=machinery">
                   <span className="hover:text-white cursor-pointer">{t('categories.machinery')}</span>
                 </Link>
               </li>
@@ -78,7 +78,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 IndustrialSource. {t('footer.allRightsReserved')}</p>
+          <p>&copy; 2024 Xuân Phong Solar. {t('footer.allRightsReserved')}</p>
         </div>
       </div>
     </footer>

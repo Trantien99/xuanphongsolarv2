@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { X, Camera, Upload, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -15,7 +15,7 @@ interface VisualSearchModalProps {
 export function VisualSearchModal({ isOpen, onClose }: VisualSearchModalProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -88,7 +88,7 @@ export function VisualSearchModal({ isOpen, onClose }: VisualSearchModalProps) {
         description: "Redirecting to search results...",
       });
       // In a real implementation, this would process the image and redirect to results
-      setLocation("/products?visual_search=true");
+      navigate("/products?visual_search=true&title=Kết quả tìm kiếm hình ảnh");
     }, 2000);
   };
 

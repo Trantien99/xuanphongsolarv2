@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 import { useRoutePreloader } from '@/lib/route-preloader';
 
 interface SmartLinkProps {
@@ -26,10 +26,8 @@ export function SmartLink({
   }, [href, preload, preloadOnHover]);
 
   return (
-    <Link href={href}>
-      <a ref={linkRef} className={className}>
-        {children}
-      </a>
+    <Link to={href} ref={linkRef} className={className}>
+      {children}
     </Link>
   );
 }
@@ -42,11 +40,9 @@ export function useSmartNavigation() {
     // Preload the route first
     await preloadRoute(href);
     
-    // Then navigate
-    window.history.pushState(null, '', href);
-    
-    // Trigger popstate event to update wouter
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    // Then navigate using React Router's navigate function
+    // This will be handled by the component using this hook
+    return href;
   };
 
   return { navigateWithPreload };

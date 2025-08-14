@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Calendar, User, Star, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +20,7 @@ interface NewsResponse {
 
 function NewsCard({ article }: { article: News }) {
   return (
-    <Link href={`/news/${article.slug}`}>
+    <Link to={`/news/${article.slug}`}>
       <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full">
         {article.imageUrl && (
           <div className="aspect-video overflow-hidden rounded-t-lg">
@@ -110,7 +110,7 @@ function FeaturedNews() {
     <section className="mb-16">
       <div className="flex items-center gap-2 mb-8">
         <Star className="h-6 w-6 text-orange-500" />
-        <h2 className="text-3xl font-bold text-gray-900">Featured News</h2>
+        <h2 className="text-3xl font-bold text-gray-900">Tin tức nổi bật</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {featuredNews.map((article) => (
@@ -153,7 +153,7 @@ function LatestNews() {
     <section className="mb-16">
       <div className="flex items-center gap-2 mb-8">
         <TrendingUp className="h-6 w-6 text-blue-500" />
-        <h2 className="text-3xl font-bold text-gray-900">Latest News</h2>
+        <h2 className="text-3xl font-bold text-gray-900">Bài viết mới nhất</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {latestNews.map((article) => (
@@ -192,7 +192,7 @@ function AllNewsList() {
   if (isLoading) {
     return (
       <section>
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">All News</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Tất cả bài viết</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {Array.from({ length: 6 }).map((_, i) => (
             <Card key={i}>
@@ -213,10 +213,10 @@ function AllNewsList() {
   if (!newsResponse || newsResponse.news.length === 0) {
     return (
       <section>
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">All News</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Tất cả bài viết</h2>
         <div className="text-center py-16">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-4">No Articles Available</h3>
-          <p className="text-gray-600">Check back soon for the latest industry news and updates.</p>
+          <h3 className="text-2xl font-semibold text-gray-900 mb-4">Không có bài viết nào khả dụng</h3>
+          <p className="text-gray-600">Hãy quay lại sớm để cập nhật những tin tức và thông tin mới nhất trong ngành.</p>
         </div>
       </section>
     );
@@ -225,7 +225,7 @@ function AllNewsList() {
   return (
     <section ref={sectionRef}>
       <h2 className="text-3xl font-bold text-gray-900 mb-8">
-        All News ({newsResponse.total} articles)
+        Tất cả ({newsResponse.total} bài viết)
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
         {newsResponse.news.map((article) => (
@@ -252,12 +252,12 @@ function NewsList() {
 
   // Dynamic SEO meta tags for news page
   useMeta({
-    title: "Tin tức ngành công nghiệp - Cập nhật xu hướng mới nhất | IndustrialSource",
-    description: "Đọc tin tức và xu hướng mới nhất trong ngành công nghiệp. Cập nhật thông tin về công nghệ, sản phẩm mới và thị trường từ IndustrialSource.",
+    title: "Tin tức ngành công nghiệp - Cập nhật xu hướng mới nhất | Xuân Phong Solar",
+    description: "Đọc tin tức và xu hướng mới nhất trong ngành công nghiệp. Cập nhật thông tin về công nghệ, sản phẩm mới và thị trường từ Xuân Phong Solar.",
     keywords: "tin tức công nghiệp, xu hướng ngành, công nghệ mới, thị trường công nghiệp, cập nhật ngành",
-    ogTitle: "Tin tức ngành công nghiệp | IndustrialSource",
+    ogTitle: "Tin tức ngành công nghiệp | Xuân Phong Solar",
     ogDescription: "Đọc tin tức và xu hướng mới nhất trong ngành công nghiệp. Cập nhật thông tin về công nghệ, sản phẩm mới và thị trường.",
-    ogImage: "https://industrialsource.com/og-news.jpg",
+    ogImage: "https://xuanphongsolar.com/og-news.jpg",
     ogUrl: window.location.href,
     canonical: window.location.href
   });

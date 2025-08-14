@@ -1,6 +1,6 @@
 # Cải tiến Single Page Application (SPA)
 
-Ứng dụng IndustrialSource đã được chuyển đổi thành một Single Page Application (SPA) hoàn chỉnh với các cải tiến hiệu suất và trải nghiệm người dùng.
+Ứng dụng Xuân Phong Solar đã được chuyển đổi thành một Single Page Application (SPA) hoàn chỉnh với các cải tiến hiệu suất và trải nghiệm người dùng.
 
 ## 🚀 Các tính năng đã triển khai
 
@@ -94,7 +94,7 @@ import { useMeta } from '@/components/seo/meta-manager';
 
 function ProductPage() {
   useMeta({
-    title: "Sản phẩm ABC - IndustrialSource",
+    title: "Sản phẩm ABC - Xuân Phong Solar",
     description: "Mô tả sản phẩm...",
     ogImage: "https://example.com/image.jpg"
   });

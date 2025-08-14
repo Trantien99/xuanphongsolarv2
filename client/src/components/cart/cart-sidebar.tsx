@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "./cart-context";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -123,7 +123,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               </div>
               
               <div className="space-y-2 sm:space-y-3 pb-3">
-                <Link href="/cart" onClick={onClose}>
+                <Link to="/cart" onClick={onClose}>
                   <Button className="w-full bg-primary hover:bg-primary/90 h-11">
                     View Cart
                   </Button>
