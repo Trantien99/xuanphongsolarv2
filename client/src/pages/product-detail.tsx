@@ -18,6 +18,7 @@ import { useMeta } from "@/components/seo/meta-manager";
 import { ProductService } from "@/service/product.service";
 import Product from "@/model/product.model";
 import { AppUtils } from "@/utils/AppUtils";
+import { add } from "date-fns";
 
 export default function ProductDetail() {
   const params = useParams();
@@ -41,7 +42,7 @@ export default function ProductDetail() {
     if (params?.id) {
       setIsLoading(true);
       ProductService.getProductById(params.id).then((response) => {
-        response && setProduct({...new Product(), ...response});
+        response && setProduct({...new Product(), ...response, amount: 10});
         setIsLoading(false);
       });
     }
@@ -80,12 +81,12 @@ export default function ProductDetail() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('productNotFound')}</h1>
-          <Link to="/products">
-            <Button>
+          {/* <Link to="/products"> */}
+            <Button onClick={() => window.history.back()}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('backToProducts')}
             </Button>
-          </Link>
+          {/* </Link> */}
         </div>
       </div>
     );
@@ -126,12 +127,12 @@ export default function ProductDetail() {
           </div>
 
           {/* Back Button */}
-          <Link to="/products">
-            <Button variant="outline" className="mb-6">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('backToProducts')}
-            </Button>
-          </Link>
+          {/* <Link to="/products"> */}
+          <Button variant="outline" className="mb-6" onClick={() => window.history.back()}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t('backToProducts')}
+          </Button>
+          {/* </Link> */}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Images */}
@@ -201,7 +202,7 @@ export default function ProductDetail() {
                 <span className="text-3xl font-bold text-gray-900">
                   {AppUtils.calculateDiscountString(product.price || 0, product?.discount?.value || 0, product?.discount?.type || '')}
                 </span>
-                {product.price && (
+                {product.price > 0 && (
                   <span className="text-xl text-gray-500 line-through">
                     {AppUtils.formatCurrency(product.price)}
                   </span>
@@ -233,7 +234,7 @@ export default function ProductDetail() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setQuantity(quantity + 1)}
-                    disabled={quantity >= (product.stockQuantity || 0)}
+                    disabled={quantity >= (product.amount || 0)}
                   >
                     +
                   </Button>
@@ -242,7 +243,7 @@ export default function ProductDetail() {
                 <Button
                   size="lg"
                   onClick={handleAddToCart}
-                  disabled={!product.inStock}
+                  disabled={!product.amount}
                   className="flex-1 max-w-sm"
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
@@ -310,77 +311,13 @@ export default function ProductDetail() {
                     </CardHeader>
                     <CardContent>
                       <dl className="space-y-3">
-                        {product.warranty && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('warranty')}:</dt>
-                            <dd className="text-gray-600">{product.warranty}</dd>
+                        {product.additionalInfo && product.additionalInfo?.map(info => (
+                          <div key={info.key} className="flex justify-between">
+                            <dt className="font-medium text-gray-900">{info.label}:</dt>
+                            <dd className="text-gray-600">{info.value}</dd>
                           </div>
-                        )}
-                        {product.warrantyType && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('warrantyType')}:</dt>
-                            <dd className="text-gray-600">{product.warrantyType}</dd>
-                          </div>
-                        )}
-                        {product.origin && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('origin')}:</dt>
-                            <dd className="text-gray-600">{product.origin}</dd>
-                          </div>
-                        )}
-                        {product.material && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('material')}:</dt>
-                            <dd className="text-gray-600">{product.material}</dd>
-                          </div>
-                        )}
-                        {product.style && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('style')}:</dt>
-                            <dd className="text-gray-600">{product.style}</dd>
-                          </div>
-                        )}
-                        {/* {product.weight && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('weight')}:</dt>
-                            <dd className="text-gray-600">{product.weight} kg</dd>
-                          </div>
-                        )} */}
-                        {/* {product.dimensions && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('dimensions')}:</dt>
-                            <dd className="text-gray-600">
-                              {product.dimensions.length && product.dimensions.width && product.dimensions.height
-                                ? `${product.dimensions.length} × ${product.dimensions.width} × ${product.dimensions.height} ${product.dimensions.unit || 'cm'}`
-                                : t('notAvailable')
-                              }
-                            </dd>
-                          </div>
-                        )}
-                        {product.color && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('color')}:</dt>
-                            <dd className="text-gray-600">{product.color}</dd>
-                          </div>
-                        )}
-                        {product.model && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('model')}:</dt>
-                            <dd className="text-gray-600">{product.model}</dd>
-                          </div>
-                        )}
-                        {product.year && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('year')}:</dt>
-                            <dd className="text-gray-600">{product.year}</dd>
-                          </div>
-                        )}
-                        {product.sku && (
-                          <div className="flex justify-between">
-                            <dt className="font-medium text-gray-900">{t('sku')}:</dt>
-                            <dd className="text-gray-600">{product.sku}</dd>
-                          </div>
-                        )} */}
+                        )) || <p className="text-gray-600">Chưa có thống tin bổ sung.</p>}
+                      
                       </dl>
                     </CardContent>
                   </Card>

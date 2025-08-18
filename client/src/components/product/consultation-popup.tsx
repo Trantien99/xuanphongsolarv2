@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { t } from "@/lib/i18n";
+import { Category } from "@/model/category.model";
+import { RequestFormService } from "@/service/request-form.service";
 
 const POPUP_OPEN_EVENT = 'popup-open';
 const POPUP_CLOSE_EVENT = 'popup-close';
@@ -40,17 +42,17 @@ interface ConsultationFormData {
   content: string;
 }
 
-const consultationCategories = [
-  { value: "solar-panels", label: t('consultationCategories.solar-panels') },
-  { value: "inverters", label: t('consultationCategories.inverters') },
-  { value: "batteries", label: t('consultationCategories.batteries') },
-  { value: "installation", label: t('consultationCategories.installation') },
-  { value: "maintenance", label: t('consultationCategories.maintenance') },
-  { value: "financing", label: t('consultationCategories.financing') },
-  { value: "others", label: t('consultationCategories.others') },
-];
+// const consultationCategories = [
+//   { value: "solar-panels", label: t('consultationCategories.solar-panels') },
+//   { value: "inverters", label: t('consultationCategories.inverters') },
+//   { value: "batteries", label: t('consultationCategories.batteries') },
+//   { value: "installation", label: t('consultationCategories.installation') },
+//   { value: "maintenance", label: t('consultationCategories.maintenance') },
+//   { value: "financing", label: t('consultationCategories.financing') },
+//   { value: "others", label: t('consultationCategories.others') },
+// ];
 
-export function ConsultationPopup() {
+export function ConsultationPopup({categories}: {categories: Category[]}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ConsultationFormData>({
@@ -120,17 +122,17 @@ export function ConsultationPopup() {
       return false;
     }
 
-    if (!formData.email.trim()) {
-      toast({
-        title: t('error'),
-        description: t('validation.enterEmail'),
-        variant: "destructive",
-      });
-      return false;
-    }
+    // if (!formData.email.trim()) {
+    //   toast({
+    //     title: t('error'),
+    //     description: t('validation.enterEmail'),
+    //     variant: "destructive",
+    //   });
+    //   return false;
+    // }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (formData.email && !emailRegex.test(formData.email)) {
       toast({
         title: t('error'),
         description: t('validation.email'),
@@ -161,15 +163,15 @@ export function ConsultationPopup() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/consultations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      const response = await RequestFormService.addRequestForm({
+        category: formData.category,
+        name: formData.name,  
+        phoneNumber: formData.phone,
+        email: formData.email,
+        note: formData.content
       });
 
-      if (!response.ok) {
+      if (response.status !== 201) {
         throw new Error("Không thể gửi yêu cầu tư vấn");
       }
 
@@ -230,8 +232,8 @@ export function ConsultationPopup() {
                   <SelectValue placeholder="Chọn danh mục..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {consultationCategories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
+                  {categories.map((category) => (
+                    <SelectItem key={category.label} value={category.key}>
                       {category.label}
                     </SelectItem>
                   ))}
@@ -260,7 +262,7 @@ export function ConsultationPopup() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">{t('consultationEmail')} *</Label>
+              <Label htmlFor="email">{t('consultationEmail')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -310,13 +312,13 @@ export function ConsultationPopup() {
             </div>
           </form>
 
-          <div className="text-xs text-gray-500 text-center pt-2">
+          {/* <div className="text-xs text-gray-500 text-center pt-2">
             {t('privacyText')}{" "}
             <span className="text-primary cursor-pointer hover:underline">
               {t('privacyPolicy')}
             </span>{" "}
             của chúng tôi
-          </div>
+          </div> */}
         </DialogContent>
       </Dialog>
     </>

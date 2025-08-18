@@ -9,23 +9,23 @@ import { useTitle } from "@/hooks/use-title";
 import { useMeta } from "@/components/seo/meta-manager";
 import { useState, useRef } from "react";
 import { scrollToElement } from "@/lib/utils";
-import type { News } from "@shared/schema";
 import { t } from "@/lib/i18n";
+import { Content } from "@/model/content.model";
 
 interface NewsResponse {
-  news: News[];
+  news: Content[];
   total: number;
   hasMore: boolean;
 }
 
-function NewsCard({ article }: { article: News }) {
+function NewsCard({ article }: { article: Content }) {
   return (
-    <Link to={`/news/${article.slug}`}>
+    <Link to={`/news/${article.id}`}>
       <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full">
-        {article.imageUrl && (
+        {article.avatar && (
           <div className="aspect-video overflow-hidden rounded-t-lg">
             <img
-              src={article.imageUrl}
+              src={article.avatar}
               alt={article.title}
               className="w-full h-full object-cover hover:scale-105 transition-transform"
             />
@@ -54,7 +54,7 @@ function NewsCard({ article }: { article: News }) {
             </div>
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1" />
-              {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'No date'}
+              {article.createdDate ? new Date(article.createdDate).toLocaleDateString() : 'No date'}
             </div>
           </div>
 
@@ -79,7 +79,7 @@ function NewsCard({ article }: { article: News }) {
 }
 
 function FeaturedNews() {
-  const { data: featuredNews = [], isLoading } = useQuery<News[]>({
+  const { data: featuredNews = [], isLoading } = useQuery<Content[]>({
     queryKey: ["/api/news", "featured"],
     queryFn: () => fetch("/api/news?featured=true&limit=3").then(res => res.json()),
   });
@@ -122,7 +122,7 @@ function FeaturedNews() {
 }
 
 function LatestNews() {
-  const { data: latestNews = [], isLoading } = useQuery<News[]>({
+  const { data: latestNews = [], isLoading } = useQuery<Content[]>({
     queryKey: ["/api/news", "latest"],
     queryFn: () => fetch("/api/news?limit=4").then(res => res.json()),
   });

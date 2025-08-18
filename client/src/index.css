@@ -358,3 +358,7 @@ body, html {
     touch-action: pan-x pan-y;
   }
 }
+
+body[data-scroll-locked] {
+  margin-left: 8px !important; /* width scrollbar */
+}

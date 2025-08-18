@@ -54,7 +54,7 @@ export default function NewsDetail() {
           <Link to="/news">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to News
+              Quay lại danh sách bài viết
             </Button>
           </Link>
         </div>
@@ -80,7 +80,7 @@ export default function NewsDetail() {
           <Link to="/news">
             <Button variant="outline" className="mb-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to News
+              Quay lại danh sách bài viết
             </Button>
           </Link>
           
@@ -213,7 +213,7 @@ export default function NewsDetail() {
           <Link to="/news">
             <Button variant="outline" size="lg" className="w-full sm:w-auto">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to All News
+              Quay lại danh sách bài viết
             </Button>
           </Link>
         </div>

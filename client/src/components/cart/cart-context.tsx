@@ -4,18 +4,16 @@ import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 import { t } from "@/lib/i18n";
 import { useCartStorage } from "@/hooks/use-cart-storage";
+import { ProductService } from "@/service/product.service";
+import { AppUtils } from "@/utils/AppUtils";
+import Product from "@/model/product.model";
 
 interface CartItem {
   id: string;
   sessionId: string;
   productId: string;
   quantity: number;
-  product: {
-    id: string;
-    name: string;
-    price: string;
-    images: string[];
-  } | null;
+  product: Product | null;
 }
 
 interface CartState {
@@ -66,8 +64,17 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 function calculateCartState(items: CartItem[]): CartState {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => {
-    const price = item.product ? parseFloat(item.product.price) : 0;
-    return sum + (price * item.quantity);
+    if (!item.product) return sum;
+    
+    const price = item.product.price || 0;
+    const discount = item.product.discount;
+    let finalPrice = price;
+    
+    if (discount && discount.value > 0) {
+      finalPrice = AppUtils.calculateDiscount(price, discount.value, discount.type);
+    }
+    
+    return sum + (finalPrice * item.quantity);
   }, 0);
 
   return { items, itemCount, total };
@@ -92,6 +99,33 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     queryKey: ["/api/cart", sessionId],
     refetchOnWindowFocus: false,
   });
+
+  // Fetch products data for cart items
+  const productIds = state.items.map(item => item.productId).filter(Boolean);
+  const { data: products, isLoading: productsLoading } = useQuery({
+    queryKey: ["products", productIds],
+    queryFn: () => ProductService.getProductByIds(productIds),
+    enabled: productIds.length > 0,
+    refetchOnWindowFocus: false,
+  });
+
+  // Update cart items with product data
+  useEffect(() => {
+    if (products && Array.isArray(products) && state.items.length > 0) {
+      const updatedItems = state.items.map(item => {
+        const product = products.find(p => p.id === item.productId);
+        return {
+          ...item,
+          product: product || null
+        };
+      });
+      
+      // Only update if products actually changed
+      if (JSON.stringify(updatedItems) !== JSON.stringify(state.items)) {
+        dispatch({ type: "SET_ITEMS", items: updatedItems });
+      }
+    }
+  }, [products, state.items]);
 
   // Đồng bộ localStorage với server
   const syncCartWithServer = async (localItems: CartItem[]) => {
@@ -122,14 +156,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const storedCart = loadCartFromStorage();
     if (storedCart && storedCart.items.length > 0) {
-      dispatch({ type: "SET_ITEMS", items: storedCart.items });
-      console.log("Cart loaded from localStorage:", storedCart.items.length, "items");
+      // Convert stored cart items to match new CartItem interface
+      const convertedItems: CartItem[] = storedCart.items.map(item => ({
+        ...item,
+        product: null // Will be populated when products are fetched
+      }));
+      
+      dispatch({ type: "SET_ITEMS", items: convertedItems });
+      console.log("Cart loaded from localStorage:", convertedItems.length, "items");
       
       // Đồng bộ với server nếu có kết nối internet
-      // Chờ một chút để đảm bảo query client đã sẵn sàng
       if (navigator.onLine) {
         setTimeout(() => {
-          syncCartWithServer(storedCart.items);
+          syncCartWithServer(convertedItems);
         }, 1000);
       }
     }
@@ -138,9 +177,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Cập nhật state khi nhận dữ liệu từ server
   useEffect(() => {
     if (cartItems && Array.isArray(cartItems)) {
-      dispatch({ type: "SET_ITEMS", items: cartItems });
+      // Convert server cart items to match new CartItem interface
+      const convertedItems: CartItem[] = cartItems.map(item => ({
+        ...item,
+        product: null // Will be populated when products are fetched
+      }));
+      
+      dispatch({ type: "SET_ITEMS", items: convertedItems });
       // Lưu vào localStorage khi nhận được dữ liệu từ server
-      saveCartToStorage(calculateCartState(cartItems));
+      saveCartToStorage(calculateCartState(convertedItems));
     }
   }, [cartItems, saveCartToStorage]);
 
@@ -166,135 +211,121 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [loadCartFromStorage]);
 
-  const addToCartMutation = useMutation({
-    mutationFn: async ({ productId, quantity }: { productId: string; quantity: number }) => {
-      const response = await apiRequest("POST", "/api/cart", {
-        sessionId,
-        productId,
-        quantity,
-      });
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: t("toastMessages.itemAddedToCart") });
-    },
-    onError: () => {
-      toast({ title: t("toastMessages.failedToAddItem"), variant: "destructive" });
-    },
-  });
-
-  const updateQuantityMutation = useMutation({
-    mutationFn: async ({ itemId, quantity }: { itemId: string; quantity: number }) => {
-      const response = await apiRequest("PUT", `/api/cart/${itemId}`, { quantity });
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-    },
-    onError: () => {
-      toast({ title: t("toastMessages.failedToUpdateCart"), variant: "destructive" });
-    },
-  });
-
-  const removeFromCartMutation = useMutation({
-    mutationFn: async (itemId: string) => {
-      const response = await apiRequest("DELETE", `/api/cart/${itemId}`);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: t("toastMessages.itemRemovedFromCart") });
-    },
-    onError: () => {
-      toast({ title: t("toastMessages.failedToRemoveItem"), variant: "destructive" });
-    },
-  });
-
-  const clearCartMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("DELETE", `/api/cart/session/${sessionId}`);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      toast({ title: t("toastMessages.cartCleared") });
-    },
-    onError: () => {
-      toast({ title: t("toastMessages.failedToClearCart"), variant: "destructive" });
-    },
-  });
-
+  // Simple cart operations like in AppUtils
   const addToCart = async (productId: string, quantity = 1) => {
     try {
-      // Thử gọi API nếu có internet
-      if (navigator.onLine) {
-        await addToCartMutation.mutateAsync({ productId, quantity });
+      // Check if product already exists in cart
+      const existingItem = state.items.find(item => item.productId === productId);
+      
+      if (existingItem) {
+        // Update quantity if product already exists
+        await updateQuantity(existingItem.id, existingItem.quantity + quantity);
       } else {
-        // Nếu offline, chỉ cập nhật local state
-        // Tạo một item tạm thời để hiển thị
-        const tempItem: CartItem = {
-          id: `temp_${Date.now()}`,
+        // Add new item to cart
+        const newItem: CartItem = {
+          id: `cart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           sessionId,
           productId,
           quantity,
-          product: null, // Sẽ được fetch sau khi online
+          product: null, // Will be populated when products are fetched
         };
         
-        dispatch({ type: "ADD_ITEM", item: tempItem });
-        toast({ title: t("toastMessages.itemAddedToCartOffline") || "Item added to cart (offline)" });
+        dispatch({ type: "ADD_ITEM", item: newItem });
+        
+        // Try to sync with server if online
+        if (navigator.onLine) {
+          try {
+            await apiRequest("POST", "/api/cart", {
+              sessionId,
+              productId,
+              quantity,
+            });
+            queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
+          } catch (error) {
+            console.error("Failed to sync with server:", error);
+          }
+        }
+        
+        toast({ title: t("toastMessages.itemAddedToCart") || "Item added to cart" });
       }
     } catch (error) {
-      // Nếu API call fail, fallback về localStorage
-      const tempItem: CartItem = {
-        id: `temp_${Date.now()}`,
-        sessionId,
-        productId,
-        quantity,
-        product: null,
-      };
-      
-      dispatch({ type: "ADD_ITEM", item: tempItem });
-      toast({ title: t("toastMessages.itemAddedToCartOffline") || "Item added to cart (offline)" });
+      console.error("Failed to add item to cart:", error);
+      toast({ title: t("toastMessages.failedToAddItem") || "Failed to add item", variant: "destructive" });
     }
   };
 
   const updateQuantity = async (itemId: string, quantity: number) => {
     try {
-      if (navigator.onLine) {
-        await updateQuantityMutation.mutateAsync({ itemId, quantity });
-      } else {
-        // Offline: chỉ cập nhật local state
-        dispatch({ type: "UPDATE_ITEM", itemId, quantity });
-        toast({ title: "Cart updated (offline)" });
+      if (quantity <= 0) {
+        // Remove item if quantity is 0 or negative
+        await removeFromCart(itemId);
+        return;
       }
-    } catch (error) {
-      // Fallback về local update
+      
+      // Update local state first
       dispatch({ type: "UPDATE_ITEM", itemId, quantity });
-      toast({ title: "Cart updated (offline)" });
+      
+      // Try to sync with server if online
+      if (navigator.onLine) {
+        try {
+          await apiRequest("PUT", `/api/cart/${itemId}`, { quantity });
+          queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
+        } catch (error) {
+          console.error("Failed to sync with server:", error);
+        }
+      }
+      
+      toast({ title: "Giỏ hàng được cập nhật thành công" });
+    } catch (error) {
+      console.error("Failed to update quantity:", error);
+      toast({ title: "Failed to update cart", variant: "destructive" });
     }
   };
 
   const removeFromCart = async (itemId: string) => {
     try {
-      if (navigator.onLine) {
-        await removeFromCartMutation.mutateAsync(itemId);
-      } else {
-        // Offline: chỉ cập nhật local state
-        dispatch({ type: "REMOVE_ITEM", itemId });
-        toast({ title: "Item removed (offline)" });
-      }
-    } catch (error) {
-      // Fallback về local remove
+      // Remove from local state first
       dispatch({ type: "REMOVE_ITEM", itemId });
-      toast({ title: "Item removed (offline)" });
+      
+      // Try to sync with server if online
+      if (navigator.onLine) {
+        try {
+          await apiRequest("DELETE", `/api/cart/${itemId}`);
+          queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
+        } catch (error) {
+          console.error("Failed to sync with server:", error);
+        }
+      }
+      
+      toast({ title: t("toastMessages.itemRemovedFromCart") || "Item removed from cart" });
+    } catch (error) {
+      console.error("Failed to remove item:", error);
+      toast({ title: "Failed to remove item", variant: "destructive" });
     }
   };
 
   const clearCart = async () => {
-    await clearCartMutation.mutateAsync();
-    // Xóa cả localStorage khi clear cart
-    clearCartStorage();
+    try {
+      // Clear local state first
+      dispatch({ type: "CLEAR_CART" });
+      
+      // Try to sync with server if online
+      if (navigator.onLine) {
+        try {
+          await apiRequest("DELETE", `/api/cart/session/${sessionId}`);
+          queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
+        } catch (error) {
+          console.error("Failed to sync with server:", error);
+        }
+      }
+      
+      // Clear localStorage
+      clearCartStorage();
+      toast({ title: t("toastMessages.cartCleared") || "Cart cleared successfully" });
+    } catch (error) {
+      console.error("Failed to clear cart:", error);
+      toast({ title: "Failed to clear cart", variant: "destructive" });
+    }
   };
 
   return (
@@ -305,7 +336,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateQuantity,
         removeFromCart,
         clearCart,
-        isLoading,
+        isLoading: isLoading || productsLoading,
       }}
     >
       {children}

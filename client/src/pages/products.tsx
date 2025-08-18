@@ -19,7 +19,6 @@ import { useMeta } from "@/components/seo/meta-manager";
 import { ProductService } from "@/service/product.service";
 import PageModel from "@/model/page.model";
 import Product from "@/model/product.model";
-import { set } from "date-fns";
 
 interface ProductsProps {
   categories: Category[];
@@ -41,35 +40,30 @@ export default function Products({ categories }: ProductsProps) {
   const productsRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
-  const [categoryName, setCategoryName] = useState(t("allProducts"));
+  // const [categoryName, setCategoryName] = useState(t("allProducts"));
 
   // Set dynamic title
   useTitle("pageTitle.products");
 
   // Dynamic SEO meta tags for SPA
-  const getCategoryName = (searchQuery?: string) => {
-    // If there's a title parameter, use it
-    // if (pageTitle) {
-    //   return pageTitle;
-    // }
-
+  const getCategoryName = (searchQuery?: string, key?: string, categories?: Category[]) => {
     // If there's a search query, show search results
     if (searchQuery) {
       return `${t('products.searchResultsFor')} "${searchQuery}"`;
     }
 
     // Otherwise, show category name
-    if (!selectedCategory) return t("allProducts");
-    const category = categories.find(c => c.key === selectedCategory);
+    if (!key) return t("allProducts");
+    const category = categories?.find(c => c.key === key);
     return category?.label || t("allProducts");
   };
 
   useMeta({
-    title: `${getCategoryName()} - Sản phẩm công nghiệp chất lượng cao | Xuân Phong Solar`,
-    description: `Khám phá ${getCategoryName().toLowerCase()} chất lượng cao tại Xuân Phong Solar. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín với công nghệ tìm kiếm hình ảnh tiên tiến.`,
-    keywords: `${getCategoryName().toLowerCase()}, sản phẩm công nghiệp, mua sắm B2B, thiết bị chuyên nghiệp, công cụ công nghiệp`,
-    ogTitle: `${getCategoryName()} - Sản phẩm công nghiệp | Xuân Phong Solar`,
-    ogDescription: `Khám phá ${getCategoryName().toLowerCase()} chất lượng cao tại Xuân Phong Solar. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín.`,
+    title: `${pageTitle} - Sản phẩm công nghiệp chất lượng cao | Xuân Phong Solar`,
+    description: `Khám phá ${pageTitle?.toLowerCase()} chất lượng cao tại Xuân Phong Solar. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín với công nghệ tìm kiếm hình ảnh tiên tiến.`,
+    keywords: `${pageTitle.toLowerCase()}, sản phẩm công nghiệp, mua sắm B2B, thiết bị chuyên nghiệp, công cụ công nghiệp`,
+    ogTitle: `${pageTitle} - Sản phẩm công nghiệp | Xuân Phong Solar`,
+    ogDescription: `Khám phá ${pageTitle?.toLowerCase()} chất lượng cao tại Xuân Phong Solar. Tìm kiếm và so sánh sản phẩm từ các thương hiệu uy tín.`,
     ogImage: "https://xuanphongsolar.com/og-products.jpg",
     ogUrl: window.location.href,
     canonical: window.location.href
@@ -83,13 +77,9 @@ export default function Products({ categories }: ProductsProps) {
     const urlParams = new URLSearchParams(location.search);
     const category = urlParams.get("category") || "";
     const search = urlParams.get("search") || "";
-    if(search){
-      setCategoryName(getCategoryName(search));
-    }
-    console.log('search',search);
     const page = parseInt(urlParams.get("page") || "1");
     const perPage = parseInt(urlParams.get("per_page") || "24");
-    const title = urlParams.get("title") || "";
+    const title = getCategoryName(search, category, categories);
     setSelectedCategory(category);
     setSearchQuery(search);
     setCurrentPage(page);
@@ -247,13 +237,13 @@ export default function Products({ categories }: ProductsProps) {
 
       {/* Price Range */}
       <div>
-        <h4 className="font-medium text-gray-700 mb-3">Price Range</h4>
+        <h4 className="font-medium text-gray-700 mb-3">Khoảng giá</h4>
         <div className="space-y-2">
           {[
-            { value: "500", label: "Under $50" },
-            { value: "50-200", label: "$50 - $200" },
-            { value: "200-500", label: "$200 - $500" },
-            { value: "over-500", label: "Over $500" },
+            { value: "<2000000", label: "Dưới 2 triệu" },
+            { value: "2000000-5000000", label: "Từ 2 - 5 triệu" },
+            { value: "5000000-10000000", label: "Từ 5 - 10 triệu" },
+            { value: ">10000000", label: "Trên 10 triệu" },
           ].map(option => (
             <label key={option.value} className="flex items-center space-x-2">
               <input
@@ -296,7 +286,7 @@ export default function Products({ categories }: ProductsProps) {
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-            {categoryName}
+            {pageTitle}
           </h1>
           {/* {searchQuery && pageTitle && (
             <p className="text-base sm:text-lg text-gray-600">
@@ -356,11 +346,11 @@ export default function Products({ categories }: ProductsProps) {
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="popular">Popular</SelectItem>
-                    <SelectItem value="price-low">Price: Low to High</SelectItem>
-                    <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    <SelectItem value="name">Name</SelectItem>
-                    <SelectItem value="rating">Rating</SelectItem>
+                    <SelectItem value="popular">Mới nhất</SelectItem>
+                    <SelectItem value="price-low">Giá: Thấp tới cao</SelectItem>
+                    <SelectItem value="price-high">Giá: Cao tới thấp</SelectItem>
+                    {/* <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="rating">Đánh giá</SelectItem> */}
                   </SelectContent>
                 </Select>
 

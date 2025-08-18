@@ -1,16 +1,12 @@
 import { useEffect, useCallback } from "react";
+import Product from "@/model/product.model";
 
 interface CartItem {
   id: string;
   sessionId: string;
   productId: string;
   quantity: number;
-  product: {
-    id: string;
-    name: string;
-    price: string;
-    images: string[];
-  } | null;
+  product: Product | null;
 }
 
 interface CartState {

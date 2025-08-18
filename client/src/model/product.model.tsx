@@ -33,7 +33,11 @@ class Product {
     description?: string;
     specifications?: Record<string, string>;
     features?: string[];
-    additionalInfo?: string;
+    additionalInfo?: {
+        key: string;
+        label: string;
+        value: string;
+    } [];
     relatedProducts?: string[];
     // reviews?: Review[];
     reviews?: any[];

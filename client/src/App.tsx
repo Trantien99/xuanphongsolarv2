@@ -110,7 +110,7 @@ function App() {
             {/* Scroll to top button */}
             <ScrollToTopButton />
             {/* Consultation Popup */}
-            <ConsultationPopup />
+            <ConsultationPopup categories={categories}/>
           </div>
           <Toaster />
         </CartProvider>

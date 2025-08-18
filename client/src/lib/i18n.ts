@@ -5,7 +5,7 @@ export interface Translations {
 export const translations: Translations = {
 
   vi: {
-    appName: "Xuan Phong Solar",
+    appName: "Xuân Phong Solar",
     // Navigation
     nav: {
       home: "Trang chủ",
@@ -185,7 +185,7 @@ export const translations: Translations = {
     filter: "Lọc",
     sort: "Sắp xếp",
     viewAll: "Xem tất cả",
-    backToProducts: "Quay lại sản phẩm",
+    backToProducts: "Quay lại danh sách sản phẩm",
     allProducts: "Tất cả sản phẩm",
 
     // Navigation

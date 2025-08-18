@@ -7,6 +7,7 @@ import { useCart } from "@/components/cart/cart-context";
 import { useTranslation } from "@/lib/i18n";
 import { useTitle } from "@/hooks/use-title";
 import { useMeta } from "@/components/seo/meta-manager";
+import { AppUtils } from "@/utils/AppUtils";
 
 export default function Cart() {
   const { state, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -41,7 +42,7 @@ export default function Cart() {
 
   const subtotal = state.total;
   const shipping = subtotal > 100 ? 0 : 15.99;
-  const tax = subtotal * 0.0875; // 8.75% tax rate
+  const tax = subtotal * 0.1; // 8.75% tax rate
   const total = subtotal + shipping + tax;
 
   if (state.items.length === 0) {
@@ -102,10 +103,10 @@ export default function Cart() {
                   {state.items.map((item) => (
                     <div key={item.id} className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 py-4 border-b border-gray-200 last:border-b-0">
                       {/* Image and Product Info */}
-                      <div className="flex items-start space-x-3 sm:space-x-4 flex-1">
+                      <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
                         <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                           <img
-                            src={item.product?.images[0] || "https://via.placeholder.com/100x100"}
+                            src={item.product?.avatar || "https://via.placeholder.com/100x100"}
                             alt={item.product?.name || "Product"}
                             className="w-full h-full object-cover"
                           />
@@ -118,9 +119,34 @@ export default function Cart() {
                           <p className="text-xs sm:text-sm text-gray-600 mt-1">
                             {t('productDetail.sku')}: {item.productId}
                           </p>
-                          <p className="text-base sm:text-lg font-medium text-gray-900 mt-1 sm:mt-2">
-                            ${item.product?.price || "0.00"}
-                          </p>
+                          <div className="mt-1 sm:mt-2">
+                            {item.product ? (
+                              <>
+                                {item.product.discount && item.product.discount.value > 0 ? (
+                                  <div className="space-y-1">
+                                    <p className="text-sm text-gray-500 line-through">
+                                      {AppUtils.formatCurrency(item.product.price)}
+                                    </p>
+                                    <p className="text-base sm:text-lg font-medium text-green-600">
+                                      {AppUtils.calculateDiscountString(
+                                        item.product.price,
+                                        item.product.discount.value,
+                                        item.product.discount.type
+                                      )}
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <p className="text-base sm:text-lg font-medium text-gray-900">
+                                    {AppUtils.formatCurrency(item.product.price)}
+                                  </p>
+                                )}
+                              </>
+                            ) : (
+                              <p className="text-base sm:text-lg font-medium text-gray-900">
+                                Liên hệ
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
 
@@ -151,9 +177,25 @@ export default function Cart() {
 
                         {/* Price and Remove */}
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900 text-sm sm:text-base">
-                            ${((parseFloat(item.product?.price || "0")) * item.quantity).toFixed(2)}
-                          </p>
+                          {item.product ? (
+                            <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                              {(() => {
+                                const price = item.product.price || 0;
+                                const discount = item.product.discount;
+                                let finalPrice = price;
+                                
+                                if (discount && discount.value > 0) {
+                                  finalPrice = AppUtils.calculateDiscount(price, discount.value, discount.type);
+                                }
+                                
+                                return AppUtils.formatCurrency(finalPrice * item.quantity);
+                              })()}
+                            </p>
+                          ) : (
+                            <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                              Liên hệ
+                            </p>
+                          )}
                           <Button
                             variant="ghost"
                             size="sm"
@@ -181,7 +223,7 @@ export default function Cart() {
               <CardContent className="space-y-3 sm:space-y-4">
                 <div className="flex justify-between text-sm sm:text-base">
                   <span>{t('cart.subtotal')}:</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{AppUtils.formatCurrency(subtotal)}</span>
                 </div>
                 
                 <div className="flex justify-between text-sm sm:text-base">
@@ -197,19 +239,19 @@ export default function Cart() {
                 
                 <div className="flex justify-between text-sm sm:text-base">
                   <span>{t('cart.tax')}:</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>{AppUtils.formatCurrency(tax)}</span>
                 </div>
                 
                 <Separator />
                 
                 <div className="flex justify-between text-base sm:text-lg font-semibold">
                   <span>{t('cart.grandTotal')}:</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{AppUtils.formatCurrency(total)}</span>
                 </div>
 
                 {shipping > 0 && (
                   <p className="text-xs sm:text-sm text-gray-600">
-                    Miễn phí vận chuyển cho đơn hàng trên $100
+                    Miễn phí vận chuyển cho đơn hàng trên 15.000.000đ
                   </p>
                 )}
                 <Link to="/checkout">

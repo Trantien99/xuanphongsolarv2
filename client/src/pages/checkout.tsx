@@ -12,6 +12,8 @@ import { useCart } from "@/components/cart/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import { useTitle } from "@/hooks/use-title";
 import { t } from "@/lib/i18n";
+import { AppUtils } from "@/utils/AppUtils";
+import App from "@/App";
 
 interface CheckoutForm {
   // Shipping Information
@@ -222,7 +224,7 @@ export default function Checkout() {
                         required
                       />
                     </div>
-                    <div>
+                    {/* <div>
                       <Label htmlFor="zipCode">Mã bưu điện *</Label>
                       <Input
                         id="zipCode"
@@ -231,10 +233,10 @@ export default function Checkout() {
                         placeholder="70000"
                         required
                       />
-                    </div>
+                    </div> */}
                   </div>
                   
-                  <div>
+                  {/* <div>
                     <Label htmlFor="country">Quốc gia</Label>
                     <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
                       <SelectTrigger>
@@ -247,12 +249,12 @@ export default function Checkout() {
                         <SelectItem value="Malaysia">Malaysia</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
 
               {/* Payment Information */}
-              <Card>
+              {/* <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <CreditCard className="h-5 w-5 mr-2" />
@@ -328,7 +330,7 @@ export default function Checkout() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* Additional Notes */}
               <Card>
@@ -360,7 +362,7 @@ export default function Checkout() {
                     <div key={item.id} className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                         <img
-                          src={item.product?.images[0] || "https://via.placeholder.com/100x100"}
+                          src={item.product?.avatar || "https://via.placeholder.com/100x100"}
                           alt={item.product?.name || "Product"}
                           className="w-full h-full object-cover"
                         />
@@ -374,7 +376,7 @@ export default function Checkout() {
                         </p>
                       </div>
                       <p className="text-sm font-medium">
-                        ${((parseFloat(item.product?.price || "0")) * item.quantity).toFixed(2)}
+                        {AppUtils.calculateDiscountString(item.product?.price || 0, item.product?.discount?.value || 0, item.product?.discount?.type || '')}
                       </p>
                     </div>
                   ))}
@@ -386,7 +388,7 @@ export default function Checkout() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Tạm tính:</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>{AppUtils.formatCurrency(subtotal)}</span>
                   </div>
                   
                   <div className="flex justify-between text-sm">
@@ -402,22 +404,22 @@ export default function Checkout() {
                   
                   <div className="flex justify-between text-sm">
                     <span>Thuế:</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>{AppUtils.formatCurrency(tax)}</span>
                   </div>
                   
                   <Separator />
                   
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Tổng cộng:</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>{AppUtils.formatCurrency(total)}</span>
                   </div>
                 </div>
-
+{/* 
                 {shipping > 0 && (
                   <p className="text-xs text-gray-600">
                     Miễn phí vận chuyển cho đơn hàng trên $100
                   </p>
-                )}
+                )} */}
 
                 <Button 
                   className="w-full mt-6" 

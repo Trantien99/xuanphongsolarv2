@@ -16,6 +16,8 @@ export class Content {
     createdDate: Date;
     updatedDate: Date;
     updatedBy: string;
+    isFeatured: boolean;
+    excerpt: string;
 
     constructor() {
         this.id = '';
@@ -35,5 +37,7 @@ export class Content {
         this.createdDate = new Date();
         this.updatedDate = new Date();
         this.updatedBy = '';
+        this.isFeatured = false;
+        this.excerpt = '';
     }
 }

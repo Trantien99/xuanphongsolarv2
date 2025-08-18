@@ -1,15 +1,17 @@
 export class RequestForm {
-    id: string;
+    id?: string;
+    name?: string;
     phoneNumber: string;
     email: string;
-    message: string;
-    address: string;
+    message?: string;
+    address?: string;
     category: string;
-    status: string;
+    status?: string;
     note: string;
 
     constructor() {
         this.id = '';
+        this.name = '';
         this.phoneNumber = '';
         this.email = '';
         this.message = '';
