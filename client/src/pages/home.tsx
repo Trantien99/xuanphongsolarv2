@@ -12,6 +12,8 @@ import { useMeta } from "@/components/seo/meta-manager";
 import { ProductService } from "@/service/product.service";
 import Product from "@/model/product.model";
 import { VisualSearchModal } from "@/components/search/visual-search-modal";
+import { Content } from "@/model/content.model";
+import { ContentService } from "@/service/content.service";
 
 const categoryIcons = {
   "Công cụ điện": Wrench,
@@ -58,9 +60,17 @@ export default function Home({ categories }: HomeProps) {
     },
   });
 
-  const { data: news = [] } = useQuery({
-    queryKey: ["/api/news"],
-    queryFn: () => fetch("/api/news?limit=2").then(res => res.json()),
+  const { data: news = [] } = useQuery<Content[]>({
+    queryKey: ["contents", "featured", "home"],
+    queryFn: async () => {
+      const res = await ContentService.findByCondition({
+        filter: { type: "NEWS", isFeatured: true, status: "=ACTIVE" },
+        page: 1,
+        pageSize: 3,
+        sort: { field: "createdDate", order: -1 }
+      });
+      return Array.isArray(res?.data) ? (res.data as Content[]) : [];
+    },
   });
 
   const sectionProductRef = useRef<HTMLDivElement | null>(null);
@@ -188,13 +198,13 @@ export default function Home({ categories }: HomeProps) {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {news.map((article: any) => (
-                <Link key={article.id} to={`/news/${article.slug}`}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {news.map((article: Content) => (
+                <Link key={article.id} to={`/news/${article.id}`}>
                   <Card className="cursor-pointer hover:shadow-lg transition-shadow">
                     <div className="aspect-video overflow-hidden rounded-t-lg">
                       <img
-                        src={article.imageUrl || "https://via.placeholder.com/600x300"}
+                        src={article.avatar || "https://via.placeholder.com/600x300"}
                         alt={article.title}
                         className="w-full h-full object-cover"
                       />
@@ -208,7 +218,7 @@ export default function Home({ categories }: HomeProps) {
                       </p>
                       <div className="flex items-center justify-between text-sm text-gray-500">
                         <span>By {article.author}</span>
-                        <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
+                        <span>{article.createdDate ? new Date(article.createdDate).toLocaleDateString() : 'No date'}</span>
                       </div>
                     </CardContent>
                   </Card>

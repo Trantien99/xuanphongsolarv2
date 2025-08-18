@@ -11,6 +11,7 @@ import { useState, useRef } from "react";
 import { scrollToElement } from "@/lib/utils";
 import { t } from "@/lib/i18n";
 import { Content } from "@/model/content.model";
+import { ContentService } from "@/service/content.service";
 
 interface NewsResponse {
   news: Content[];
@@ -80,8 +81,16 @@ function NewsCard({ article }: { article: Content }) {
 
 function FeaturedNews() {
   const { data: featuredNews = [], isLoading } = useQuery<Content[]>({
-    queryKey: ["/api/news", "featured"],
-    queryFn: () => fetch("/api/news?featured=true&limit=3").then(res => res.json()),
+    queryKey: ["contents", "featured"],
+    queryFn: async () => {
+      const res = await ContentService.findByCondition({
+        filter: { type: "NEWS", isFeatured: true, status: "=ACTIVE" },
+        page: 1,
+        pageSize: 3,
+        sort: { field: "createdDate", order: -1 }
+      });
+      return Array.isArray(res?.data) ? (res.data as Content[]) : [];
+    },
   });
 
   if (isLoading) {
@@ -123,8 +132,16 @@ function FeaturedNews() {
 
 function LatestNews() {
   const { data: latestNews = [], isLoading } = useQuery<Content[]>({
-    queryKey: ["/api/news", "latest"],
-    queryFn: () => fetch("/api/news?limit=4").then(res => res.json()),
+    queryKey: ["contents", "latest"],
+    queryFn: async () => {
+      const res = await ContentService.findByCondition({
+        filter: { type: "NEWS", status: "=ACTIVE" },
+        page: 1,
+        pageSize: 4,
+        sort: { field: "createdDate", order: -1 }
+      });
+      return Array.isArray(res?.data) ? (res.data as Content[]) : [];
+    },
   });
 
   if (isLoading) {
@@ -170,10 +187,19 @@ function AllNewsList() {
   const sectionRef = useRef<HTMLElement>(null);
 
   const { data: newsResponse, isLoading } = useQuery<NewsResponse>({
-    queryKey: ["/api/news", "all", currentPage],
-    queryFn: () => 
-      fetch(`/api/news?withCount=true&limit=${itemsPerPage}&offset=${(currentPage - 1) * itemsPerPage}`)
-        .then(res => res.json()),
+    queryKey: ["contents", "all", currentPage],
+    queryFn: async () => {
+      const res = await ContentService.findByCondition({
+        filter: { type: "NEWS", status: "=ACTIVE" },
+        page: currentPage,
+        pageSize: itemsPerPage,
+        sort: { field: "createdDate", order: -1 }
+      });
+      const total = res?.total || 0;
+      const news = Array.isArray(res?.data) ? (res.data as Content[]) : [];
+      const hasMore = currentPage * itemsPerPage < total;
+      return { news, total, hasMore } as NewsResponse;
+    },
   });
 
   const totalPages = newsResponse ? Math.ceil(newsResponse.total / itemsPerPage) : 0;

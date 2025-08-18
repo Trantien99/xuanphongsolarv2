@@ -8,21 +8,32 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { useShare } from "@/hooks/use-share";
 import { t } from "@/lib/i18n";
-import type { News } from "@shared/schema";
+import { Content } from "@/model/content.model";
+import { ContentService } from "@/service/content.service";
 
 export default function NewsDetail() {
   const params = useParams();
   const { share, isSharing, isMobileDevice, hasWebShareSupport } = useShare();
   
-  const { data: article, isLoading, error } = useQuery<News>({
-    queryKey: ["/api/news/slug", params?.slug],
+  const { data: article, isLoading, error } = useQuery<Content>({
+    queryKey: ["contents", "detail", params?.slug],
+    queryFn: async () => ContentService.getContentById(params?.slug as string),
     enabled: !!params?.slug,
   });
 
-  const { data: relatedNews = [] } = useQuery<News[]>({
-    queryKey: ["/api/news"],
-    select: (data) => data.filter(item => item.id !== article?.id).slice(0, 3),
-    enabled: !!article,
+  const { data: relatedNews = [] } = useQuery<Content[]>({
+    queryKey: ["contents", "related", article?.id],
+    queryFn: async () => {
+      const res = await ContentService.findByCondition({
+        filter: { type: "NEWS", status: "=ACTIVE" },
+        page: 1,
+        pageSize: 3,
+        sort: { field: "createdDate", order: -1 }
+      });
+      const list = Array.isArray(res?.data) ? (res.data as Content[]) : [];
+      return list.filter(item => item.id !== article?.id).slice(0, 3);
+    },
+    enabled: !!article?.id,
   });
 
   if (isLoading) {
@@ -91,7 +102,7 @@ export default function NewsDetail() {
             </div>
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-2" />
-              {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', {
+              {article.createdDate ? new Date(article.createdDate).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
@@ -133,10 +144,10 @@ export default function NewsDetail() {
       {/* Article Content */}
       <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         <article className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {article.imageUrl && (
+          {article.avatar && (
             <div className="aspect-video overflow-hidden">
               <img
-                src={article.imageUrl}
+                src={article.avatar}
                 alt={article.title}
                 className="w-full h-full object-cover"
               />
@@ -176,12 +187,12 @@ export default function NewsDetail() {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {relatedNews.map((relatedArticle) => (
-                <Link key={relatedArticle.id} to={`/news/${relatedArticle.slug}`}>
+                <Link key={relatedArticle.id} to={`/news/${relatedArticle.id}`}>
                   <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full">
-                    {relatedArticle.imageUrl && (
+                    {relatedArticle.avatar && (
                       <div className="aspect-video overflow-hidden rounded-t-lg">
                         <img
-                          src={relatedArticle.imageUrl}
+                          src={relatedArticle.avatar}
                           alt={relatedArticle.title}
                           className="w-full h-full object-cover hover:scale-105 transition-transform"
                         />
@@ -197,7 +208,7 @@ export default function NewsDetail() {
                       <div className="flex items-center justify-between text-xs text-gray-500 mt-3">
                         <span>{relatedArticle.author}</span>
                         <span>
-                          {relatedArticle.publishedAt ? new Date(relatedArticle.publishedAt).toLocaleDateString() : 'No date'}
+                          {relatedArticle.createdDate ? new Date(relatedArticle.createdDate).toLocaleDateString() : 'No date'}
                         </span>
                       </div>
                     </CardContent>
